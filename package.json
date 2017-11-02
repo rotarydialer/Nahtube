@@ -1,0 +1,19 @@
+{
+  "name": "nahtube",
+  "version": "1.0.0",
+  "description": "Curated, local YouTube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/rotarydialer/Nahtube.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rotarydialer/Nahtube/issues"
+  },
+  "homepage": "https://github.com/rotarydialer/Nahtube#readme"
+}
