@@ -51,6 +51,8 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto"
 -------------------------------------------------------------------------------
 -- TABLES, SEQUENCES, CONSTRAINTS, etc.
 -------------------------------------------------------------------------------
+
+-- USERS --------------------------
 -- Sequence: nahtube.users_id_seq
 
 -- DROP SEQUENCE nahtube.users_id_seq;
@@ -75,6 +77,7 @@ CREATE TABLE nahtube.users
   password character varying NOT NULL,
   common_name character varying(64),
   created date NOT NULL DEFAULT ('now'::text)::date,
+  roles character varying(256)[],
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_username_key UNIQUE (username)
 )
@@ -97,3 +100,37 @@ ALTER TABLE nahtube.users
 
 ALTER TABLE nahtube.users
   ADD CONSTRAINT users_username_key UNIQUE(username);
+
+-- ROLES --------------------------
+
+-- Table: nahtube.user_roles
+
+-- DROP TABLE nahtube.user_roles;
+
+CREATE TABLE nahtube.user_roles
+(
+  id serial NOT NULL,
+  rolename character varying(32) NOT NULL,
+  CONSTRAINT user_roles_pkey PRIMARY KEY (rolename),
+  CONSTRAINT user_roles_rolename_key UNIQUE (rolename)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE nahtube.user_roles
+  OWNER TO postgres;
+
+-- Constraint: nahtube.user_roles_pkey
+
+-- ALTER TABLE nahtube.user_roles DROP CONSTRAINT user_roles_pkey;
+
+ALTER TABLE nahtube.user_roles
+  ADD CONSTRAINT user_roles_pkey PRIMARY KEY(rolename);
+
+-- Constraint: nahtube.user_roles_rolename_key
+
+-- ALTER TABLE nahtube.user_roles DROP CONSTRAINT user_roles_rolename_key;
+
+ALTER TABLE nahtube.user_roles
+  ADD CONSTRAINT user_roles_rolename_key UNIQUE(rolename);
+
