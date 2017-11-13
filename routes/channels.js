@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+/* GET list of allowed channels */
 router.get('/', function(req, res, next) {
   console.log('Allowed channels, you say?');
   
