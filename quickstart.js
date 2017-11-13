@@ -120,7 +120,7 @@ function getChannel(auth) {
                   channels[0].snippet.title,
                   channels[0].statistics.viewCount);
 
-      console.log(channels[0]);
+      console.log(JSON.stringify(channels[0]));
     }
   });
 }
