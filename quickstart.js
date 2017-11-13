@@ -119,6 +119,8 @@ function getChannel(auth) {
                   channels[0].id,
                   channels[0].snippet.title,
                   channels[0].statistics.viewCount);
+
+      console.log(channels[0]);
     }
   });
 }
