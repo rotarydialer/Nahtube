@@ -87,20 +87,6 @@ WITH (
 ALTER TABLE nahtube.users
   OWNER TO postgres;
 
--- Constraint: nahtube.users_pkey
-
--- ALTER TABLE nahtube.users DROP CONSTRAINT users_pkey;
-
-ALTER TABLE nahtube.users
-  ADD CONSTRAINT users_pkey PRIMARY KEY(id);
-
--- Constraint: nahtube.users_username_key
-
--- ALTER TABLE nahtube.users DROP CONSTRAINT users_username_key;
-
-ALTER TABLE nahtube.users
-  ADD CONSTRAINT users_username_key UNIQUE(username);
-
 -- ROLES --------------------------
 
 -- Table: nahtube.user_roles
@@ -120,20 +106,6 @@ WITH (
 ALTER TABLE nahtube.user_roles
   OWNER TO postgres;
 
--- Constraint: nahtube.user_roles_pkey
-
--- ALTER TABLE nahtube.user_roles DROP CONSTRAINT user_roles_pkey;
-
-ALTER TABLE nahtube.user_roles
-  ADD CONSTRAINT user_roles_pkey PRIMARY KEY(rolename);
-
--- Constraint: nahtube.user_roles_rolename_key
-
--- ALTER TABLE nahtube.user_roles DROP CONSTRAINT user_roles_rolename_key;
-
-ALTER TABLE nahtube.user_roles
-  ADD CONSTRAINT user_roles_rolename_key UNIQUE(rolename);
-
 -- CHANNELS --------------------------
 
 -- Table: nahtube.channels_allowed
@@ -144,19 +116,25 @@ CREATE TABLE nahtube.channels_allowed
 (
   id serial NOT NULL,
   channel_id character varying(64) NOT NULL,
+  user_id integer NOT NULL,
   channel_name character varying(128) NOT NULL,
   channel_data jsonb NOT NULL,
-  CONSTRAINT channels_allowed_pkey PRIMARY KEY (channel_id)
+  CONSTRAINT channels_allowed_pkey PRIMARY KEY (channel_id),
+  CONSTRAINT channels_allowed_user_fkey FOREIGN KEY (user_id)
+      REFERENCES nahtube.users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
 ALTER TABLE nahtube.channels_allowed
   OWNER TO postgres;
-  
--- Constraint: nahtube.channels_allowed_pkey
 
--- ALTER TABLE nahtube.channels_allowed DROP CONSTRAINT channels_allowed_pkey;
+-- Index: nahtube.fki_channels_allowed_user_fkey
 
-ALTER TABLE nahtube.channels_allowed
-  ADD CONSTRAINT channels_allowed_pkey PRIMARY KEY(channel_id);
+-- DROP INDEX nahtube.fki_channels_allowed_user_fkey;
+
+CREATE INDEX fki_channels_allowed_user_fkey
+  ON nahtube.channels_allowed
+  USING btree
+  (user_id);
