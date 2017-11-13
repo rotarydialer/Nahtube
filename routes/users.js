@@ -50,4 +50,32 @@ router.get('/:username.json', function(req, res, next) {
 
 });
 
+router.get('/created/:daysAgo', function(req, res, next) {
+
+   (async () => {
+       const { rows } = await pgpool.query(`
+          SELECT id, username, common_name, roles, created FROM nahtube.users 
+           WHERE DATE(created) <= DATE(NOW()) - INTERVAL '1 DAY' * $1;`, 
+           [req.params.daysAgo]);
+ 
+       if (rows.length) {
+         console.log('Returning details for users created ' + [req.params.daysAgo] + ' days ago. Total: ' + rows.length);
+         return res.send(JSON.stringify(rows));
+       } else {
+         console.log('BAD REQUEST for users created ' + [req.params.daysAgo] + ' days ago.');
+         res.status(404);
+         return res.send('No such user found.');
+       }
+ 
+               
+   })().catch(e => setImmediate(() => { 
+     //throw e 
+     res.status(500);
+     console.log(e);
+     return res.send('Error: ' + e.message);
+   } ))
+ 
+ 
+ });
+
 module.exports = router;
