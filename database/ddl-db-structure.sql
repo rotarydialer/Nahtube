@@ -134,3 +134,29 @@ ALTER TABLE nahtube.user_roles
 ALTER TABLE nahtube.user_roles
   ADD CONSTRAINT user_roles_rolename_key UNIQUE(rolename);
 
+-- CHANNELS --------------------------
+
+-- Table: nahtube.channels_allowed
+
+-- DROP TABLE nahtube.channels_allowed;
+
+CREATE TABLE nahtube.channels_allowed
+(
+  id serial NOT NULL,
+  channel_id character varying(64) NOT NULL,
+  channel_name character varying(128) NOT NULL,
+  channel_data jsonb NOT NULL,
+  CONSTRAINT channels_allowed_pkey PRIMARY KEY (channel_id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE nahtube.channels_allowed
+  OWNER TO postgres;
+  
+-- Constraint: nahtube.channels_allowed_pkey
+
+-- ALTER TABLE nahtube.channels_allowed DROP CONSTRAINT channels_allowed_pkey;
+
+ALTER TABLE nahtube.channels_allowed
+  ADD CONSTRAINT channels_allowed_pkey PRIMARY KEY(channel_id);
