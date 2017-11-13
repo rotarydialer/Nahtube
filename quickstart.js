@@ -17,7 +17,10 @@ fs.readFile('client_secret.json', function processClientSecrets(err, content) {
     return;
   }
   // Authorize a client with the loaded credentials, then call the YouTube API.
-  authorize(JSON.parse(content), getChannel);
+  // Don't make two authorize calls here! Only the second will execute fully.
+
+  //authorize(JSON.parse(content), getChannel);
+  authorize(JSON.parse(content), getChannelById);
 });
 
 /**
@@ -100,11 +103,40 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 function getChannel(auth) {
+  console.log('Getting channel details by name...');
   var service = google.youtube('v3');
   service.channels.list({
     auth: auth,
     part: 'snippet,contentDetails,statistics',
     forUsername: 'Zooniversity1'
+  }, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var channels = response.items;
+    if (channels.length == 0) {
+      console.log('No channel found.');
+    } else {
+      console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
+                  'it has %s views.',
+                  channels[0].id,
+                  channels[0].snippet.title,
+                  channels[0].statistics.viewCount);
+
+      console.log(JSON.stringify(channels[0]));
+    }
+  });
+}
+
+function getChannelById(auth) {
+  console.log('Getting channel details by ID...');
+
+  var service = google.youtube('v3');
+  service.channels.list({
+    auth: auth,
+    part: 'snippet,contentDetails,statistics',
+    id: 'UCiBvuoKHWkW62kM0H5OakRA'
   }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
