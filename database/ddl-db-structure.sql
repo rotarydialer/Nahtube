@@ -119,7 +119,7 @@ CREATE TABLE nahtube.channels_allowed
   user_id integer NOT NULL,
   channel_name character varying(128) NOT NULL,
   channel_data jsonb NOT NULL,
-  CONSTRAINT channels_allowed_pkey PRIMARY KEY (channel_id),
+  CONSTRAINT channels_allowed_pkey PRIMARY KEY (channel_id, user_id),
   CONSTRAINT channels_allowed_user_fkey FOREIGN KEY (user_id)
       REFERENCES nahtube.users (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
