@@ -78,6 +78,7 @@ CREATE TABLE nahtube.users
   common_name character varying(64),
   created date NOT NULL DEFAULT ('now'::text)::date,
   roles character varying(256)[],
+  youtube_id character varying(64),
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_username_key UNIQUE (username)
 )
