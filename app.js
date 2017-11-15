@@ -45,4 +45,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// workaround for http code 304 getting cached or "stuck" somehow
+app.disable('etag');
+
 module.exports = app;
