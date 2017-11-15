@@ -13,7 +13,7 @@ const pool = new Pool({             // TODO: remove hardcoding
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'NahTube' });
+  res.render('dashboard', { title: 'NahTube' });
 });
 
 

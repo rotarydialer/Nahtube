@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+  <style>
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+      height: 100%;
+      margin: 200;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+    <div id="dashboard"><%= title %> Dashboard</div>
+
+    <div>
+        <select id="users" name="users"></select>
+    </div>
+
+    <script>
+        // AJAX call to populate the Person field above
+        $.get( "/users", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.id + '">' + entry.common_name + ' - ' + entry.username + '</option>');
+                $("#users").append(option);
+            });
+        });
+    </script>
+  
+</body>
+
+</html>
