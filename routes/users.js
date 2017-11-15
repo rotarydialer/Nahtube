@@ -7,8 +7,12 @@ router.get('/', function(req, res, next) {
   
   (async () => {
       const { rows } = await pgpool.query(`
-              SELECT username, common_name, roles 
-              FROM nahtube.users`);
+              SELECT id, username, common_name, roles 
+              FROM nahtube.users
+              ORDER BY roles ASC, username ASC`);
+
+      var data = {};
+      data['data'] = rows;
 
       return res.send(JSON.stringify(rows));
               
@@ -17,8 +21,22 @@ router.get('/', function(req, res, next) {
     res.status(500);
     return res.send('There was an error.');
   } ))
+});
 
+router.get('/names', function(req, res, next) {  
+  (async () => {
+      const { rows } = await pgpool.query(`
+              SELECT common_name
+              FROM nahtube.users
+              ORDER BY common_name`);
 
+      return res.send(rows);
+              
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send('There was an error.');
+  } ))
 });
 
 router.get('/:username.json', function(req, res, next) {
