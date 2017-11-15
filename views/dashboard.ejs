@@ -24,17 +24,30 @@
         <select id="user-mock"></select>
     </div>
 
-    <div id="channels-allowed"></div>
+    <div id="channels-allowed">
+        <h2>Channels Allowed:</h2>
+
+    </div>
 
     <!-- Populate the fields and divs above -->
     <script>
-        // AJAX call to populate the Person field above
+        // AJAX call to populate the user-mock field above
         $.get( "/users", function( data ) {
             $( ".result" ).html( data );
     
             $.each(JSON.parse(data), function(index, entry) {
                 option = $('<option value="' + entry.id + '">' + entry.common_name + ' - ' + entry.username + '</option>');
                 $("#user-mock").append(option);
+            });
+        });
+
+        // AJAX call to populate the user-mock field above
+        $.get( "/channels", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = ((index+1) + ': ' + entry.channel_name + ' / ' + entry.username + '<br>');
+                $("#channels-allowed").append(option);
             });
         });
     </script>
