@@ -3,7 +3,6 @@ var router = express.Router();
 
 /* GET list of allowed channels */
 router.get('/', function(req, res, next) {
-  console.log('Allowed channels, you say?');
   
   (async () => {
       const { rows } = await pgpool.query(`
@@ -11,7 +10,9 @@ router.get('/', function(req, res, next) {
         FROM nahtube.channels_allowed ch
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id
-        ORDER BY u.username`);
+        ORDER BY u.username, ch.channel_name`);
+
+        console.log(rows.length + ' allowed channels.');
 
       return res.send(JSON.stringify(rows));
               
