@@ -2,11 +2,8 @@
 <html>
 
 <head>
-  <title>
-    <%= title %>
-  </title>
+  <title><%= title %> Dashboard</title>
 
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
   <style>
@@ -21,12 +18,15 @@
 </head>
 
 <body>
-    <div id="dashboard"><%= title %> Dashboard</div>
+    <h1><%= title %> Dashboard</h1>
 
-    <div>
-        <select id="users" name="users"></select>
+    <div id="mock-user-select">
+        <select id="user-mock"></select>
     </div>
 
+    <div id="channels-allowed"></div>
+
+    <!-- Populate the fields and divs above -->
     <script>
         // AJAX call to populate the Person field above
         $.get( "/users", function( data ) {
@@ -34,7 +34,7 @@
     
             $.each(JSON.parse(data), function(index, entry) {
                 option = $('<option value="' + entry.id + '">' + entry.common_name + ' - ' + entry.username + '</option>');
-                $("#users").append(option);
+                $("#user-mock").append(option);
             });
         });
     </script>
