@@ -43,8 +43,15 @@
             getChannelsForUser($('#user-mock').val());
         });
 
+        // refresh on field changes
+        $("#user-mock").change( function () {
+            getChannelsForUser(this.value);
+            });
+
         function getChannelsForUser(userLoggedIn) {
             $("#channels-allowed-list").empty();
+
+            console.log('Populating for ' + userLoggedIn);
 
             // AJAX call to populate the Allowed Channels div above
             $.get( "/channels/" + userLoggedIn, function( data ) {
