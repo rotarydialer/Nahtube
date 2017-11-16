@@ -20,6 +20,35 @@ router.get('/', function(req, res, next) {
   } ))
 });
 
+router.get('/role/:role', function(req, res, next) {
+ 
+  (async () => {
+    var role = req.params.role;
+
+    console.log('Returning list of users with the role "' + role + '".');
+
+    const { rows } = await pgpool.query(`
+            SELECT id, username, common_name, roles 
+            FROM nahtube.users
+            WHERE roles @> ARRAY[$1]::varchar[];`, [role]);
+
+    if (rows.length) {
+      console.log('Returning list of users with the role "' + role + '".');
+      return res.send(JSON.stringify(rows));
+    } else {
+      console.log('BAD REQUEST for role "' + role + '".');
+      res.status(404);
+      return res.send('No such user found.');
+    }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    console.log(e);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
 router.get('/names', function(req, res, next) {  
   (async () => {
       const { rows } = await pgpool.query(`
