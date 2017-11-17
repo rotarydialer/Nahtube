@@ -113,6 +113,12 @@ ALTER TABLE nahtube.user_roles
 
 -- DROP TABLE nahtube.channels_allowed;
 
+-- NOTE: Probably need another column here to track "allowed type/rules"
+--    e.g.:
+--      "ANY"       : all videos on this channel are allowed
+--      "SPECIFIC"  : only certain specified videos (separate table) are allowed
+--      "NONE"      : ham-fisted blacklist? No... too confusing, I think.
+
 CREATE TABLE nahtube.channels_allowed
 (
   id serial NOT NULL,
