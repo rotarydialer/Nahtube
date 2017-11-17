@@ -1,3 +1,4 @@
+var config = require('../config/config');
 var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
@@ -6,29 +7,42 @@ var googleAuth = require('google-auth-library');
 var express = require('express');
 var router = express.Router();
 
+var YouTube = require('youtube-node');
+var youTube = new YouTube();
+
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/youtube-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
 // var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
 //     process.env.USERPROFILE) + '/config/';
-var TOKEN_DIR = '/config/';
-var TOKEN_PATH = TOKEN_DIR + 'credentials.json';
+// var TOKEN_DIR = 'config/';
+// var TOKEN_PATH = TOKEN_DIR + 'credentials.json';
 
-/* Just confirm you're in this file */
+youTube.setKey(config.youtube.key);
+
+/* Setup and check the YT client */
 router.get('/', function(req, res, next) {
-    return res.send('{ "result": "You\'re in the youtube file."}');
-  });
+  var results = [];
+
+  results.push('{"youtubekey": "' + config.youtube.key + '"}');
+
+  //return res.send('{"youtubekey": "' + config.youtube.key + '"}');
+  return res.send(results);
+});
 
 // Load client secrets from a local file.
-fs.readFile(TOKEN_DIR + 'client_secret.json', function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
-  }
-  // Authorize a client with the loaded credentials, then call the YouTube API.
-  // Don't make two authorize calls here! Only the second will execute fully.
-  authorize(JSON.parse(content), getChannelById);
-});
+// fs.readFile(TOKEN_DIR, function returnClientKey(err, content) {
+//   if (err) {
+//     console.log('Error loading client secret file: ' + err);
+//     return;
+//   }
+
+//   console.log('Okay, what is the key in here?');
+//   console.log(content);
+//   // Authorize a client with the loaded credentials, then call the YouTube API.
+//   // Don't make two authorize calls here! Only the second will execute fully.
+//   //authorize(JSON.parse(content), getChannelById);
+// });
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
