@@ -22,12 +22,21 @@ youTube.setKey(config.youtube.key);
 
 /* Setup and check the YT client */
 router.get('/', function(req, res, next) {
-  var results = [];
 
-  results.push('{"youtubekey": "' + config.youtube.key + '"}');
+  // test search
+  youTube.search('palestrina', 20, function(error, result) {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      return res.send(error);
+    }
+    else {
+      console.log(JSON.stringify(result, null, 20));
+      return res.send(JSON.stringify(result, null, 20));
+    }
+  });
 
   //return res.send('{"youtubekey": "' + config.youtube.key + '"}');
-  return res.send(results);
 });
 
 // Load client secrets from a local file.
