@@ -32,7 +32,7 @@
     <!-- Populate the fields and divs above -->
     <script>
         // AJAX call to populate the user-mock field above
-        $.get( "/users", function( data ) {
+        $.get( "/users/role/child", function( data ) {
             $( ".result" ).html( data );
     
             $.each(JSON.parse(data), function(index, entry) {
