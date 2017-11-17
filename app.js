@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+var config = require('./config/config');
 var users = require('./routes/users');
 var channels = require('./routes/channels');
 var youtube = require('./routes/youtube');
