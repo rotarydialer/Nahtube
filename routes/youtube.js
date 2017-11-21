@@ -43,6 +43,7 @@ router.get('/direct/:channelId', function(req, res, next) {
   // https://developers.google.com/youtube/v3/docs/playlistItems
   // the parameter from this will be found in the channels data under
   // items.contentDetails.relatedPlaylists.uploads
+  // good reference: https://www.youtube.com/watch?v=jdqsiFw74Jk&t=178s
   youtube_base.channels.list(listparams, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
