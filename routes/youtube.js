@@ -9,32 +9,9 @@ var youtube_base = google.youtube('v3');
 var express = require('express');
 var router = express.Router();
 
-// If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/youtube-nodejs-quickstart.json
-// var SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
-//  var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-//      process.env.USERPROFILE) + '/config/';
-//  var TOKEN_DIR = 'config/';
-//  var TOKEN_PATH = TOKEN_DIR + 'credentials.json';
-
-// Load client secrets from a local file.
-// fs.readFile(TOKEN_DIR + 'client_secret.json', function processClientSecrets(err, client_secret) {
-//   if (err) {
-//     console.log('Error loading client secret file: ' + err);
-//     return;
-//   }
-//   // Authorize a client with the loaded credentials, then call the YouTube API.
-
-//   authorize(JSON.parse(client_secret), function () {
-//     console.log('Client authorized.');
-//     console.log('Secret: ' + client_secret);
-//   });
-// });
-
 var YouTubeNode = require('youtube-node');
 var youtube_node = new YouTubeNode();
 youtube_node.setKey(config.youtube.key);
-
 
 /* Setup and check the YT client */
 router.get('/', function(req, res, next) {
