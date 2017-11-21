@@ -39,6 +39,8 @@ router.get('/direct/:channelId', function(req, res, next) {
     id: channelId
   };
 
+  // ultimately, call playlistItems.list
+  // https://developers.google.com/youtube/v3/docs/playlistItems
   youtube_base.channels.list(listparams, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
