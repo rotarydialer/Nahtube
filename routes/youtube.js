@@ -8,9 +8,6 @@ var youtube_base = google.youtube('v3');
 var express = require('express');
 var router = express.Router();
 
-var YouTubeNode = require('youtube-node');
-var youtube_node = new YouTubeNode();
-
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/youtube-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
@@ -19,6 +16,8 @@ var SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
 // var TOKEN_DIR = 'config/';
 // var TOKEN_PATH = TOKEN_DIR + 'credentials.json';
 
+var YouTubeNode = require('youtube-node');
+var youtube_node = new YouTubeNode();
 youtube_node.setKey(config.youtube.key);
 
 /* Setup and check the YT client */
