@@ -1,6 +1,4 @@
 var config = require('../config/config');
-var fs = require('fs');
-var readline = require('readline');
 var googleAuth = require('google-auth-library');
 var auth = new googleAuth();
 var google = require('googleapis');
@@ -90,11 +88,11 @@ router.get('/direct/:channelId', function(req, res, next) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function getChannel(auth) {
+function getChannel() {
   console.log('Getting channel details by name...');
   var service = google.youtube('v3');
   service.channels.list({
-    auth: auth,
+    auth: config.youtube.key,
     part: 'snippet,contentDetails,statistics',
     forUsername: 'Zooniversity1'
   }, function(err, response) {
