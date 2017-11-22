@@ -201,44 +201,6 @@ router.get('/videosawait', async (req, res, next) => {
   }
 });
 
-
-router.get('/testasync', async (req, res, next) => {
-
-  //var testplid = 'UUG6_vtkcSBdcCHnSFb1zonQ';
-  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
-
-  var reqparams = {
-    auth: config.youtube.key,
-    part: 'snippet,contentDetails',
-    playlistId: playlistId,
-    maxResults: 10
-  };
-
-    console.log('in async');
-    try {
-      console.log('attempting asynchronous call...');
-
-      const playlist = await youtube_base.playlistItems.list(reqparams);
-
-      /// uhh, second await here instead of the callback .list expects?
-
-      console.log('playlist: ' + JSON.stringify(playlist));
-
-      console.log('finished waiting');
-      return res.json(playlist);
-
-    } catch (e) {
-      console.log('Error in async function:', e);
-      //next(e);
-      res.status(500);
-      return res.send('Error in async function call.');
-    }
-  
-    console.log('await complete');
-  }
-);
-
-
 /**
  * Lists the names and IDs of up to 10 files.
  *
