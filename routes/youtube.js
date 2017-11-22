@@ -145,11 +145,65 @@ router.get('/videos', function(req, res, next) {
 
       console.log(JSON.stringify(playlists));
       return res.send(response);
-    }
+    }// ---- NON-WORKING EXAMPLE ------ START //
   });
   
 });
 
+// ---- NON-WORKING EXAMPLE ------ START //
+function getCrapFromYoutubeInline() {
+//var getCrapFromYoutube = async function() {
+    var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
+    //var playlistId = 'FLV40LtJ8v2pO3_fYy0wJ2rw'; //e.g., "liked" videos
+  
+    var reqparams = {
+      auth: config.youtube.key,
+      part: 'snippet,contentDetails',
+      playlistId: playlistId,
+      maxResults: 10
+    };
+    
+    youtube_base.playlistItems.list(reqparams, function(err, response) {
+      if (err) {
+        console.log('The API returned an error: ' + err);
+        return err;
+      }
+      var playlist = response.items;
+      if (playlist.length == 0) {
+        console.log('No results');
+        return 'No results';
+      } else {
+        console.log('Found ' + playlist.length + ' videos in playlist.');
+  
+        return playlist;
+      }
+    });
+  }
+  
+  router.get('/videosawaitinline', async (req, res, next) => {
+    // How I WANNA dooooo iiiit
+    // attempt at https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+    try {
+      console.log('Oh I\'m trying!');
+  
+      const ytresult = await getCrapFromYoutubeInline();
+  
+      console.log('Post await.');
+      console.log('ytresult: ' + ytresult);
+  
+      return res.send(ytresult); // <-- I want to await and send when it returns
+  
+    } catch (e) {
+      console.log('Await error: ' + e);
+      res.status(404);
+      return res.send('await error: ' + e);
+      //next(e);
+    }
+  });
+
+// ---- NON-WORKING EXAMPLE ------ END //
+
+// ---- WORKING EXAMPLE ------ START //
 function getCrapFromYoutube(res) {
 //var getCrapFromYoutube = async function() {
   var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
@@ -186,7 +240,7 @@ router.get('/videosawait', async (req, res, next) => {
   try {
     console.log('Oh I\'m trying!');
 
-    var ytresult = await getCrapFromYoutube(res); // <-- I don't wanna bury it in here, but I have to (?)
+    const ytresult = await getCrapFromYoutube(res); // <-- I don't wanna bury it in here, but I have to (?)
 
     console.log('Post await.');
     console.log('ytresult: ' + ytresult);
@@ -200,6 +254,7 @@ router.get('/videosawait', async (req, res, next) => {
     //next(e);
   }
 });
+// ---- WORKING EXAMPLE ------ END //
 
 /**
  * Lists the names and IDs of up to 10 files.
