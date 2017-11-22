@@ -86,6 +86,124 @@ router.get('/direct/:channelId', function(req, res, next) {
   
 });
 
+router.get('/videos', function(req, res, next) {
+  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+
+  var reqparams = {
+    auth: config.youtube.key,
+    part: 'snippet,contentDetails',
+    playlistId: playlistId,
+    maxResults: 10
+  };
+
+  youtube_base.playlistItems.list(reqparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var playlists = response.items;
+    if (playlists.length == 0) {
+      console.log('ERROR: No playlist found for id "' + playlistId + '".');
+      res.status(404);
+      return res.send('No playlist found for id "' + playlistId + '".');
+    } else {
+      console.log('playlist:',
+                  playlists);
+
+      console.log(JSON.stringify(playlists));
+      return res.send(response);
+    }
+  });
+  
+});
+
+function getCrapFromYoutube(res) {
+//var getCrapFromYoutube = async function() {
+  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+
+  var reqparams = {
+    auth: config.youtube.key,
+    part: 'snippet,contentDetails',
+    playlistId: playlistId,
+    maxResults: 10
+  };
+  
+  youtube_base.playlistItems.list(reqparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return err;
+    }
+    var playlist = response.items;
+    if (playlist.length == 0) {
+      console.log('No results');
+      return 'No results';
+    } else {
+      console.log('Found ' + playlist.length + ' videos in playlist.');
+
+      //return playlist;
+      return res.send(playlist);
+    }
+  });
+}
+
+router.get('/videosawait', async (req, res, next) => {
+  // attempt at https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+  // this works BUT... referring to 4. Stack Frames here: https://blog.sessionstack.com/how-javascript-works-event-loop-and-the-rise-of-async-programming-5-ways-to-better-coding-with-2f077c4438b5
+  try {
+    var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+    console.log('Oh I\'m trying!');
+
+    var ytresult = await getCrapFromYoutube(res); // <-- I don't wanna bury it in here, but I have to (?)
+
+    console.log('Post await.');
+    console.log('ytresult: ' + ytresult);
+
+    //return res.send(ytresult); // <-- I want to await and send when it returns
+
+  } catch (e) {
+    console.log('Await error: ' + e);
+    res.status(404);
+    return res.send('await error: ' + e);
+    //next(e);
+  }
+});
+
+
+router.get('/testasync', async (req, res, next) => {
+
+  //var testplid = 'UUG6_vtkcSBdcCHnSFb1zonQ';
+  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+
+  var reqparams = {
+    auth: config.youtube.key,
+    part: 'snippet,contentDetails',
+    playlistId: playlistId,
+    maxResults: 10
+  };
+
+    console.log('in async');
+    try {
+      console.log('attempting asynchronous call...');
+
+      const playlist = await youtube_base.playlistItems.list(reqparams);
+
+      /// uhh, second await here instead of the callback .list expects?
+
+      console.log('playlist: ' + JSON.stringify(playlist));
+
+      console.log('finished waiting');
+      return res.json(playlist);
+
+    } catch (e) {
+      console.log('Error in async function:', e);
+      //next(e);
+      res.status(500);
+      return res.send('Error in async function call.');
+    }
+  
+    console.log('await complete');
+  }
+);
 
 
 /**
