@@ -120,12 +120,13 @@ router.get('/user/:username', function(req, res, next) {
 
 router.get('/videos', function(req, res, next) {
   var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+  //var playlistId = ['UUiBvuoKHWkW62kM0H5OakRA','UUV40LtJ8v2pO3_fYy0wJ2rw'];
 
   var reqparams = {
     auth: config.youtube.key,
     part: 'snippet,contentDetails',
     playlistId: playlistId,
-    maxResults: 10
+    maxResults: 50
   };
 
   youtube_base.playlistItems.list(reqparams, function(err, response) {
@@ -151,7 +152,8 @@ router.get('/videos', function(req, res, next) {
 
 function getCrapFromYoutube(res) {
 //var getCrapFromYoutube = async function() {
-  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
+  //var playlistId = 'FLV40LtJ8v2pO3_fYy0wJ2rw'; //e.g., "liked" videos
 
   var reqparams = {
     auth: config.youtube.key,
@@ -182,7 +184,6 @@ router.get('/videosawait', async (req, res, next) => {
   // attempt at https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
   // this works BUT... referring to 4. Stack Frames here: https://blog.sessionstack.com/how-javascript-works-event-loop-and-the-rise-of-async-programming-5-ways-to-better-coding-with-2f077c4438b5
   try {
-    var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
     console.log('Oh I\'m trying!');
 
     var ytresult = await getCrapFromYoutube(res); // <-- I don't wanna bury it in here, but I have to (?)
