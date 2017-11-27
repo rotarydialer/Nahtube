@@ -320,4 +320,70 @@ function getChannelById(someChannelId) {
   });
 }
 
+router.post('/save/:channelId/:username', function(req, res, next) {
+  var channelId = req.params.channelId;
+  var username = req.params.username;
+
+  var listparams = {
+    auth: config.youtube.key,
+    part: 'snippet,contentDetails,statistics',
+    id: channelId
+  };
+  
+  if (!channelId) {
+    res.status(500);
+    return res.send('No channel id specified');
+  }
+  
+    if (!username) {
+      res.status(500);
+      return res.send('No user specified');
+    }
+
+  youtube_base.channels.list(listparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var channels = response.items;
+    if (channels.length == 0) {
+      console.log('ERROR: No channel found for id "' + username + '".');
+      res.status(404);
+      return res.send('No channel found for id "' + username + '".');
+    } else {
+      console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
+                  'it has %s views.',
+                  channels[0].id,
+                  channels[0].snippet.title,
+                  channels[0].statistics.viewCount);
+
+      console.log('Saving this as an allowed channel for ' + username + '.');
+
+      (async () => {
+        
+        const { rows } = await pgpool.query(`
+        INSERT INTO nahtube.channels_allowed (channel_id, user_id, channel_name, channel_data) 
+        VALUES (
+            $1, 
+            (SELECT id FROM nahtube.users WHERE username = $2),
+            $3,
+            $4
+            )
+        ON CONFLICT (channel_id, user_id) DO UPDATE
+            SET channel_name = $3, channel_data = $4;`,
+              [channelId, username, channels[0].snippet.title, JSON.stringify(channels[0])]);
+        
+        console.log(JSON.stringify(channels[0]));
+        return res.send(response);
+                
+      })().catch(e => setImmediate(() => { 
+        //throw e 
+        res.status(500);
+        return res.send('There was an error.');
+      } ))
+
+    }
+  });
+});
+
 module.exports = router;
