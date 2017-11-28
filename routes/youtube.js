@@ -64,35 +64,16 @@ router.get('/direct/:channelId', function(req, res, next) {
       console.log(JSON.stringify(channels[0]));
       return res.send(response);
     }
-  });
-  
-    // I'd prefer to call it thus:
-    //getChannelById('UCV40LtJ8v2pO3_fYy0wJ2rw');
-
-  // or with async:
-  // (async () => {
-  //   console.log('In dat async');
-
-  //   // I want to do it this way but...
-  //   const { chresp } = await getChannelById('UCV40LtJ8v2pO3_fYy0wJ2rw');
-
-  //   console.log('After dat awaitness.');
-
-  //   console.log('chresp be like >>>' + chresp + '<<<');
-
-  //   return res.send(chresp);
-
-  // })().catch(e => setImmediate(() => { throw e } ));
-  
+  });  
 });
 
-router.get('/user/:username', function(req, res, next) {
-  var username = req.params.username;
+router.get('/user/:ytuser', function(req, res, next) {
+  var ytuser = req.params.ytuser;
 
   var listparams = {
     auth: config.youtube.key,
     part: 'snippet,contentDetails,statistics',
-    forUsername: username
+    forUsername: ytuser
   };
 
   youtube_base.channels.list(listparams, function(err, response) {
@@ -102,9 +83,9 @@ router.get('/user/:username', function(req, res, next) {
     }
     var channels = response.items;
     if (channels.length == 0) {
-      console.log('ERROR: No channel found for id "' + username + '".');
+      console.log('ERROR: No channel found for YouTube username "' + ytuser + '".');
       res.status(404);
-      return res.send('No channel found for id "' + username + '".');
+      return res.send('No channel found for YouTube username "' + ytuser + '".');
     } else {
       console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
                   'it has %s views.',
@@ -112,7 +93,7 @@ router.get('/user/:username', function(req, res, next) {
                   channels[0].snippet.title,
                   channels[0].statistics.viewCount);
 
-      console.log(JSON.stringify(channels[0]));
+      //console.log(JSON.stringify(channels[0]));
       return res.send(response);
     }
   });
@@ -120,13 +101,14 @@ router.get('/user/:username', function(req, res, next) {
 
 router.get('/videos', function(req, res, next) {
   var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
+  //var playlistId = 'UUV40LtJ8v2pO3_fYy0wJ2rw';
   //var playlistId = ['UUiBvuoKHWkW62kM0H5OakRA','UUV40LtJ8v2pO3_fYy0wJ2rw'];
 
   var reqparams = {
     auth: config.youtube.key,
     part: 'snippet,contentDetails',
     playlistId: playlistId,
-    maxResults: 50
+    maxResults: 10
   };
 
   youtube_base.playlistItems.list(reqparams, function(err, response) {
@@ -140,72 +122,17 @@ router.get('/videos', function(req, res, next) {
       res.status(404);
       return res.send('No playlist found for id "' + playlistId + '".');
     } else {
-      console.log('playlist:',
-                  playlists);
+      console.log('playlist:', playlists);
 
-      console.log(JSON.stringify(playlists));
       return res.send(response);
-    }// ---- NON-WORKING EXAMPLE ------ START //
+      //return res.send(JSON.stringify(playlists));
+    }
   });
   
 });
 
-// ---- NON-WORKING EXAMPLE ------ START //
-function getCrapFromYoutubeInline() {
-//var getCrapFromYoutube = async function() {
-    var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
-    //var playlistId = 'FLV40LtJ8v2pO3_fYy0wJ2rw'; //e.g., "liked" videos
-  
-    var reqparams = {
-      auth: config.youtube.key,
-      part: 'snippet,contentDetails',
-      playlistId: playlistId,
-      maxResults: 10
-    };
-    
-    youtube_base.playlistItems.list(reqparams, function(err, response) {
-      if (err) {
-        console.log('The API returned an error: ' + err);
-        return err;
-      }
-      var playlist = response.items;
-      if (playlist.length == 0) {
-        console.log('No results');
-        return 'No results';
-      } else {
-        console.log('Found ' + playlist.length + ' videos in playlist.');
-  
-        return playlist;
-      }
-    });
-  }
-  
-  router.get('/videosawaitinline', async (req, res, next) => {
-    // How I WANNA dooooo iiiit
-    // attempt at https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
-    try {
-      console.log('Oh I\'m trying!');
-  
-      const ytresult = await getCrapFromYoutubeInline();
-  
-      console.log('Post await.');
-      console.log('ytresult: ' + ytresult);
-  
-      return res.send(ytresult); // <-- I want to await and send when it returns
-  
-    } catch (e) {
-      console.log('Await error: ' + e);
-      res.status(404);
-      return res.send('await error: ' + e);
-      //next(e);
-    }
-  });
-
-// ---- NON-WORKING EXAMPLE ------ END //
-
 // ---- WORKING EXAMPLE ------ START //
 function getCrapFromYoutube(res) {
-//var getCrapFromYoutube = async function() {
   var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
   //var playlistId = 'FLV40LtJ8v2pO3_fYy0wJ2rw'; //e.g., "liked" videos
 
@@ -235,8 +162,6 @@ function getCrapFromYoutube(res) {
 }
 
 router.get('/videosawait', async (req, res, next) => {
-  // attempt at https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
-  // this works BUT... referring to 4. Stack Frames here: https://blog.sessionstack.com/how-javascript-works-event-loop-and-the-rise-of-async-programming-5-ways-to-better-coding-with-2f077c4438b5
   try {
     console.log('Oh I\'m trying!');
 
@@ -245,48 +170,12 @@ router.get('/videosawait', async (req, res, next) => {
     console.log('Post await.');
     console.log('ytresult: ' + ytresult);
 
-    //return res.send(ytresult); // <-- I want to await and send when it returns
-
   } catch (e) {
     console.log('Await error: ' + e);
     res.status(404);
     return res.send('await error: ' + e);
-    //next(e);
   }
 });
-// ---- WORKING EXAMPLE ------ END //
-
-/**
- * Lists the names and IDs of up to 10 files.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function getChannel() {
-  console.log('Getting channel details by name...');
-  var service = google.youtube('v3');
-  service.channels.list({
-    auth: config.youtube.key,
-    part: 'snippet,contentDetails,statistics',
-    forUsername: 'Zooniversity1'
-  }, function(err, response) {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    }
-    var channels = response.items;
-    if (channels.length == 0) {
-      console.log('No channel found.');
-    } else {
-      console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
-                  'it has %s views.',
-                  channels[0].id,
-                  channels[0].snippet.title,
-                  channels[0].statistics.viewCount);
-
-      console.log(JSON.stringify(channels[0]));
-    }
-  });
-}
 
 function getChannelById(someChannelId) {
   console.log('Getting channel details by ID...');
@@ -351,13 +240,13 @@ router.post('/save/:channelId/:username', function(req, res, next) {
       res.status(404);
       return res.send('No channel found for id "' + username + '".');
     } else {
-      console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
-                  'it has %s views.',
-                  channels[0].id,
-                  channels[0].snippet.title,
-                  channels[0].statistics.viewCount);
+      // console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
+      //             'it has %s views.',
+      //             channels[0].id,
+      //             channels[0].snippet.title,
+      //             channels[0].statistics.viewCount);
 
-      console.log('Saving this as an allowed channel for ' + username + '.');
+      console.log('Saving "%s" as an allowed channel for %s.', channels[0].snippet.title, username);
 
       (async () => {
         
@@ -373,7 +262,7 @@ router.post('/save/:channelId/:username', function(req, res, next) {
             SET channel_name = $3, channel_data = $4;`,
               [channelId, username, channels[0].snippet.title, JSON.stringify(channels[0])]);
         
-        console.log(JSON.stringify(channels[0]));
+        //console.log(JSON.stringify(channels[0]));
         return res.send(response);
                 
       })().catch(e => setImmediate(() => { 
