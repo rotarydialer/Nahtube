@@ -183,10 +183,7 @@ function getYoutubePlaylist(playlistId, res) {
 
 router.get('/videosawait', async (req, res, next) => {
   try {
-    const ytresult = await getYoutubePlaylist('UUiBvuoKHWkW62kM0H5OakRA', res);
-
-    console.log('Post await.');
-    console.log('ytresult: ' + ytresult);
+    await getYoutubePlaylist('UUiBvuoKHWkW62kM0H5OakRA', res);
 
   } catch (e) {
     console.log('Await error: ' + e);
