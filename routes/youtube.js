@@ -149,18 +149,13 @@ router.get('/videos/:channelId', function(req, res, next) {
         }
       });
 
-      //
-
     }
   }); 
   
 });
 
 // ---- WORKING EXAMPLE ------ START //
-function getCrapFromYoutube(res) {
-  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA'; //e.g., uploaded videos
-  //var playlistId = 'FLV40LtJ8v2pO3_fYy0wJ2rw'; //e.g., "liked" videos
-
+function getYoutubePlaylist(playlistId, res) {
   var reqparams = {
     auth: config.youtube.key,
     part: 'snippet,contentDetails',
@@ -188,9 +183,7 @@ function getCrapFromYoutube(res) {
 
 router.get('/videosawait', async (req, res, next) => {
   try {
-    console.log('Oh I\'m trying!');
-
-    const ytresult = await getCrapFromYoutube(res); // <-- I don't wanna bury it in here, but I have to (?)
+    const ytresult = await getYoutubePlaylist('UUiBvuoKHWkW62kM0H5OakRA', res);
 
     console.log('Post await.');
     console.log('ytresult: ' + ytresult);
@@ -201,38 +194,6 @@ router.get('/videosawait', async (req, res, next) => {
     return res.send('await error: ' + e);
   }
 });
-
-function getChannelById(someChannelId) {
-  console.log('Getting channel details by ID...');
-
-  var listparams = {
-    auth: config.youtube.key,
-    part: 'snippet,contentDetails,statistics',
-    id: someChannelId
-  };
-
-  var service = google.youtube('v3');
-  service.channels.list(listparams, function(err, response) {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    }
-    var channels = response.items;
-    if (channels.length == 0) {
-      console.log('No channel found.');
-      return;
-    } else {
-      console.log('This channel\'s ID is %s. Its title is \'%s\', and ' +
-                  'it has %s views.',
-                  channels[0].id,
-                  channels[0].snippet.title,
-                  channels[0].statistics.viewCount);
-
-      console.log(JSON.stringify(channels[0]));
-      return response;
-    }
-  });
-}
 
 router.post('/save/:channelId/:username', function(req, res, next) {
   var channelId = req.params.channelId;
