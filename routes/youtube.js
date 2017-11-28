@@ -22,8 +22,7 @@ router.get('/', function(req, res, next) {
       return res.send(error);
     }
     else {
-      console.log(JSON.stringify(result, null, 20));
-      return res.send(JSON.stringify(result, null, 20));
+      return res.send(result);
     }
   });
 
@@ -61,7 +60,7 @@ router.get('/direct/:channelId', function(req, res, next) {
                   channels[0].snippet.title,
                   channels[0].statistics.viewCount);
 
-      console.log(JSON.stringify(channels[0]));
+      //console.log(JSON.stringify(channels[0]));
       return res.send(response);
     }
   });  
@@ -99,35 +98,61 @@ router.get('/user/:ytuser', function(req, res, next) {
   });
 });
 
-router.get('/videos', function(req, res, next) {
-  var playlistId = 'UUiBvuoKHWkW62kM0H5OakRA';
-  //var playlistId = 'UUV40LtJ8v2pO3_fYy0wJ2rw';
-  //var playlistId = ['UUiBvuoKHWkW62kM0H5OakRA','UUV40LtJ8v2pO3_fYy0wJ2rw'];
+router.get('/videos/:channelId', function(req, res, next) {
+  var channelId = req.params.channelId;
 
-  var reqparams = {
+  var channelparams = {
     auth: config.youtube.key,
     part: 'snippet,contentDetails',
-    playlistId: playlistId,
-    maxResults: 10
+    id: channelId
   };
 
-  youtube_base.playlistItems.list(reqparams, function(err, response) {
+  var playlistId;
+
+  youtube_base.channels.list(channelparams, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
       return;
     }
-    var playlists = response.items;
-    if (playlists.length == 0) {
-      console.log('ERROR: No playlist found for id "' + playlistId + '".');
+    var channels = response.items;
+    if (channels.length == 0) {
+      console.log('ERROR: No channel found for id "' + channelId + '".');
       res.status(404);
-      return res.send('No playlist found for id "' + playlistId + '".');
+      return res.send('No channel found for id "' + channelId + '".');
     } else {
-      console.log('playlist:', playlists);
+      console.log('This channel\'s ID is %s. Its title is \'%s\'.',
+                  channels[0].id,
+                  channels[0].snippet.title);
 
-      return res.send(response);
-      //return res.send(JSON.stringify(playlists));
+      console.log('Uploads playlist ID: ' + channels[0].contentDetails.relatedPlaylists.uploads);
+      playlistId = channels[0].contentDetails.relatedPlaylists.uploads;
+
+      var playlistparams = {
+        auth: config.youtube.key,
+        part: 'snippet,contentDetails',
+        playlistId: playlistId,
+        maxResults: 10
+      };
+
+      youtube_base.playlistItems.list(playlistparams, function(err, response) {
+        if (err) {
+          console.log('The API returned an error: ' + err);
+          return;
+        }
+        var playlists = response.items;
+        if (playlists.length == 0) {
+          console.log('ERROR: No playlist found for id "' + playlistId + '".');
+          res.status(404);
+          return res.send('No playlist found for id "' + playlistId + '".');
+        } else {
+          return res.send(response);
+        }
+      });
+
+      //
+
     }
-  });
+  }); 
   
 });
 
