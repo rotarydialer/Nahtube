@@ -30,16 +30,16 @@ router.get('/', function(req, res, next) {
 
 // search with the youtube_node helper
 router.post('/search', function(req, res, next) {
-  var searchval = JSON.stringify(req.body);
+  var searchstr = req.body.searchstring;
 
-  youtube_node.search(searchval, 15, function(error, result) {
+  youtube_node.search(searchstr, 15, function(error, result) {
     if (error) {
       console.log(error);
       res.status(500);
       return res.send(error);
     }
     else {
-      console.log('Found %d results for "%s".', result.items.length, searchval);
+      console.log('Found %d results for "%s".', result.items.length, searchstr);
       return res.send(result);
     }
   });

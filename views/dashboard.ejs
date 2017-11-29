@@ -63,8 +63,9 @@
             $.ajax({
                 type: "POST",
                 url: "/youtube/search",
-                data: this.value,
+                data: {"searchstring": this.value},
                 success: function (data) {
+                    console.log('Populate the results pane with these:');
                     console.log(data);
                 }
             });
