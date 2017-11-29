@@ -45,13 +45,23 @@
 
     <section id="search-section">
         <div id="search-action">
-            <input name="yt-search-text"></input>
-            <button>Search</button>
+            <input id="search-text"></input>
         </div>
         <div id="search-results">
             Results will display here...
         </div>
     </section>
+
+    <!-- Enable the search above -->
+    <script type="text/javascript">
+    $("#search-text").on('keypress',function (e) {
+        if (e.keyCode == 13) {
+            console.log('Going to search with "%s".', this.value);
+            $("#search-text").addClass("buttonSearch");
+            $("#search-results").text("Class added = " + $("#search-text").attr("class"));
+        }
+    });
+    </script>
 
     <div id="channels-allowed-container">
         <h2>Channels Allowed:</h2>
