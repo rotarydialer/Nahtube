@@ -14,6 +14,23 @@
       margin: 200;
       padding: 0;
     }
+
+    #search-section {
+        width: 95%;
+        height: 30px;
+        /* background: aqua; */
+        padding: 0px;
+    }
+    #search-action {
+        width: 270px;
+        /* background: red; */
+        float: left;
+    }
+    #search-results {
+        margin-left: 275px;
+        width: auto;
+        /* background: pink; */
+    }
   </style>
 </head>
 
@@ -23,6 +40,18 @@
     <div id="mock-user-select">
         <select id="user-mock"></select>
     </div>
+
+    <hr>
+
+    <section id="search-section">
+        <div id="search-action">
+            <input name="yt-search-text"></input>
+            <button>Search</button>
+        </div>
+        <div id="search-results">
+            Results will display here...
+        </div>
+    </section>
 
     <div id="channels-allowed-container">
         <h2>Channels Allowed:</h2>
