@@ -28,6 +28,24 @@ router.get('/', function(req, res, next) {
 
 });
 
+// search with the youtube_node helper
+router.post('/search', function(req, res, next) {
+  var searchval = JSON.stringify(req.body);
+
+  youtube_node.search(searchval, 15, function(error, result) {
+    if (error) {
+      console.log(error);
+      res.status(500);
+      return res.send(error);
+    }
+    else {
+      console.log('Found %d results for "%s".', result.items.length, searchval);
+      return res.send(result);
+    }
+  });
+
+});
+
 // Test using the YouTube API directly
 router.get('/direct/:channelId', function(req, res, next) {
   var channelId = req.params.channelId;
