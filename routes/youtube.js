@@ -32,6 +32,12 @@ router.get('/', function(req, res, next) {
 router.post('/search', function(req, res, next) {
   var searchstr = req.body.searchstring;
 
+  // these parameters don't seem to have any effect
+  // try with youtube_base
+  youtube_node.addParam('safeSearch', 'strict');
+  youtube_node.addParam('type', 'video');
+  youtube_node.addParam('order', 'title');
+
   youtube_node.search(searchstr, 15, function(error, result) {
     if (error) {
       console.log(error);
