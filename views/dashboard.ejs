@@ -18,18 +18,15 @@
     #search-section {
         width: 95%;
         height: 30px;
-        /* background: aqua; */
         padding: 0px;
     }
     #search-action {
         width: 270px;
-        /* background: red; */
         float: left;
     }
     #search-results {
         margin-left: 275px;
         width: auto;
-        /* background: pink; */
     }
   </style>
 </head>
@@ -76,9 +73,9 @@
                         console.log(i + ': ' + item.snippet.title);
 
                         $('#search-results').append(
-                            //'<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
+                            '<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
                             //'<img src="' + item.snippet.thumbnails.high.url + '"><br>' +
-                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
+                            //'<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
                             (i+1) + '. ' + item.snippet.title + '<br>\n'
                         );
                     });
