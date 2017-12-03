@@ -13,5 +13,9 @@ router.get('/', function(req, res, next) {
   res.render('dashboard', { title: 'NahTube' });
 });
 
+// user login
+router.get('/login', function(req, res, next) {
+  res.render('login', { title: 'NahTube' });
+});
 
 module.exports = router;

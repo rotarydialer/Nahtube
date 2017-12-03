@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title><%= title %></title>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+  <style>
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+      height: 100%;
+      margin: 200;
+      padding: 0;
+    }
+
+    #search-section {
+        width: 95%;
+        height: 30px;
+        padding: 0px;
+    }
+    #search-action {
+        width: 270px;
+        float: left;
+    }
+    #search-results {
+        margin-left: 275px;
+        width: auto;
+    }
+  </style>
+</head>
+
+<body>
+    <h1><%= title %> Login</h1>
+
+    <div id="mock-user-select">
+        <select id="user-mock"></select>
+        <button id="login">Login</button>
+    </div>
+
+    <!-- Populate the fields and divs above -->
+    <script>
+        // AJAX call to populate the user-mock field above
+        $.get( "/users/role/child", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+                $("#user-mock").append(option);
+            });
+
+        });
+
+        // refresh on field changes
+        $("#user-mock").change( function () {
+            // do something else... pass on to the dashboard
+            //getChannelsForUser(this.value);
+        });
+
+        function getChannelsForUser(userLoggedIn) {
+            $("#channels-allowed-list").empty();
+
+            console.log('Populating for ' + userLoggedIn);
+
+            // AJAX call to populate the Allowed Channels div above
+            $.get( "/channels/" + userLoggedIn, function( data ) {
+                $( ".result" ).html( data );
+                $.each(JSON.parse(data), function(index, entry) {
+                    option = ((index+1) + ': <a href="https://youtube.com/channel/' + entry.channel_id + '">' + entry.channel_name + '</a> <br>');
+                    $("#channels-allowed-list").append(option);
+                });
+            });
+        }
+    </script>
+  
+</body>
+
+</html>
