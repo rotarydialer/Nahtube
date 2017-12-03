@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // session -- using memory storage
 // look into postgres-based session storage
+// TODO: move secret to .env
 app.use(session({
   secret: 'averyverysecretvaluesolikedonteventrytocvrakdis',
   saveUninitialized: false,
