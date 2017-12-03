@@ -6,6 +6,8 @@
 
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
   <style>
     /* Optional: Makes the sample page fill the window. */
     html,
@@ -73,9 +75,9 @@
                         console.log(i + ': ' + item.snippet.title);
 
                         $('#search-results').append(
-                            '<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
+                            //'<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
                             //'<img src="' + item.snippet.thumbnails.high.url + '"><br>' +
-                            //'<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
+                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
                             (i+1) + '. ' + item.snippet.title + '<br>\n'
                         );
                     });
