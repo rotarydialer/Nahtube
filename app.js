@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var expressSession = require('express-session');
 
 var index = require('./routes/index');
 var config = require('./config/config');
@@ -24,6 +25,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// session -- using memory storage
+// look into postgres-based session storage
+app.use(expressSession({
+  secret: 'averyverysecretvaluesolikedonteventrytocvrakdis',
+  saveUninitialized: false,
+  resave: false
+}));
 
 // static routes for images, css, etc.
 app.use('/images', express.static(__dirname + '/assets/images'));
