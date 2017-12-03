@@ -28,12 +28,42 @@ router.get('/', function(req, res, next) {
 
 });
 
-// search with the youtube_node helper
+// search with the youtube api
 router.post('/search', function(req, res, next) {
   var searchstr = req.body.searchstring;
 
-  // these parameters don't seem to have any effect
-  // try with youtube_base
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    safeSearch: 'strict',
+    maxResults: 25,
+    q: searchstr
+  };
+
+  youtube_base.search.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No results found for id "' + searchstr + '".');
+      res.status(404);
+      return res.send('ERROR: No results found for id "' + searchstr + '".');
+    } else {
+      console.log('Found %d results for "%s".', results.length, searchstr);
+
+      return res.send(response);
+    }
+  }); 
+
+});
+
+// search with the youtube_node helper
+router.post('/crappysearch', function(req, res, next) {
+  var searchstr = req.body.searchstring;
+
+  // CONFIRMED: these parameters don't work
   youtube_node.addParam('safeSearch', 'strict');
   youtube_node.addParam('type', 'video');
   youtube_node.addParam('order', 'title');
