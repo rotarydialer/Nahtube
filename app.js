@@ -25,6 +25,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// static routes for images, css, etc.
+app.use('/images', express.static(__dirname + '/assets/images'));
+app.use('/css', express.static(__dirname + '/assets/css'));
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/channels', channels);
