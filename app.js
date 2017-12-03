@@ -24,16 +24,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // session -- using memory storage
 // look into postgres-based session storage
 // TODO: move secret to .env
 app.use(session({
-  secret: 'averyverysecretvaluesolikedonteventrytocvrakdis',
+  secret: "immaputthisonmorelinesilikemoarlinesmorelinesmoreclarityialwayssay",
   saveUninitialized: false,
   resave: false
 }));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // static routes for images, css, etc.
 app.use('/images', express.static(__dirname + '/assets/images'));
