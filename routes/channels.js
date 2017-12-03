@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 
         console.log(rows.length + ' allowed channels.');
 
-      return res.send(JSON.stringify(rows));
+      return res.send(rows);
               
   })().catch(e => setImmediate(() => { 
     //throw e 
@@ -24,14 +24,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/details', function(req, res, next) {
-  console.log('Allowed channels, you say?');
+  console.log('Returning full channel details.');
   
   (async () => {
       const { rows } = await pgpool.query(`
         SELECT id, user_id, channel_id, channel_name, channel_data 
         FROM nahtube.channels_allowed`);
 
-      return res.send(JSON.stringify(rows));
+      return res.send(rows);
               
   })().catch(e => setImmediate(() => { 
     //throw e 
@@ -40,9 +40,8 @@ router.get('/details', function(req, res, next) {
   } ))
 });
 
-
 router.get('/:username', function(req, res, next) {
-  console.log('Allowed channels for "' + req.params.username + '", you say?');
+  var username = req.params.username;
   
   (async () => {
       const { rows } = await pgpool.query(`
@@ -51,13 +50,13 @@ router.get('/:username', function(req, res, next) {
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id
         WHERE u.username = $1
-        ORDER BY u.username`, [req.params.username]);
+        ORDER BY u.username`, [username]);
 
       if (rows.length) {
-        console.log('Returning channel details for user "' + [req.params.username] + '".');
+        console.log('Returning channels for "%s".', username);
         return res.send(JSON.stringify(rows));
       } else {
-        console.log('BAD REQUEST for user "' + [req.params.username] + '".');
+        console.log('BAD REQUEST for user "' + [username] + '".');
         res.status(404);
         return res.send('No allowed channels found for that user.');
       }

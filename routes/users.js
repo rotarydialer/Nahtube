@@ -3,7 +3,6 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  console.log('Users, you say?');
   
   (async () => {
       const { rows } = await pgpool.query(`
@@ -11,7 +10,7 @@ router.get('/', function(req, res, next) {
               FROM nahtube.users
               ORDER BY roles ASC, username ASC`);
 
-      return res.send(JSON.stringify(rows));
+      return res.send(rows);
               
   })().catch(e => setImmediate(() => { 
     //throw e 
@@ -25,7 +24,7 @@ router.get('/role/:role', function(req, res, next) {
   (async () => {
     var role = req.params.role;
 
-    console.log('Returning list of users with the role "' + role + '".');
+    //console.log('Returning list of users with the role "' + role + '".');
 
     const { rows } = await pgpool.query(`
             SELECT id, username, common_name, roles 
@@ -33,7 +32,7 @@ router.get('/role/:role', function(req, res, next) {
             WHERE roles @> ARRAY[$1]::varchar[];`, [role]);
 
     if (rows.length) {
-      console.log('Returning list of users with the role "' + role + '".');
+      //console.log('Returning list of users with the role "' + role + '".');
       return res.send(JSON.stringify(rows));
     } else {
       console.log('BAD REQUEST for role "' + role + '".');
@@ -66,19 +65,19 @@ router.get('/names', function(req, res, next) {
 });
 
 router.get('/:username.json', function(req, res, next) {
- 
+  var username = req.params.username;
+
   (async () => {
       const { rows } = await pgpool.query(`
               SELECT id, username, common_name, roles 
               FROM nahtube.users
               WHERE username = $1
-              LIMIT 1;`,[req.params.username]);
+              LIMIT 1;`,[username]);
 
       if (rows.length) {
-        console.log('Returning details for user "' + [req.params.username] + '".');
-        return res.send(JSON.stringify(rows[0]));
+        return res.send(rows[0]);
       } else {
-        console.log('BAD REQUEST for user "' + [req.params.username] + '".');
+        console.log('BAD REQUEST for user "' + [username] + '".');
         res.status(404);
         return res.send('No such user found.');
       }      
@@ -103,8 +102,8 @@ router.get('/id/:userid.json', function(req, res, next) {
               LIMIT 1;`, [userid]);
 
       if (rows.length) {
-        console.log('Returning details for user id "' + userid + '".');
-        return res.send(JSON.stringify(rows[0]));
+        //console.log('Returning details for user id "' + userid + '".');
+        return res.send(rows[0]);
       } else {
         console.log('BAD REQUEST for user "' + userid + '".');
         res.status(404);
@@ -120,18 +119,19 @@ router.get('/id/:userid.json', function(req, res, next) {
 });
 
 router.get('/created/:daysAgo', function(req, res, next) {
+  var daysAgo = req.params.daysAgo;
 
    (async () => {
        const { rows } = await pgpool.query(`
           SELECT id, username, common_name, roles, created FROM nahtube.users 
            WHERE DATE(created) <= DATE(NOW()) - INTERVAL '1 DAY' * $1;`, 
-           [req.params.daysAgo]);
+           [daysAgo]);
  
        if (rows.length) {
-         console.log('Returning details for users created ' + [req.params.daysAgo] + ' days ago. Total: ' + rows.length);
-         return res.send(JSON.stringify(rows));
+         console.log('Returning details for users created ' + [daysAgo] + ' days ago. Total: ' + rows.length);
+         return res.send(rows);
        } else {
-         console.log('BAD REQUEST for users created ' + [req.params.daysAgo] + ' days ago.');
+         console.log('BAD REQUEST for users created ' + [daysAgo] + ' days ago.');
          res.status(404);
          return res.send('No such user found.');
        }

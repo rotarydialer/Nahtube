@@ -19,7 +19,7 @@ router.get('/checksession', function(req, res, next) {
     res.status(401);
     return res.send('No session!');
   } else {
-    console.log('session id: %s', req.session.id);
+    console.log('Session id: %s', req.session.id);
   }
 
   if (!req.session.user) {
@@ -53,7 +53,7 @@ router.post('/login', function(req, res, next) {
     if (rows.length) {
       console.log('login successful for "%s".', username);
       req.session.user = rows[0];
-      console.log(' --> id: %d, name: %s ', req.session.user.id, req.session.user.username);
+      console.log(' └─> id: %d, common name: "%s", roles: %s ', req.session.user.id, req.session.user.common_name, req.session.user.roles.toString());
       return res.status(200).send();
     } else {
       console.log('login NOT AUTHORIZED: "%s"', username);
