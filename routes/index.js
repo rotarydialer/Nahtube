@@ -9,9 +9,26 @@ const pool = new Pool({
 
 global.pgpool = pool;
 
+function isLoggedIn(req) {
+  if (req.session.user) {
+    console.log('Logged in as "%s".', req.session.user.username);
+    return true;
+  } else {
+    console.log('Not logged in.');
+    return false;
+  }
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('dashboard', { title: 'NahTube' });
+  req.session.returnTo = req.path; 
+
+  if (isLoggedIn(req)) {
+
+  }
+  console.log(req.session.user);
+
+  res.render('dashboard', { title: 'NahTube', username: req.session.common_name });
 });
 
 router.get('/checksession', function(req, res, next) {
@@ -28,7 +45,7 @@ router.get('/checksession', function(req, res, next) {
     return res.send('Found a session, but you\'re not logged in.');
   } else {
     console.log('User #%d logged in: "%s"', req.session.user.id, req.session.user.username);
-    return res.send('You are logged in as "' + req.session.user.username + '".');
+    return res.send(req.session.user);
   }
 
   res.render('dashboard', { title: 'NahTube' });
@@ -54,7 +71,7 @@ router.post('/login', function(req, res, next) {
       console.log('login successful for "%s".', username);
       req.session.user = rows[0];
       console.log(' └─> id: %d, common name: "%s", roles: %s ', req.session.user.id, req.session.user.common_name, req.session.user.roles.toString());
-      return res.status(200).send();
+      return res.redirect('/');
     } else {
       console.log('login NOT AUTHORIZED: "%s"', username);
       return res.status(401).send();
