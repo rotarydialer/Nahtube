@@ -34,10 +34,12 @@
 <body>
     <h1><%= title %> Login</h1>
 
-    <div id="mock-user-select">
-        <select id="user-mock"></select>
-        <button id="login">Login</button>
-    </div>
+    <form method="POST" action="/login">
+        <div id="mock-user-select">
+            <select id="user-mock" name="username"></select>
+            <button id="login">Login</button>
+        </div>
+    </form>
 
     <!-- Populate the fields and divs above -->
     <script>
