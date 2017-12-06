@@ -34,6 +34,12 @@ app.use(session({
   resave: false
 }));
 
+// middleware to make 'user' available to all templates
+app.use(function(req, res, next) {
+  res.locals.user = req.session.user;
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // static routes for images, css, etc.

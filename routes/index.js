@@ -23,12 +23,12 @@ function isLoggedIn(req) {
 router.get('/', function(req, res, next) {
   req.session.returnTo = req.path; 
 
-  if (isLoggedIn(req)) {
-
+  if (!isLoggedIn(req)) {
+    res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
+  } else {
+    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
   }
-  console.log(req.session.user);
 
-  res.render('dashboard', { title: 'NahTube', username: req.session.common_name });
 });
 
 router.get('/checksession', function(req, res, next) {
