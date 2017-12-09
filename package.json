@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "build": "webpack ./src/app.js ./dist/app.bundle.js"
+    "build": "webpack ./src/app.js ./dist/app.bundle.js",
+    "dev": "webpack -d --watch"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
