@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "docker-postgres": "docker run --name nahtube-db -p 5432:5432 -e POSTGRES_PASSWORD=nownowdontreallyusethis -d nah_pg:0.1" 
+    "docker-postgres": "docker run --name nahtube-db -p 5432:5432 -e POSTGRES_PASSWORD=nownowdontreallyusethis -d nah_pg:0.1",
+    "build": "webpack ./src/app.js ./dist/app.bundle.js"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
