@@ -22,15 +22,6 @@ function isLoggedIn(req) {
   }
 }
 
-function logActivity (action, userId, channelId, details) {
-  // eventually move this to its own routes file; activity.js
-  // and call the routes there instead of having this function per file.
-  console.log('I\'m going to log some "%s" activity.', action);
-
-  console.log(userId);
-  activity.track('login');
-}
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   req.session.returnTo = req.path; 
@@ -84,7 +75,7 @@ router.post('/login', function(req, res, next) {
       req.session.user = rows[0];
       console.log(' └─> id: %d, common name: "%s", roles: %s ', req.session.user.id, req.session.user.common_name, req.session.user.roles.toString());
 
-      logActivity('login', req.session.user.id);
+      activity.track('login', req.session.user.id);
       return res.redirect('/');
     } else {
       console.log('login NOT AUTHORIZED: "%s"', username);

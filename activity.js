@@ -1,7 +1,7 @@
 module.exports = {
     track: function (action, userId) {
-        console.log(' --> action: "%s"', action);
-        console.log(' --> userId: "%s"', userId);
+        console.log(' ├─> action: "%s"', action);
+        console.log(' └─> userId: "%s"', userId);
     }
 };
 
