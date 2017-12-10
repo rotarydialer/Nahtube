@@ -9,6 +9,7 @@ var session = require('express-session');
 var index = require('./routes/index');
 var config = require('./config/config');
 var users = require('./routes/users');
+var activity = require('./routes/activity');
 var channels = require('./routes/channels');
 var youtube = require('./routes/youtube');
 
@@ -48,6 +49,7 @@ app.use('/css', express.static(__dirname + '/assets/css'));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/activity', activity);
 app.use('/channels', channels);
 app.use('/youtube', youtube);
 
