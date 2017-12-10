@@ -2,6 +2,9 @@ var express = require('express');
 var session = require('express-session');
 var router = express.Router();
 
+// activity tracking functions
+var activity = require('../activity');
+
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: 'postgresql://postgres@localhost/nahdb'
@@ -25,6 +28,7 @@ function logActivity (action, userId, channelId, details) {
   console.log('I\'m going to log some "%s" activity.', action);
 
   console.log(userId);
+  activity.track('login');
 }
 
 /* GET home page. */
@@ -79,7 +83,7 @@ router.post('/login', function(req, res, next) {
       console.log('login successful for "%s".', username);
       req.session.user = rows[0];
       console.log(' └─> id: %d, common name: "%s", roles: %s ', req.session.user.id, req.session.user.common_name, req.session.user.roles.toString());
-      
+
       logActivity('login', req.session.user.id);
       return res.redirect('/');
     } else {

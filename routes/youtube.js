@@ -5,11 +5,30 @@ var google = require('googleapis');
 var youtube_base = google.youtube('v3');
 
 var express = require('express');
+var session = require('express-session');
 var router = express.Router();
 
 var YouTubeNode = require('youtube-node');
 var youtube_node = new YouTubeNode();
 youtube_node.setKey(config.youtube.key);
+
+function isLoggedIn(req) {
+  if (req.session.user) {
+    console.log('Logged in as "%s".', req.session.user.username);
+    return true;
+  } else {
+    console.log('Not logged in.');
+    return false;
+  }
+}
+
+function logActivity (action, userId, channelId, details) {
+  // eventually move this to its own routes file; activity.js
+  // and call the routes there instead of having this function per file.
+  console.log('I\'m going to log some "%s" activity.', action);
+
+  console.log(userId);
+}
 
 /* Setup and check the YT client */
 router.get('/', function(req, res, next) {
@@ -39,6 +58,10 @@ router.post('/search', function(req, res, next) {
     maxResults: 25,
     q: searchstr
   };
+
+  if (isLoggedIn(req)) {
+    logActivity('search', req.session.user.id);
+  }
 
   youtube_base.search.list(searchparams, function(err, response) {
     if (err) {
