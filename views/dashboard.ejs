@@ -41,7 +41,7 @@
         $.get( "/channels/" + userLoggedIn, function( data ) {
             $( ".result" ).html( data );
             $.each(JSON.parse(data), function(index, entry) {
-                option = ((index+1) + ': <a href="https://youtube.com/channel/' + entry.channel_id + '">' + entry.channel_name + '</a> <br>');
+                option = ((index+1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' + entry.channel_name + '</a> <br>');
                 $("#channels-allowed-list").append(option);
             });
         });

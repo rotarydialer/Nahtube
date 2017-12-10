@@ -152,7 +152,7 @@ router.get('/user/:ytuser', function(req, res, next) {
   });
 });
 
-router.get('/videos/:channelId', function(req, res, next) {
+router.get('/videos/:channelId.json', function(req, res, next) {
   var channelId = req.params.channelId;
 
   var channelparams = {
@@ -206,6 +206,12 @@ router.get('/videos/:channelId', function(req, res, next) {
     }
   }); 
   
+});
+
+router.get('/videos/:channelId', function(req, res, next) {
+
+  res.render('videos', { channelId: req.params.channelId });
+
 });
 
 // ---- WORKING EXAMPLE ------ START //
