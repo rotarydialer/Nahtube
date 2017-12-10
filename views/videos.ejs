@@ -2,30 +2,69 @@
 <html>
 
 <head>
-  <title>Videos</title>
+    <title>Videos</title>
 
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+    <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
-  <style>
+    <style>
     /* Optional: Makes the sample page fill the window. */
     html,
     body {
-      height: 100%;
-      margin: 200;
-      padding: 0;
+        height: 100%;
+        margin: 200;
+        padding: 0;
     }
-  </style>
+    </style>
+    <script>
+        function getVideosForChannelId(channelId) {
+            $("#channels-allowed-list").empty();
+
+            console.log('Populating for ' + channelId);
+
+            // populate the name while you're in here I guess
+
+            $.ajax({
+                type: "GET",
+                url: "/youtube/videos/" + channelId + ".json",
+                data: {"channelId": this.value},
+                success: function (data) {
+                    console.log(data);
+
+                    $('#channelTitle').text('Videos for ' + data.channelTitle);
+
+                    $('#videos-list').empty();
+
+                    $.each(data.items, function (i, item) {
+                        console.log(i + ': ' + item.snippet.title);
+
+                        $('#videos-list').append(
+                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
+                            item.snippet.title + '<br>\n'
+                        );
+                    });
+
+                    // the jQuery definition determines these, and the params of the callback
+                    // http://api.jquery.com/jquery.each/
+                    //$.each(data.items, constructVideoResult);
+                }
+            });
+
+        }
+        </script>
 </head>
 
 <body>
-    <h1>Videos for <%= channelId %> </h1>
+    <h1><span id="channelTitle"></span></h1>
     
-    <div id="channels-allowed-container">
-        <h2>Channels Allowed:</h2>
-        <div id="channels-allowed-list"></div>
+    <div id="videos-container">
+        <div id="videos-list"></div>
     </div>
+
+    <script>
+        getVideosForChannelId( '<%= channelId %>' ); // this looks pretty bad to me...
+    </script>
 
 </body>
 

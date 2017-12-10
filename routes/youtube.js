@@ -162,6 +162,7 @@ router.get('/videos/:channelId.json', function(req, res, next) {
   };
 
   var playlistId;
+  var channelTitle;
 
   youtube_base.channels.list(channelparams, function(err, response) {
     if (err) {
@@ -174,9 +175,10 @@ router.get('/videos/:channelId.json', function(req, res, next) {
       res.status(404);
       return res.send('No channel found for id "' + channelId + '".');
     } else {
+      channelTitle = channels[0].snippet.title
       console.log('This channel\'s ID is %s. Its title is \'%s\'.',
                   channels[0].id,
-                  channels[0].snippet.title);
+                  channelTitle);
 
       console.log('Uploads playlist ID: ' + channels[0].contentDetails.relatedPlaylists.uploads);
       playlistId = channels[0].contentDetails.relatedPlaylists.uploads;
@@ -199,6 +201,7 @@ router.get('/videos/:channelId.json', function(req, res, next) {
           res.status(404);
           return res.send('No playlist found for id "' + playlistId + '".');
         } else {
+          response.channelTitle = channelTitle;
           return res.send(response);
         }
       });
