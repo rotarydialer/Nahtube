@@ -145,3 +145,31 @@ CREATE INDEX fki_channels_allowed_user_fkey
   ON nahtube.channels_allowed
   USING btree
   (user_id);
+
+-- ACTIVITY --------------------------
+
+-- Table: nahtube.user_activity
+
+-- DROP TABLE nahtube.user_activity;
+
+CREATE TABLE nahtube.user_activity
+(
+  id serial NOT NULL,
+  user_id integer NOT NULL,
+  action character varying(128) NOT NULL,
+  action_time timestamp NOT NULL DEFAULT NOW(),
+  channel_id character varying(64),
+  details jsonb,
+  CONSTRAINT user_activity_pkey PRIMARY KEY (id),
+  CONSTRAINT user_activity_channel_fkey FOREIGN KEY (channel_id, user_id)
+      REFERENCES nahtube.channels_allowed (channel_id, user_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT user_activity_user_fkey FOREIGN KEY (user_id)
+      REFERENCES nahtube.users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE nahtube.user_activity
+  OWNER TO postgres;
