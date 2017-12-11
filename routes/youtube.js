@@ -22,14 +22,6 @@ function isLoggedIn(req) {
   }
 }
 
-function logActivity (action, userId, channelId, details) {
-  // eventually move this to its own routes file; activity.js
-  // and call the routes there instead of having this function per file.
-  console.log('I\'m going to log some "%s" activity.', action);
-
-  console.log(userId);
-}
-
 /* Setup and check the YT client */
 router.get('/', function(req, res, next) {
 
@@ -58,10 +50,6 @@ router.post('/search', function(req, res, next) {
     maxResults: 25,
     q: searchstr
   };
-
-  if (isLoggedIn(req)) {
-    logActivity('search', req.session.user.id);
-  }
 
   youtube_base.search.list(searchparams, function(err, response) {
     if (err) {
