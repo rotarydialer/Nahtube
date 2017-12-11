@@ -14,10 +14,10 @@ global.pgpool = pool;
 
 function isLoggedIn(req) {
   if (req.session.user) {
-    console.log('Logged in as "%s".', req.session.user.username);
+    //console.log('Logged in as "%s".', req.session.user.username);
     return true;
   } else {
-    console.log('Not logged in.');
+    //console.log('Not logged in.');
     return false;
   }
 }
@@ -29,6 +29,8 @@ router.get('/', function(req, res, next) {
   if (!isLoggedIn(req)) {
     res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
   } else {
+    activity.track('dashboard', req.session.user.id);
+
     res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
   }
 
