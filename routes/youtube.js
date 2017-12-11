@@ -8,6 +8,8 @@ var express = require('express');
 var session = require('express-session');
 var router = express.Router();
 
+var activity = require('../activity');
+
 var YouTubeNode = require('youtube-node');
 var youtube_node = new YouTubeNode();
 youtube_node.setKey(config.youtube.key);
@@ -51,6 +53,8 @@ router.post('/search', function(req, res, next) {
     q: searchstr
   };
 
+  activity.track('search', req.session.user.id, '', JSON.stringify({"searchstring": searchstr}) );
+
   youtube_base.search.list(searchparams, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
@@ -78,6 +82,8 @@ router.post('/crappysearch', function(req, res, next) {
   youtube_node.addParam('safeSearch', 'strict');
   youtube_node.addParam('type', 'video');
   youtube_node.addParam('order', 'title');
+
+  activity.track('search - crappy', req.session.user.id, '', searchstr);
 
   youtube_node.search(searchstr, 15, function(error, result) {
     if (error) {
@@ -223,6 +229,8 @@ router.get('/videos/:channelId.json', function(req, res, next) {
 });
 
 router.get('/videos/:channelId', function(req, res, next) {
+
+  activity.track('list videos', req.session.user.id, req.params.channelId);
 
   res.render('videos', { channelId: req.params.channelId });
 
