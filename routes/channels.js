@@ -54,7 +54,7 @@ router.get('/:username', function(req, res, next) {
 
       if (rows.length) {
         console.log('Returning channels for "%s".', username);
-        return res.send(JSON.stringify(rows));
+        return res.send(rows);
       } else {
         console.log('BAD REQUEST for user "' + [username] + '".');
         res.status(404);
