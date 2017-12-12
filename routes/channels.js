@@ -45,7 +45,7 @@ router.get('/:username', function(req, res, next) {
   
   (async () => {
       const { rows } = await pgpool.query(`
-        SELECT u.username, ch.channel_name, ch.channel_id
+        SELECT u.username, ch.channel_name, ch.channel_id, ch.channel_data
         FROM nahtube.channels_allowed ch
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id

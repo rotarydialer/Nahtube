@@ -301,7 +301,7 @@ router.post('/save/:channelId/:username', function(req, res, next) {
     }
     var channels = response.items;
     if (channels.length == 0) {
-      console.log('ERROR: No channel found for id "' + username + '".');
+      console.log('ERROR: No channel found for id "' + channelId + '".');
       res.status(404);
       return res.send('No channel found for id "' + username + '".');
     } else {
