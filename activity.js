@@ -1,5 +1,10 @@
 module.exports = {
     track: function (action, userId, channelId, details) {
+        if (!userId || !action) {
+            console.log('Invalid parameters. ACTIVITY NOT LOGGED');
+            return;
+        }
+
         console.log('TRACK');
         console.log(' ├─> action: "%s"', action);
         console.log(' └─> userId: "%s"', userId);
