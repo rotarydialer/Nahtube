@@ -230,9 +230,28 @@ router.get('/videos/:channelId.json', function(req, res, next) {
 
 router.get('/videos/:channelId', function(req, res, next) {
 
+  if (!isLoggedIn(req)) {
+    var referer = req.originalUrl;
+
+    refQstr = referer ? '?r=' + referer : '';
+
+    console.log('Redirecting to "%s"', ('/login' + refQstr));
+
+    return res.redirect('/login' + refQstr);
+  }
+
   activity.track('list videos', req.session.user.id, req.params.channelId);
 
   res.render('videos', { channelId: req.params.channelId });
+
+});
+
+router.get('/watch', function(req, res, next) {
+  var videoId = req.query.v;
+
+  activity.track('watch video', req.session.user.id, req.params.channelId, JSON.stringify({"videoId": videoId}));
+
+  res.render('watch', { videoId: videoId || '' });
 
 });
 
