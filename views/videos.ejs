@@ -16,14 +16,19 @@
         margin: 200;
         padding: 0;
     }
+
+    div.video-thumbnail, .video-content {
+        margin: 10px;
+        float: left;
+    }
+
+    div.video-container {
+        overflow: hidden;
+    }
+
     </style>
     <script>
         function getVideosForChannelId(channelId) {
-            $("#channels-allowed-list").empty();
-
-            console.log('Populating for ' + channelId);
-
-            // populate the name while you're in here I guess
 
             $.ajax({
                 type: "GET",
@@ -40,8 +45,15 @@
                         console.log(i + ': ' + item.snippet.title);
 
                         $('#videos-list').append(
-                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
-                            item.snippet.title + '<br>\n'
+                            '<div class="video-container">' +
+                            '  <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  <div class="video-content">' + 
+                            '    <h3 class="video-title">' + 
+                            '      <a href="../watch?v=' + item.id + '">' + item.snippet.title + '</a>\n' +
+                            '    </h3>\n' + 
+                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
+                            '  </div>' +
+                            '</div>'
                         );
                     });
 
@@ -56,10 +68,9 @@
 </head>
 
 <body>
-    <h1><span id="channelTitle"></span></h1>
+    <!-- <h1><span id="channelTitle"></span></h1> -->
     
-    <div id="videos-container">
-        <div id="videos-list"></div>
+    <div id="videos-list">
     </div>
 
     <script>
