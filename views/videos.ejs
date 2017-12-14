@@ -39,6 +39,15 @@
 
     </style>
     <script>
+        function assembleQueryString(videoId, channelId) {
+            var qstr = '?v=' + videoId;
+
+            qstr += (channelId ? '&c=' + channelId : '' );
+
+            console.log('Assembled "%s"', qstr);
+
+            return qstr;
+        }
         function getVideosForChannelId(channelId) {
 
             $.ajax({
@@ -59,12 +68,13 @@
 
                         $('#videos-list').append(
                             '<div class="video-container">' +
-                            '  <a href="../watch?v=' + videoId + '">' +
+                                assembleQueryString(videoId, channelId) +
+                            '  <a href="../watch' + assembleQueryString(videoId, channelId) + '">' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
                             '  </a>\n' +
                             '  <div class="video-content">' + 
                             '    <h3 class="video-title">' + 
-                            '      <a href="../watch?v=' + videoId + '">' + item.snippet.title + '</a>\n' +
+                            '      <a href="../watch' + assembleQueryString(videoId, channelId) + '">' + item.snippet.title + '</a>\n' +
                             '    </h3>\n' + 
                             '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
                             '  </div>' +

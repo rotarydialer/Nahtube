@@ -271,8 +271,9 @@ router.get('/watch', function(req, res, next) {
   checkLoginAndRedirect(req, res);
 
   var videoId = req.query.v;
+  var channelId = req.query.c;
 
-  activity.track('watch video', req.session.user.id, req.params.channelId, JSON.stringify({"videoId": videoId}));
+  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
   res.render('watch', { title: 'NahTube', videoId: videoId || '' });
 
