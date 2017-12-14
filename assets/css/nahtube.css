@@ -1,9 +1,9 @@
 body {
 	color: #333;
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 }
 h1 {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 26px;
 	font-style: normal;
 	font-variant: normal;
@@ -11,7 +11,7 @@ h1 {
 	line-height: 26.4px;
 }
 h2 {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 20px;
 	font-style: normal;
 	font-variant: normal;
@@ -19,7 +19,7 @@ h2 {
 	line-height: 22px;
 }
 h3 {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 14px;
 	font-style: normal;
 	font-variant: normal;
@@ -27,7 +27,7 @@ h3 {
 	line-height: 15.4px;
 }
 p, a {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 14px;
 	font-style: normal;
 	font-variant: normal;
@@ -35,7 +35,7 @@ p, a {
 	line-height: 20px;
 }
 blockquote {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 21px;
 	font-style: normal;
 	font-variant: normal;
@@ -43,7 +43,7 @@ blockquote {
 	line-height: 30px;
 }
 pre {
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 13px;
 	font-style: normal;
 	font-variant: normal;
