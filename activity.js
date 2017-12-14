@@ -10,40 +10,25 @@ module.exports = {
         console.log(' └─> userId: "%s"', userId);
         channelId ? console.log(' └─> channelId: "%s"', channelId) : '';
         details ? console.log(' └─> details: "%s"', details) : '';
+
+        (async () => {
+            
+            const { rows } = await pgpool.query(`
+            INSERT INTO nahtube.user_activity (user_id, action, channel_id, details) 
+            VALUES ($1, $2, $3, $4);`,
+                [userId, action, channelId, details]);
+            if (rows) {
+                console.log('Activity logged to database.');
+            } else {
+                console.log('Error saving user activity.');
+            }
+                    
+        })().catch(e => setImmediate(() => { 
+            //throw e 
+            console.log("ERROR:", e.message);
+            console.log('There was an error logging user activity.');
+        } ))
+
+
     }
 };
-
-// var userId = req.params.userId;
-// var action = req.params.action;
-
-// console.log('payload: ' + req.payload);
-  
-// if (!userId) {
-//     res.status(500);
-//     return res.send('No user specified');
-// }
-
-// if (!action) {
-//     res.status(500);
-//     return res.send('No action specified');
-// }
-
-// (async () => {
-    
-//     const { rows } = await pgpool.query(`
-//     INSERT INTO nahtube.user_activity (channel_id, user_id, channel_name, channel_data) 
-//     VALUES (
-//         $1, 
-//         $2,
-//         $3,
-//         $4
-//         );`,
-//         [channelId, username, channels[0].snippet.title, JSON.stringify(channels[0])]);
-    
-//     return res.send().status(200);
-            
-// })().catch(e => setImmediate(() => { 
-//     //throw e 
-//     res.status(500);
-//     return res.send('There was an error.');
-// } ))
