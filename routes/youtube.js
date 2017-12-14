@@ -216,7 +216,7 @@ router.get('/videos/:channelId.json', function(req, res, next) {
                   channels[0].id,
                   channelTitle);
 
-      console.log('Uploads playlist ID: ' + channels[0].contentDetails.relatedPlaylists.uploads);
+      //console.log('Uploads playlist ID: ' + channels[0].contentDetails.relatedPlaylists.uploads);
       playlistId = channels[0].contentDetails.relatedPlaylists.uploads;
 
       var playlistparams = {

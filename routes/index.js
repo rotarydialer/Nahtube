@@ -2,15 +2,15 @@ var express = require('express');
 var session = require('express-session');
 var router = express.Router();
 
-// activity tracking functions
-var activity = require('../activity');
-
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: 'postgresql://postgres@localhost/nahdb'
 });
 
 global.pgpool = pool;
+
+// activity tracking functions
+var activity = require('../activity');
 
 function isLoggedIn(req) {
   if (req.session.user) {
