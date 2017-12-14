@@ -58,12 +58,22 @@ router.get('/checksession', function(req, res, next) {
 
 // user login
 router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'NahTube' });
+    var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
+  
+  res.render('login', { title: 'NahTube', referer: referer });
 });
 
 router.post('/login', function(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
+  var referer = req.body.referer;
+
+  var routeTo = '/';
+
+  if (referer) {
+    console.log('Coming from "%s"', referer);
+    routeTo = referer;
+  }
 
   (async () => {
     const { rows } = await pgpool.query(`
@@ -78,7 +88,8 @@ router.post('/login', function(req, res, next) {
       console.log(' └─> id: %d, common name: "%s", roles: %s ', req.session.user.id, req.session.user.common_name, req.session.user.roles.toString());
 
       activity.track('login', req.session.user.id);
-      return res.redirect('/');
+      //return res.redirect('/');
+      return res.redirect(routeTo);
     } else {
       console.log('login NOT AUTHORIZED: "%s"', username);
       return res.status(401).send();

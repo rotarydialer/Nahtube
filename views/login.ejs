@@ -39,6 +39,7 @@
     <h1><%= title %> Login</h1>
 
     <form method="POST" action="/login">
+        <input type="hidden" name="referer" value=<%= referer %>>
         <div id="mock-user-select">
             <select id="user-mock" name="username"></select>
             <button id="login">Login</button>
