@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title><%= title %> - Watch</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+    <style>
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+        height: 100%;
+        margin: 200;
+        padding: 0;
+    }
+
+    div.video-thumbnail, div.video-content {
+	    font-family: 'Roboto', sans-serif;
+        margin: 10px;
+        float: left;
+    }
+
+    div.video-container {
+        overflow: hidden;
+    }
+
+    </style>
+    <script>
+        function getVideosForChannelId(channelId) {
+
+            $.ajax({
+                type: "GET",
+                url: "/youtube/videos/" + channelId + ".json",
+                data: {"channelId": this.value},
+                success: function (data) {
+                    console.log(data);
+
+                    $('#channelTitle').text('Videos for ' + data.channelTitle);
+
+                    $('#videos-list').empty();
+
+                    $.each(data.items, function (i, item) {
+                        console.log(i + ': ' + item.snippet.title);
+
+                        $('#videos-list').append(
+                            '<div class="video-container">' +
+                            '  <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  <div class="video-content">' + 
+                            '    <h3 class="video-title">' + 
+                            '      <a href="../watch?v=' + item.id + '">' + item.snippet.title + '</a>\n' +
+                            '    </h3>\n' + 
+                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
+                            '  </div>' +
+                            '</div>'
+                        );
+                    });
+
+                }
+            });
+
+        }
+        </script>
+</head>
+
+<body>
+    <div id="player">
+        <%= videoId %>
+    </div>
+
+    <div id="videos-list">
+    </div>
+
+    <script>
+        //getVideosForChannelId( '< % = channelId % >' ); // this looks pretty bad to me...
+    </script>
+
+</body>
+
+</html>
