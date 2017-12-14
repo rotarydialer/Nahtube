@@ -24,6 +24,18 @@ function isLoggedIn(req) {
   }
 }
 
+function checkLoginAndRedirect(req, res) {
+  if (!isLoggedIn(req)) {
+    var referer = req.originalUrl;
+
+    refQstr = referer ? '?r=' + referer : '';
+
+    console.log('Redirecting to "%s"', ('/login' + refQstr));
+
+    return res.redirect('/login' + refQstr);
+  }
+}
+
 /* Setup and check the YT client */
 router.get('/', function(req, res, next) {
 
@@ -44,6 +56,11 @@ router.get('/', function(req, res, next) {
 // search with the youtube api
 router.post('/search', function(req, res, next) {
   var searchstr = req.body.searchstring;
+  
+    if(!isLoggedIn(req)) {
+      res.status(401);
+      return res.send('ERROR: Not authorized. User must login.');
+    }
 
   var searchparams = {
     auth: config.youtube.key,
@@ -76,6 +93,8 @@ router.post('/search', function(req, res, next) {
 
 // search with the youtube_node helper
 router.post('/crappysearch', function(req, res, next) {
+  checkLoginAndRedirect(req, res);
+
   var searchstr = req.body.searchstring;
 
   // CONFIRMED: these parameters don't work
@@ -230,15 +249,17 @@ router.get('/videos/:channelId.json', function(req, res, next) {
 
 router.get('/videos/:channelId', function(req, res, next) {
 
-  if (!isLoggedIn(req)) {
-    var referer = req.originalUrl;
+  checkLoginAndRedirect(req, res);
 
-    refQstr = referer ? '?r=' + referer : '';
+  // if (!isLoggedIn(req)) {
+  //   var referer = req.originalUrl;
 
-    console.log('Redirecting to "%s"', ('/login' + refQstr));
+  //   refQstr = referer ? '?r=' + referer : '';
 
-    return res.redirect('/login' + refQstr);
-  }
+  //   console.log('Redirecting to "%s"', ('/login' + refQstr));
+
+  //   return res.redirect('/login' + refQstr);
+  // }
 
   activity.track('list videos', req.session.user.id, req.params.channelId);
 
@@ -247,11 +268,13 @@ router.get('/videos/:channelId', function(req, res, next) {
 });
 
 router.get('/watch', function(req, res, next) {
+  checkLoginAndRedirect(req, res);
+
   var videoId = req.query.v;
 
   activity.track('watch video', req.session.user.id, req.params.channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { videoId: videoId || '' });
+  res.render('watch', { title: 'NahTube', videoId: videoId || '' });
 
 });
 
