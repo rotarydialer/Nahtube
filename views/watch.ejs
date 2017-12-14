@@ -48,7 +48,9 @@
 
                         $('#videos-list').append(
                             '<div class="video-container">' +
-                            '  <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  <a href="../watch?v=' + item.id + '">' +
+                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  </a>\n' +
                             '  <div class="video-content">' + 
                             '    <h3 class="video-title">' + 
                             '      <a href="../watch?v=' + item.id + '">' + item.snippet.title + '</a>\n' +

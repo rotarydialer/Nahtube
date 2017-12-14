@@ -55,12 +55,16 @@
                     $.each(data.items, function (i, item) {
                         console.log(i + ': ' + item.snippet.title);
 
+                        var videoId = item.snippet.resourceId.videoId;
+
                         $('#videos-list').append(
                             '<div class="video-container">' +
-                            '  <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  <a href="../watch?v=' + videoId + '">' +
+                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  </a>\n' +
                             '  <div class="video-content">' + 
                             '    <h3 class="video-title">' + 
-                            '      <a href="../watch?v=' + item.snippet.resourceId.videoId + '">' + item.snippet.title + '</a>\n' +
+                            '      <a href="../watch?v=' + videoId + '">' + item.snippet.title + '</a>\n' +
                             '    </h3>\n' + 
                             '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
                             '  </div>' +
