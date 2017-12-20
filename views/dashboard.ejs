@@ -54,9 +54,11 @@
 </head>
 
 <body>
-    <h1><%= title %> Dashboard</h1>
 
     <%if (loggedinuser) { %>
+
+        <% include topbar.ejs %>
+        
         <h3>Welcome, <%= user.common_name %>!</h3>
         <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
 
@@ -75,7 +77,7 @@
         </section>
 
         <div id="channels-allowed-container">
-            <h2>Channels Allowed:</h2>
+            <h2>My Channels:</h2>
             <div id="channels-allowed-list"></div>
         </div>
     <% } else{ %>
