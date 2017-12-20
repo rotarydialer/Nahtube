@@ -68,7 +68,6 @@
 
                         $('#videos-list').append(
                             '<div class="video-container">' +
-                                assembleQueryString(videoId, channelId) +
                             '  <a href="../watch' + assembleQueryString(videoId, channelId) + '">' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
                             '  </a>\n' +
@@ -93,6 +92,7 @@
 </head>
 
 <body>
+    <% include topbar.ejs %>
     <!-- <h1><span id="channelTitle"></span></h1> -->
     
     <div id="videos-list">
