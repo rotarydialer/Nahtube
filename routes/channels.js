@@ -50,7 +50,7 @@ router.get('/:username', function(req, res, next) {
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id
         WHERE u.username = $1
-        ORDER BY u.username`, [username]);
+        ORDER BY u.username, ch.id`, [username]);
 
       if (rows.length) {
         console.log('Returning channels for "%s".', username);
