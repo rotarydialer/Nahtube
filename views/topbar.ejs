@@ -1,0 +1,28 @@
+<style>
+    div.avatar {
+        float: left;
+    }
+
+    #logo-icon-container {
+        width: 100px;
+        height: 24px;
+    }
+</style>
+
+<div id="topbar">
+    <table>
+        <tr>
+            <td>
+                <div class="avatar">
+                    <% if (user.username) { %>
+                        <img src="/images/avatars/<%= user.username %>-avatar-sm.png">
+                    <% } %>
+                </div>
+            </td>
+
+            <td>
+                <!-- svg -->
+            </td>
+        </tr>
+    </table>
+</div>
