@@ -1,3 +1,5 @@
+assets/images/avatars/
+
 # Environment
 .env
 client_secret.json
