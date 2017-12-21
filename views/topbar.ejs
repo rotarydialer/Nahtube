@@ -43,6 +43,8 @@
                 <section id="search-section">
                     <div id="search-action">
                         <input id="search-text"></input>
+                        <button id="search-btn" class="search-button" type="submit" 
+                            onclick="if (document.getElementById('search-text').value != '') postSearch(document.getElementById('search-text').value);"><span>Search</span></button>
                     </div>
                 </section>
             </td>
@@ -79,20 +81,39 @@
             $('#search-results').append(searchResultDiv);
     };
 
-    $('#search-text').on('keypress',function (e) {
+    function postSearch(searchString) {
+        $.ajax({
+                type: "POST",
+                url: "/youtube/search",
+                data: {"searchstring": searchString},
+                success: function (data) {
+                    //console.log(data);
+
+                    $('#search-results').empty();
+                    
+                    $.each(data.items, constructVideoResult);
+                }
+            });
+    }
+
+    $('#search-text').on('keypress', function (e) {
+        if (!e) return false;
+
         if (e.keyCode == 13) {
             console.log('Going to search with "%s".', this.value);
             $('#search-text').addClass('buttonSearch');
             $('#search-results').text('Searching...');
 
-            $.ajax({
-                type: "POST",
-                url: "/youtube/search",
-                data: {"searchstring": this.value},
-                success: function (data) {
-                    console.log(data);
+            postSearch(this.value);
 
-                    $('#search-results').empty();
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/youtube/search",
+            //     data: {"searchstring": this.value},
+            //     success: function (data) {
+            //         console.log(data);
+
+            //         $('#search-results').empty();
 
                     // $.each(data.items, function (i, item) {
                     //     console.log(i + ': ' + item.snippet.title);
@@ -105,9 +126,9 @@
 
                     // the jQuery definition determines these, and the params of the callback
                     // http://api.jquery.com/jquery.each/
-                    $.each(data.items, constructVideoResult);
-                }
-            });
+                    //$.each(data.items, constructVideoResult);
+            //     }
+            // });
 
         }
     });
