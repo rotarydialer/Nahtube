@@ -17,20 +17,6 @@
       margin: 200;
       padding: 0;
     }
-
-    #search-section {
-        width: 95%;
-        height: 30px;
-        padding: 0px;
-    }
-    #search-action {
-        width: 270px;
-        float: left;
-    }
-    #search-results {
-        margin-left: 275px;
-        width: auto;
-    }
   </style>
   <script>
     function getChannelsForUser(userLoggedIn) {
@@ -59,7 +45,6 @@
 
         <% include topbar.ejs %>
         
-        <h3>Welcome, <%= user.common_name %>!</h3>
         <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
 
         <script>
@@ -68,17 +53,14 @@
 
         <hr>
 
-        <section id="search-section">
-            <div id="search-action">
-                <input id="search-text"></input>
+        <div id="content-container">
+            <div id="channels-allowed-container">
+                <h2><%= user.common_name %>'s Channels:</h2>
+                <div id="channels-allowed-list"></div>
             </div>
+
             <div id="search-results">
             </div>
-        </section>
-
-        <div id="channels-allowed-container">
-            <h2>My Channels:</h2>
-            <div id="channels-allowed-list"></div>
         </div>
     <% } else{ %>
        <form method="POST" action="/login">
