@@ -52,8 +52,31 @@
 
 <!-- Enable the search above -->
 <script type="text/javascript">
+    function assembleQueryString(videoId, channelId) {
+        var qstr = '?v=' + videoId;
+
+        qstr += (channelId ? '&c=' + channelId : '' );
+
+        return qstr;
+    }
+
     function constructVideoResult(i, item) {
-        console.log('Build out a proper div for #' + (i+1) + ': ' + item.snippet.title);
+        var videoId = item.id.videoId;
+        var channelId = item.snippet.channelId;
+
+        var searchResultDiv = '<div class="video-container">' +
+            '  <a href="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+            '  </a>\n' +
+            '  <div class="video-content">' + 
+            '    <h3 class="video-title">' + 
+            '      <a href="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' + item.snippet.title + '</a>\n' +
+            '    </h3>\n' + 
+            '    <div class="video-meta">' + item.snippet.channelTitle + '</div>\n' +
+            '  </div>' +
+            '</div>'
+        
+            $('#search-results').append(searchResultDiv);
     };
 
     $('#search-text').on('keypress',function (e) {
@@ -71,20 +94,18 @@
 
                     $('#search-results').empty();
 
-                    $.each(data.items, function (i, item) {
-                        console.log(i + ': ' + item.snippet.title);
+                    // $.each(data.items, function (i, item) {
+                    //     console.log(i + ': ' + item.snippet.title);
 
-                        $('#search-results').append(
-                            //'<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
-                            //'<img src="' + item.snippet.thumbnails.high.url + '"><br>' +
-                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
-                            (i+1) + '. ' + item.snippet.title + '<br>\n'
-                        );
-                    });
+                    //     $('#search-results').append(
+                    //         '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
+                    //         (i+1) + '. ' + item.snippet.title + '<br>\n'
+                    //     );
+                    // });
 
                     // the jQuery definition determines these, and the params of the callback
                     // http://api.jquery.com/jquery.each/
-                    //$.each(data.items, constructVideoResult);
+                    $.each(data.items, constructVideoResult);
                 }
             });
 

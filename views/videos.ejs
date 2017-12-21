@@ -48,8 +48,8 @@
 
             return qstr;
         }
-        function getVideosForChannelId(channelId) {
 
+        function getVideosForChannelId(channelId) {
             $.ajax({
                 type: "GET",
                 url: "/youtube/videos/" + channelId + ".json",
