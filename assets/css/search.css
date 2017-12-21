@@ -1,0 +1,14 @@
+#search-section {
+    width: 95%;
+    height: 30px;
+    padding: 0px;
+}
+#search-action {
+    width: 270px;
+    float: left;
+}
+#search-results {
+    margin-left: 10px;
+    display:block;
+    float:left;
+}
