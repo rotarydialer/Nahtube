@@ -29,9 +29,13 @@
             <td>
                 <section id="search-section">
                     <div id="search-action">
-                        <input id="search-text"></input>
-                        <button id="search-btn" class="search-button" type="submit" 
-                            onclick="if (document.getElementById('search-text').value != '') postSearch(document.getElementById('search-text').value);"><span>Search</span></button>
+                        <div id="search-text-container">
+                            <input id="search-text" style="outline: none;"></input>
+                        </div>
+                        <div id="search-btn-container">
+                            <button id="search-btn" class="search-button" type="submit" 
+                                onclick="if (document.getElementById('search-text').value != '') postSearch(document.getElementById('search-text').value);"><span>Search</span></button>
+                        </div>
                     </div>
                 </section>
             </td>
