@@ -17,6 +17,18 @@
       margin: 200;
       padding: 0;
     }
+
+    #content-container {
+        width: auto;
+    }
+
+    #channels-allowed-container {
+        display:block;
+        float:left;
+        min-width: 250px;
+        width: 15%;
+        margin: 5px;
+    }
   </style>
   <script>
     function getChannelsForUser(userLoggedIn) {
@@ -71,47 +83,7 @@
        </form>
     <% } %>
 
-    <!-- Enable the search above -->
-    <script type="text/javascript">
-    function constructVideoResult(i, item) {
-        console.log('Build out a proper div for #' + (i+1) + ': ' + item.snippet.title);
-    };
-
-    $('#search-text').on('keypress',function (e) {
-        if (e.keyCode == 13) {
-            console.log('Going to search with "%s".', this.value);
-            $('#search-text').addClass('buttonSearch');
-            $('#search-results').text('Searching...');
-
-            $.ajax({
-                type: "POST",
-                url: "/youtube/search",
-                data: {"searchstring": this.value},
-                success: function (data) {
-                    console.log(data);
-
-                    $('#search-results').empty();
-
-                    $.each(data.items, function (i, item) {
-                        console.log(i + ': ' + item.snippet.title);
-
-                        $('#search-results').append(
-                            //'<img src="' + item.snippet.thumbnails.default.url + '"><br>' +
-                            //'<img src="' + item.snippet.thumbnails.high.url + '"><br>' +
-                            '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
-                            (i+1) + '. ' + item.snippet.title + '<br>\n'
-                        );
-                    });
-
-                    // the jQuery definition determines these, and the params of the callback
-                    // http://api.jquery.com/jquery.each/
-                    //$.each(data.items, constructVideoResult);
-                }
-            });
-
-        }
-    });
-    </script>
+    
 
     <!-- Populate the fields and divs above -->
     <script>
