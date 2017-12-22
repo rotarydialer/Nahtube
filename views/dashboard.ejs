@@ -18,6 +18,12 @@
       padding: 0;
     }
 
+    .channels-list {
+        background-color: #fbfbfb;
+        padding: 5px;
+        min-width: 270px;
+    }
+
   </style>
   <script>
     function getChannelsForUser(userLoggedIn) {
@@ -52,10 +58,8 @@
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
         </script>
 
-        <hr>
-
         <div id="content-container" class="row">
-            <div id="channels-allowed-container" class="col-3">
+            <div id="channels-allowed-container" class="col-3 channels-list">
                 <h2><%= user.common_name %>'s Channels:</h2>
                 <div id="channels-allowed-list"></div>
             </div>
