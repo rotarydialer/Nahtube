@@ -18,17 +18,6 @@
       padding: 0;
     }
 
-    #content-container {
-        width: auto;
-    }
-
-    #channels-allowed-container {
-        display:block;
-        float:left;
-        min-width: 250px;
-        width: 15%;
-        margin: 5px;
-    }
   </style>
   <script>
     function getChannelsForUser(userLoggedIn) {
@@ -65,13 +54,13 @@
 
         <hr>
 
-        <div id="content-container">
-            <div id="channels-allowed-container">
+        <div id="content-container" class="row">
+            <div id="channels-allowed-container" class="col-3">
                 <h2><%= user.common_name %>'s Channels:</h2>
                 <div id="channels-allowed-list"></div>
             </div>
 
-            <div id="search-results">
+            <div id="search-results" class="col">
             </div>
         </div>
     <% } else{ %>
