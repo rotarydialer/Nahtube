@@ -18,17 +18,18 @@
       padding: 0;
     }
 
-    #content-container {
-        width: auto;
+    .channels-list {
+        background-color: #fbfbfb;
+        padding: 5px;
+        min-width: 270px;
+        margin-left: 12px;
     }
 
-    #channels-allowed-container {
-        display:block;
-        float:left;
-        min-width: 250px;
-        width: 15%;
-        margin: 5px;
+    .list-title {
+        font-weight: bold;
+        padding: 4px;
     }
+
   </style>
   <script>
     function getChannelsForUser(userLoggedIn) {
@@ -63,15 +64,13 @@
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
         </script>
 
-        <hr>
-
-        <div id="content-container">
-            <div id="channels-allowed-container">
-                <h2><%= user.common_name %>'s Channels:</h2>
+        <div id="content-container" class="row">
+            <div id="channels-allowed-container" class="col-3 channels-list">
+                <div class="list-title"><%= user.common_name %>'s Channels:</div>
                 <div id="channels-allowed-list"></div>
             </div>
 
-            <div id="search-results">
+            <div id="search-results" class="col">
             </div>
         </div>
     <% } else{ %>
