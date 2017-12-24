@@ -1,9 +1,10 @@
 {
   "name": "nahtube",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "docker-postgres": "docker run nah_postgres:dockerfile --name nahtube-db -p 5432:5432 -e POSTGRES_PASSWORD=nownowdontreallyusethis -d postgres"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
