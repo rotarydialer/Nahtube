@@ -29,7 +29,8 @@ router.get('/role/:role', function(req, res, next) {
     const { rows } = await pgpool.query(`
             SELECT id, username, common_name, roles 
             FROM nahtube.users
-            WHERE roles @> ARRAY[$1]::varchar[];`, [role]);
+            WHERE roles @> ARRAY[$1]::varchar[]
+            ORDER BY username;`, [role]);
 
     if (rows.length) {
       //console.log('Returning list of users with the role "' + role + '".');
