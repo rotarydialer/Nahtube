@@ -223,7 +223,7 @@ router.get('/videos/:channelId.json', function(req, res, next) {
         auth: config.youtube.key,
         part: 'snippet,contentDetails',
         playlistId: playlistId,
-        maxResults: 10
+        maxResults: 30
       };
 
       youtube_base.playlistItems.list(playlistparams, function(err, response) {
