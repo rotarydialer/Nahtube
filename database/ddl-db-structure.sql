@@ -37,7 +37,7 @@ CREATE SCHEMA nahtube
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
     SCHEMA nahtube
-    VERSION "1.1";
+    VERSION "1.0";
 
 -- Extension: pgcrypto
 
