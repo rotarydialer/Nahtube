@@ -36,21 +36,16 @@ function checkLoginAndRedirect(req, res) {
   }
 }
 
-/* Setup and check the YT client */
 router.get('/', function(req, res, next) {
+  req.session.returnTo = req.path; 
 
-  // test search
-  youtube_node.search('palestrina', 5, function(error, result) {
-    if (error) {
-      console.log(error);
-      res.status(500);
-      return res.send(error);
-    }
-    else {
-      return res.send(result);
-    }
-  });
+  if (!isLoggedIn(req)) {
+    res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
+  } else {
+    activity.track('dashboard', req.session.user.id);
 
+    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+  }
 });
 
 // search with the youtube api
