@@ -6,6 +6,7 @@
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     
+    
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
@@ -26,6 +27,10 @@
 
     div.video-container {
         overflow: hidden;
+    }
+
+    #related-videos-list {
+        z-index: -1;
     }
     </style>    
     <script>
@@ -68,20 +73,24 @@
 <body>
 
     <% include topbar.ejs %>
+
+    <div class="row">
     
-    <div id="player">
-        <iframe id="ytplayer" type="text/html" width="854" height="480"
-        src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1"
-        frameborder="0"
-        allowfullscreen="allowfullscreen"
-        mozallowfullscreen="mozallowfullscreen" 
-        msallowfullscreen="msallowfullscreen" 
-        oallowfullscreen="oallowfullscreen" 
-        webkitallowfullscreen="webkitallowfullscreen"></iframe>
-    </div>
+        <div id="player" class="col-lg-7 col-sm-8">
+            <iframe id="ytplayer" type="text/html" width="854" height="480"
+            src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1"
+            frameborder="0"
+            allowfullscreen="allowfullscreen"
+            mozallowfullscreen="mozallowfullscreen" 
+            msallowfullscreen="msallowfullscreen" 
+            oallowfullscreen="oallowfullscreen" 
+            webkitallowfullscreen="webkitallowfullscreen"></iframe>
+        </div>
 
 
-    <div id="related-videos-list">
+        <div id="related-videos-list" class="col">
+        </div>
+
     </div>
 
     <script>
