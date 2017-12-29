@@ -161,9 +161,6 @@ CREATE TABLE nahtube.user_activity
   channel_id character varying(64),
   details jsonb,
   CONSTRAINT user_activity_pkey PRIMARY KEY (id),
-  CONSTRAINT user_activity_channel_fkey FOREIGN KEY (channel_id, user_id)
-      REFERENCES nahtube.channels_allowed (channel_id, user_id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT user_activity_user_fkey FOREIGN KEY (user_id)
       REFERENCES nahtube.users (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
