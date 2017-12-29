@@ -27,44 +27,42 @@
     div.video-container {
         overflow: hidden;
     }
-    </style>
+    </style>    
     <script>
-        function getVideosForChannelId(channelId) {
+        function assembleQueryString(videoId, channelId) {
+            var qstr = '?v=' + videoId;
 
-            $.ajax({
-                type: "GET",
-                url: "/youtube/videos/" + channelId + ".json",
-                data: {"channelId": this.value},
-                success: function (data) {
-                    console.log(data);
+            qstr += (channelId ? '&c=' + channelId : '' );
 
-                    $('#channelTitle').text('Videos for ' + data.channelTitle);
-
-                    $('#videos-list').empty();
-
-                    $.each(data.items, function (i, item) {
-                        console.log(i + ': ' + item.snippet.title);
-
-                        $('#videos-list').append(
-                            '<div class="video-container">' +
-                            '  <a href="../watch?v=' + item.id + '">' +
-                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
-                            '  </a>\n' +
-                            '  <div class="video-content">' + 
-                            '    <h3 class="video-title">' + 
-                            '      <a href="../watch?v=' + item.id + '">' + item.snippet.title + '</a>\n' +
-                            '    </h3>\n' + 
-                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
-                            '  </div>' +
-                            '</div>'
-                        );
-                    });
-
-                }
-            });
-
+            return qstr;
         }
-        </script>
+        function getRelatedVideos(videoId) {
+            $("#related-videos-list").empty();
+
+            // AJAX call to populate the Allowed Channels div above
+            $.get( "/youtube/related/" + videoId, function( data ) {
+                $( ".result" ).html( data );
+                $.each(data.items, function(index, entry) {
+                    console.log('in here...');
+
+                    var video_row = 
+                        '<div class="video-container">' +
+                        '  <a href="../watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
+                        '    <div class="video-thumbnail"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
+                        '  </a>\n' +
+                        '  <div class="video-content">' + 
+                        '    <h3 class="video-title">' + 
+                        '      <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' + entry.snippet.title + '</a>\n' +
+                        '    </h3>\n' + 
+                        '    <div class="video-meta">' + entry.snippet.channelTitle + '</div>\n' +
+                        '  </div>' +
+                        '</div>';
+
+                    $("#related-videos-list").append(video_row);
+                });
+            });
+        }
+    </script>
 </head>
 
 <body>
@@ -83,11 +81,11 @@
     </div>
 
 
-    <div id="videos-list">
+    <div id="related-videos-list">
     </div>
 
     <script>
-        //getVideosForChannelId( '< % = channelId % >' ); // this looks pretty bad to me...
+        getRelatedVideos( '<%= videoId %>' ); // this looks pretty bad to me...
     </script>
 
 </body>

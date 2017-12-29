@@ -313,4 +313,42 @@ router.post('/save/:channelId/:username', function(req, res, next) {
   });
 });
 
+router.get('/related/:videoId', function(req, res, next) {
+  var videoId = req.params.videoId;
+
+  console.log('Searching for videos related to %s', videoId);
+  
+    if(!isLoggedIn(req)) {
+      res.status(401);
+      return res.send('ERROR: Not authorized. User must login.');
+    }
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    relatedToVideoId: videoId,
+    type: 'video',
+    safeSearch: 'strict',
+    maxResults: 30
+  };
+
+  youtube_base.search.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No related videos found.');
+      res.status(404);
+      return res.send('ERROR: No related videos found.');
+    } else {
+      console.log(' -- Found %d related videos.', results.length);
+
+      return res.send(response);
+    }
+  }); 
+
+});
+
 module.exports = router;
