@@ -91,33 +91,6 @@ router.post('/search', function(req, res, next) {
 
 });
 
-// search with the youtube_node helper
-router.post('/crappysearch', function(req, res, next) {
-  checkLoginAndRedirect(req, res);
-
-  var searchstr = req.body.searchstring;
-
-  // CONFIRMED: these parameters don't work
-  youtube_node.addParam('safeSearch', 'strict');
-  youtube_node.addParam('type', 'video');
-  youtube_node.addParam('order', 'title');
-
-  activity.track('search - crappy', req.session.user.id, '', searchstr);
-
-  youtube_node.search(searchstr, 15, function(error, result) {
-    if (error) {
-      console.log(error);
-      res.status(500);
-      return res.send(error);
-    }
-    else {
-      console.log('Found %d results for "%s".', result.items.length, searchstr);
-      return res.send(result);
-    }
-  });
-
-});
-
 // Test using the YouTube API directly
 router.get('/direct/:channelId', function(req, res, next) {
   var channelId = req.params.channelId;
@@ -277,44 +250,6 @@ router.get('/watch', function(req, res, next) {
 
   res.render('watch', { title: 'NahTube', videoId: videoId || '' });
 
-});
-
-// ---- WORKING EXAMPLE ------ START //
-function getYoutubePlaylist(playlistId, res) {
-  var reqparams = {
-    auth: config.youtube.key,
-    part: 'snippet,contentDetails',
-    playlistId: playlistId,
-    maxResults: 10
-  };
-  
-  youtube_base.playlistItems.list(reqparams, function(err, response) {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return err;
-    }
-    var playlist = response.items;
-    if (playlist.length == 0) {
-      console.log('No results');
-      return 'No results';
-    } else {
-      console.log('Found ' + playlist.length + ' videos in playlist.');
-
-      //return playlist;
-      return res.send(playlist);
-    }
-  });
-}
-
-router.get('/videosawait', async (req, res, next) => {
-  try {
-    await getYoutubePlaylist('UUiBvuoKHWkW62kM0H5OakRA', res);
-
-  } catch (e) {
-    console.log('Await error: ' + e);
-    res.status(404);
-    return res.send('await error: ' + e);
-  }
 });
 
 router.post('/save/:channelId/:username', function(req, res, next) {
