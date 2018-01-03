@@ -25,18 +25,25 @@
         float: left;
     }
 
+    h3.video-title {
+        line-height: 2px;
+    }
+
     div.video-meta {
         font-family: 'Roboto', sans-serif;
         font-size: 12px;
         color: #9f9f9f;
     }
 
-    div.video-container {
+    div.related-video-container {
         overflow: hidden;
     }
 
     #player {
         z-index: 2;
+        margin-left: 20px;
+        margin-right: 10px;
+        margin-top: 3px;
     }
 
     #related-videos-list {
@@ -63,7 +70,7 @@
                     console.log('in here...');
 
                     var video_row = 
-                        '<div class="video-container">' +
+                        '<div class="related-video-container">' +
                         '  <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
                         '    <div class="video-thumbnail"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
                         '  </a>\n' +
@@ -76,7 +83,7 @@
                         '</div>';
 
                     var tabular_video_row = 
-                        '<div class="video-container" class="row">' +
+                        '<div class="related-video-container" class="row">' +
                         '   <table border=0><tr><td>' +
                         '       <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
                         '           <div class="video-thumbnail" class="col"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
@@ -104,7 +111,7 @@
 
     <div class="row">
     
-        <div id="player" class="col-lg-6 col-sm-8">
+        <div id="player" class="col-8">
             <iframe id="ytplayer" type="text/html" width="854" height="480"
             src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1"
             frameborder="0"
