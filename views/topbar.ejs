@@ -2,6 +2,7 @@
 
 <style>
     div.avatar {
+        margin: 10px;
         float: left;
     }
 
@@ -39,13 +40,26 @@
             <td>
                 <section id="search-section">
                     <div id="search-action">
-                        <div id="search-text-container">
-                            <input id="search-text" style="outline: none;"></input>
-                        </div>
-                        <div id="search-btn-container">
-                            <button id="search-btn" class="search-button" type="submit" 
-                                onclick="if (document.getElementById('search-text').value != '') postSearch(document.getElementById('search-text').value);"><span>Search</span></button>
-                        </div>
+                        <table width="100%" border=0>
+                            <tr>
+                                <td width="80%">
+
+                                    <div id="search-text-container">
+                                        <input id="search-text" style="outline: none;"></input>
+                                    </div>
+
+                                </td>
+                                <td>
+
+                                    <div id="search-btn-container">
+                                        <button id="search-btn" class="search-button" type="submit" 
+                                            onclick="if (document.getElementById('search-text').value != '') postSearch(document.getElementById('search-text').value);"><span>Search</span></button>
+                                    </div>  
+
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
                 </section>
             </td>
@@ -106,30 +120,6 @@
             $('#search-results').text('Searching...');
 
             postSearch(this.value);
-
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/youtube/search",
-            //     data: {"searchstring": this.value},
-            //     success: function (data) {
-            //         console.log(data);
-
-            //         $('#search-results').empty();
-
-                    // $.each(data.items, function (i, item) {
-                    //     console.log(i + ': ' + item.snippet.title);
-
-                    //     $('#search-results').append(
-                    //         '<img src="' + item.snippet.thumbnails.medium.url + '"><br>' +
-                    //         (i+1) + '. ' + item.snippet.title + '<br>\n'
-                    //     );
-                    // });
-
-                    // the jQuery definition determines these, and the params of the callback
-                    // http://api.jquery.com/jquery.each/
-                    //$.each(data.items, constructVideoResult);
-            //     }
-            // });
 
         }
     });
