@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title><%= title %>: Parent Dashboard</title>
+
+  <script src="/js/jquery-3.2.1.min.js"></script>
+
+  <link href="/css/google-font-Roboto.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+  <script>
+    function clearAll() {
+        $("#channels-allowed-list").empty();
+        $("#activity-list").empty();
+    }
+
+    function getChannelsForUser(userLoggedIn) {
+        clearAll();
+
+        // AJAX call to populate the Allowed Channels div
+        $.get( "/channels/" + userLoggedIn, function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                option = '<div>' + 
+                    ((index+1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' + 
+                    '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
+                    entry.channel_name + '</a> </div>');
+                $("#channels-allowed-list").append(option);
+            });
+        });
+    }
+
+    function getActivityForUser(username) {
+        clearAll();
+
+        // AJAX call to populate the Allowed Channels div
+        $.get( "/parents/activity/" + username + '.json', function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
+                console.log(entry);
+                $("#activity-list").append(row);
+            });
+        });
+    }
+  </script>
+</head>
+
+<body>
+    <!-- TODO: restore login check -->
+
+        <div id="user-select-container">
+            <select id="user-select" name="username"></select>
+            <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+            <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
+        </div>
+
+        <script>
+            //getChannelsForUser($('#user-select').val()); // SO MUCH UGH!
+        </script>
+
+        <div id="content-container" class="row">
+            
+            <div id="activity-container" class="col-9">
+                <div id="activity-list"></div>
+            </div>
+
+            <div id="channels-allowed-container" class="col-3 channels-list">
+                <div class="list-title">Allowed Channels:</div>
+                <div id="channels-allowed-list"></div>
+            </div>
+
+            <div id="search-results" class="col">
+            </div>
+        </div>
+
+    <script>
+        // AJAX call to populate the user-select field above
+        $.get( "/users/role/child", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+                $("#user-select").append(option);
+            });
+        });
+    </script>
+  
+</body>
+
+</html>
