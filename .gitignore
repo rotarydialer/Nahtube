@@ -3,6 +3,7 @@ assets/images/avatars/
 # Environment
 .env
 client_secret.json
+config/*
 config/credentials.json
 config/config.js
 
