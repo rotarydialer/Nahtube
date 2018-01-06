@@ -4,6 +4,7 @@ assets/images/avatars/
 .env
 client_secret.json
 config/credentials.json
+config/config.js
 
 # Logs
 logs
