@@ -34,7 +34,7 @@ router.get('/role/:role', function(req, res, next) {
 
     if (rows.length) {
       //console.log('Returning list of users with the role "' + role + '".');
-      return res.send(JSON.stringify(rows));
+      return res.send(rows);
     } else {
       console.log('BAD REQUEST for role "' + role + '".');
       res.status(404);
@@ -81,6 +81,38 @@ router.get('/:username.json', function(req, res, next) {
         console.log('BAD REQUEST for user "' + [username] + '".');
         res.status(404);
         return res.send('No such user found.');
+      }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    console.log(e);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
+router.get('/actiontypes/:username', function(req, res, next) {
+  var username = req.params.username;
+
+  (async () => {
+      const { rows } = await pgpool.query(`
+        SELECT act.action
+        FROM nahtube.user_activity act
+          INNER JOIN nahtube.users users
+              ON act.user_id = users.id
+        WHERE users.username = $1
+        GROUP BY action
+        ORDER BY action;`,[username]);
+
+      var actions = rows.map((row) => row.action);
+
+      if (rows.length) {
+        //return res.send(rows);
+        return res.send(actions);
+      } else {
+        console.log('BAD REQUEST for user "' + [username] + '".');
+        res.status(404);
+        return res.send('No activity for user found.');
       }      
   })().catch(e => setImmediate(() => { 
     //throw e 
