@@ -4,9 +4,9 @@
 <head>
     <title><%= title %> - Watch</title>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="/js/jquery-3.2.1.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="/css/google-font-Roboto.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
     <style>
@@ -24,70 +24,111 @@
         float: left;
     }
 
-    div.video-container {
+    h3.video-title {
+        line-height: 2px;
+    }
+
+    div.video-meta {
+        font-family: 'Roboto', sans-serif;
+        font-size: 12px;
+        color: #9f9f9f;
+    }
+
+    div.related-video-container {
         overflow: hidden;
     }
-    </style>
+
+    #player {
+        z-index: 2;
+        margin-left: 20px;
+        margin-right: 10px;
+        margin-top: 3px;
+    }
+
+    #related-videos-list {
+        z-index: 1;
+        float: right;
+    }
+
+    </style>    
     <script>
-        function getVideosForChannelId(channelId) {
+        function assembleQueryString(videoId, channelId) {
+            var qstr = '?v=' + videoId;
 
-            $.ajax({
-                type: "GET",
-                url: "/youtube/videos/" + channelId + ".json",
-                data: {"channelId": this.value},
-                success: function (data) {
-                    console.log(data);
+            qstr += (channelId ? '&c=' + channelId : '' );
 
-                    $('#channelTitle').text('Videos for ' + data.channelTitle);
-
-                    $('#videos-list').empty();
-
-                    $.each(data.items, function (i, item) {
-                        console.log(i + ': ' + item.snippet.title);
-
-                        $('#videos-list').append(
-                            '<div class="video-container">' +
-                            '  <a href="../watch?v=' + item.id + '">' +
-                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
-                            '  </a>\n' +
-                            '  <div class="video-content">' + 
-                            '    <h3 class="video-title">' + 
-                            '      <a href="../watch?v=' + item.id + '">' + item.snippet.title + '</a>\n' +
-                            '    </h3>\n' + 
-                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
-                            '  </div>' +
-                            '</div>'
-                        );
-                    });
-
-                }
-            });
-
+            return qstr;
         }
-        </script>
+        function getRelatedVideos(videoId) {
+            $("#related-videos-list").empty();
+
+            // AJAX call to populate the Allowed Channels div above
+            $.get( "/youtube/related/" + videoId, function( data ) {
+                $( ".result" ).html( data );
+                $.each(data.items, function(index, entry) {
+                    console.log('in here...');
+
+                    var video_row = 
+                        '<div class="related-video-container">' +
+                        '  <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
+                        '    <div class="video-thumbnail"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
+                        '  </a>\n' +
+                        '  <div class="video-content">' + 
+                        '    <h3 class="video-title">' + 
+                        '      <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' + entry.snippet.title + '</a>\n' +
+                        '    </h3>\n' + 
+                        '    <div class="video-meta">' + entry.snippet.channelTitle + '</div>\n' +
+                        '  </div>' +
+                        '</div>';
+
+                    var tabular_video_row = 
+                        '<div class="related-video-container" class="row">' +
+                        '   <table border=0><tr><td>' +
+                        '       <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
+                        '           <div class="video-thumbnail" class="col"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
+                        '       </a>\n' +
+                        '   </td><td width="100%">' +
+                        '       <div class="video-content col">' + 
+                        '           <h3 class="video-title">' + 
+                        '               <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' + entry.snippet.title + '</a>\n' +
+                        '           </h3>\n' + 
+                        '           <div class="video-meta">' + entry.snippet.channelTitle + '</div>\n' +
+                        '       </div>' +
+                        '   </td></tr></table>' +
+                        '</div>';
+
+                    $("#related-videos-list").append(tabular_video_row);
+                });
+            });
+        }
+    </script>
 </head>
 
 <body>
 
     <% include topbar.ejs %>
+
+    <div class="row">
     
-    <div id="player">
-        <iframe id="ytplayer" type="text/html" width="854" height="480"
-        src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1"
-        frameborder="0"
-        allowfullscreen="allowfullscreen"
-        mozallowfullscreen="mozallowfullscreen" 
-        msallowfullscreen="msallowfullscreen" 
-        oallowfullscreen="oallowfullscreen" 
-        webkitallowfullscreen="webkitallowfullscreen"></iframe>
-    </div>
+        <div id="player" class="col-8">
+            <iframe id="ytplayer" type="text/html" width="854" height="480"
+            src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1"
+            frameborder="0"
+            allowfullscreen="allowfullscreen"
+            mozallowfullscreen="mozallowfullscreen" 
+            msallowfullscreen="msallowfullscreen" 
+            oallowfullscreen="oallowfullscreen" 
+            webkitallowfullscreen="webkitallowfullscreen"></iframe>
+        </div>
 
 
-    <div id="videos-list">
+        <div id="related-videos-list" class="col">
+        </div>
+
     </div>
 
     <script>
-        //getVideosForChannelId( '< % = channelId % >' ); // this looks pretty bad to me...
+        getRelatedVideos( '<%= videoId %>' ); // this looks pretty bad to me...
     </script>
 
 </body>

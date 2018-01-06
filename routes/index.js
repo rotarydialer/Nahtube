@@ -1,10 +1,11 @@
 var express = require('express');
 var session = require('express-session');
+var config = require('../config/config');
 var router = express.Router();
 
 const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: 'postgresql://postgres@localhost/nahdb'
+  connectionString: config.database.connectionString
 });
 
 global.pgpool = pool;

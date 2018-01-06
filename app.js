@@ -12,6 +12,7 @@ var users = require('./routes/users');
 var activity = require('./activity');
 var channels = require('./routes/channels');
 var youtube = require('./routes/youtube');
+var parents = require('./routes/parents');
 
 var app = express();
 
@@ -46,11 +47,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // static routes for images, css, etc.
 app.use('/images', express.static(__dirname + '/assets/images'));
 app.use('/css', express.static(__dirname + '/assets/css'));
+app.use('/js', express.static(__dirname + '/assets/js'));
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/channels', channels);
 app.use('/youtube', youtube);
+app.use('/parents', parents);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

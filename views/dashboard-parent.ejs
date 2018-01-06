@@ -2,44 +2,23 @@
 <html>
 
 <head>
-  <title><%= title %> Dashboard</title>
+  <title><%= title %>: Parent Dashboard</title>
 
-  <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
   <script src="/js/jquery-3.2.1.min.js"></script>
 
-  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
-  <style>
-    /* Optional: Makes the sample page fill the window. */
-    html,
-    body {
-      height: 100%;
-      margin: 200;
-      padding: 0;
-    }
-
-    .channels-list {
-        background-color: #fbfbfb;
-        padding: 5px;
-        min-width: 270px;
-        margin-left: 12px;
-    }
-
-    .list-title {
-        font-weight: bold;
-        padding: 4px;
-    }
-
-  </style>
   <script>
-    function getChannelsForUser(userLoggedIn) {
+    function clearAll() {
         $("#channels-allowed-list").empty();
+        $("#activity-list").empty();
+    }
 
-        console.log('Populating for ' + userLoggedIn);
+    function getChannelsForUser(userLoggedIn) {
+        clearAll();
 
-        // AJAX call to populate the Allowed Channels div above
+        // AJAX call to populate the Allowed Channels div
         $.get( "/channels/" + userLoggedIn, function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
@@ -51,53 +30,61 @@
             });
         });
     }
+
+    function getActivityForUser(username) {
+        clearAll();
+
+        // AJAX call to populate the Allowed Channels div
+        $.get( "/parents/activity/" + username + '.json', function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
+                console.log(entry);
+                $("#activity-list").append(row);
+            });
+        });
+    }
   </script>
 </head>
 
 <body>
+    <!-- TODO: restore login check -->
 
-    <%if (loggedinuser) { %>
-
-        <% include topbar.ejs %>
-        
-        <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
+        <div id="user-select-container">
+            <select id="user-select" name="username"></select>
+            <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+            <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
+        </div>
 
         <script>
-            getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
+            //getChannelsForUser($('#user-select').val()); // SO MUCH UGH!
         </script>
 
         <div id="content-container" class="row">
+            
+            <div id="activity-container" class="col-9">
+                <div id="activity-list"></div>
+            </div>
+
             <div id="channels-allowed-container" class="col-3 channels-list">
-                <div class="list-title"><%= user.common_name %>'s Channels:</div>
+                <div class="list-title">Allowed Channels:</div>
                 <div id="channels-allowed-list"></div>
             </div>
 
             <div id="search-results" class="col">
             </div>
         </div>
-    <% } else{ %>
-       <form method="POST" action="/login">
-           <div id="mock-user-select">
-               <select id="user-mock" name="username"></select>
-               <button id="login">Login</button>
-           </div>
-       </form>
-    <% } %>
 
-    
-
-    <!-- Populate the fields and divs above -->
     <script>
-        // AJAX call to populate the user-mock field above
+        // AJAX call to populate the user-select field above
         $.get( "/users/role/child", function( data ) {
             $( ".result" ).html( data );
     
             $.each(JSON.parse(data), function(index, entry) {
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
-                $("#user-mock").append(option);
+                $("#user-select").append(option);
             });
         });
-
     </script>
   
 </body>

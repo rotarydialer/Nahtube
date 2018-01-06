@@ -36,21 +36,16 @@ function checkLoginAndRedirect(req, res) {
   }
 }
 
-/* Setup and check the YT client */
 router.get('/', function(req, res, next) {
+  req.session.returnTo = req.path; 
 
-  // test search
-  youtube_node.search('palestrina', 5, function(error, result) {
-    if (error) {
-      console.log(error);
-      res.status(500);
-      return res.send(error);
-    }
-    else {
-      return res.send(result);
-    }
-  });
+  if (!isLoggedIn(req)) {
+    res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
+  } else {
+    activity.track('dashboard', req.session.user.id);
 
+    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+  }
 });
 
 // search with the youtube api
@@ -88,33 +83,6 @@ router.post('/search', function(req, res, next) {
       return res.send(response);
     }
   }); 
-
-});
-
-// search with the youtube_node helper
-router.post('/crappysearch', function(req, res, next) {
-  checkLoginAndRedirect(req, res);
-
-  var searchstr = req.body.searchstring;
-
-  // CONFIRMED: these parameters don't work
-  youtube_node.addParam('safeSearch', 'strict');
-  youtube_node.addParam('type', 'video');
-  youtube_node.addParam('order', 'title');
-
-  activity.track('search - crappy', req.session.user.id, '', searchstr);
-
-  youtube_node.search(searchstr, 15, function(error, result) {
-    if (error) {
-      console.log(error);
-      res.status(500);
-      return res.send(error);
-    }
-    else {
-      console.log('Found %d results for "%s".', result.items.length, searchstr);
-      return res.send(result);
-    }
-  });
 
 });
 
@@ -279,44 +247,6 @@ router.get('/watch', function(req, res, next) {
 
 });
 
-// ---- WORKING EXAMPLE ------ START //
-function getYoutubePlaylist(playlistId, res) {
-  var reqparams = {
-    auth: config.youtube.key,
-    part: 'snippet,contentDetails',
-    playlistId: playlistId,
-    maxResults: 10
-  };
-  
-  youtube_base.playlistItems.list(reqparams, function(err, response) {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return err;
-    }
-    var playlist = response.items;
-    if (playlist.length == 0) {
-      console.log('No results');
-      return 'No results';
-    } else {
-      console.log('Found ' + playlist.length + ' videos in playlist.');
-
-      //return playlist;
-      return res.send(playlist);
-    }
-  });
-}
-
-router.get('/videosawait', async (req, res, next) => {
-  try {
-    await getYoutubePlaylist('UUiBvuoKHWkW62kM0H5OakRA', res);
-
-  } catch (e) {
-    console.log('Await error: ' + e);
-    res.status(404);
-    return res.send('await error: ' + e);
-  }
-});
-
 router.post('/save/:channelId/:username', function(req, res, next) {
   var channelId = req.params.channelId;
   var username = req.params.username;
@@ -381,6 +311,44 @@ router.post('/save/:channelId/:username', function(req, res, next) {
 
     }
   });
+});
+
+router.get('/related/:videoId', function(req, res, next) {
+  var videoId = req.params.videoId;
+
+  console.log('Searching for videos related to %s', videoId);
+  
+    if(!isLoggedIn(req)) {
+      res.status(401);
+      return res.send('ERROR: Not authorized. User must login.');
+    }
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    relatedToVideoId: videoId,
+    type: 'video',
+    safeSearch: 'strict',
+    maxResults: 30
+  };
+
+  youtube_base.search.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No related videos found.');
+      res.status(404);
+      return res.send('ERROR: No related videos found.');
+    } else {
+      console.log(' -- Found %d related videos.', results.length);
+
+      return res.send(response);
+    }
+  }); 
+
 });
 
 module.exports = router;
