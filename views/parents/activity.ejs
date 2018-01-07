@@ -68,19 +68,12 @@
     }
 
     function formatDetails(details) {
-        if (details.videoId) {
-            return details.videoId;
-        } else {
-            return JSON.stringify(details);
-        }
-    }
+        if (details.videoId) return details.videoId;
+        if (details.searchstring) return details.searchstring;
 
-    // Initialize DataTable
-    // $(document).ready(function(){
-    //     $('#datatable-activity').DataTable({
-    //         "autoWidth": false
-    //     });
-    // });
+        return JSON.stringify(details);
+    }
+    
   </script>
 </head>
 
