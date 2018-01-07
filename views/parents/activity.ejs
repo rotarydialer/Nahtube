@@ -6,38 +6,71 @@
 
   <script src="/js/jquery-3.2.1.min.js"></script>
 
+    <!-- DataTables: https://datatables.net -->
+    <link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="/js/jquery.dataTables.min.js"></script>
+
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
   <script>
-    function clearAll() {
-        $("#activity-list").empty();
-    }
 
-    function getActivityForUser(username) {
-        clearAll();
+    function populateActivityTable(username) {
+        console.log('Populating activity table for "%s".', username);
+        var t = $('#datatable-activity').DataTable();
 
-        // AJAX call to populate the Allowed Channels div
         $.get( "/parents/activity/" + username + '.json', function( data ) {
             $( ".result" ).html( data );
+
             $.each(data, function(index, entry) {
-                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
-                console.log(entry);
-                $("#activity-list").append(row);
+                //row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
+                const {
+                    username,
+                    id,
+                    common_name,
+                    action,
+                    action_time,
+                    channel_id,
+                    channel_name,
+                    details
+                } = entry;
+                
+                t.row.add([
+                    common_name,
+                    action,
+                    action_time,
+                    channel_name,
+                    details ? formatDetails(details) : ''
+                ]).draw(false);
             });
         });
     }
+
+    function formatDetails(details) {
+        if (details.videoId) {
+            return details.videoId;
+        } else {
+            return JSON.stringify(details);
+        }
+    }
+
+    // Initialize DataTable
+    $(document).ready(function(){
+        $('#datatable-activity').DataTable({
+            "autoWidth": false
+        });
+    });
   </script>
 </head>
 
 <body>
     <!-- TODO: restore login check -->
 
-        <!-- <div id="user-select-container"> -->
+        <div id="user-select-container">
             <select id="user-select"></select>
             <!-- <select id="user-select" class="selectpicker"></select> -->
-            <!-- <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button> -->
-        <!-- </div> -->
+            <button id="login" onclick="populateActivityTable($('#user-select').val())">Activity</button>
+        </div>
 
     <script>
         // AJAX call to populate the user-select field above
@@ -50,6 +83,18 @@
             });
         });
     </script>
+
+    <table id="datatable-activity" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Common Name</th>
+                <th>Action</th>
+                <th>Time</th>
+                <th>Channel</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+    </table>
   
 </body>
 
