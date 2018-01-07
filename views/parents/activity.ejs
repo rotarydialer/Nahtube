@@ -15,15 +15,36 @@
 
   <script>
 
+    function populateActivityTableAjax(username) {
+        console.log('AJAX populating activity table for "%s".', username);
+        
+        var t = $('#datatable-activity').DataTable({
+            ajax: {
+                url: '/parents/activity/' + username + '.json',
+                dataSrc: ''
+            },
+            columns: [
+                { data: 'common_name' },
+                { data: 'action' },
+                { data: 'action_time' },
+                { data: 'channel_name' },
+                { 
+                    data: 'details',
+                    render: function (data, type, row) {
+                        return data ? formatDetails(data) : '';
+                    }
+                }
+            ]
+        });
+    }
+
     function populateActivityTable(username) {
-        console.log('Populating activity table for "%s".', username);
         var t = $('#datatable-activity').DataTable();
 
         $.get( "/parents/activity/" + username + '.json', function( data ) {
             $( ".result" ).html( data );
 
             $.each(data, function(index, entry) {
-                //row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
                 const {
                     username,
                     id,
@@ -55,11 +76,11 @@
     }
 
     // Initialize DataTable
-    $(document).ready(function(){
-        $('#datatable-activity').DataTable({
-            "autoWidth": false
-        });
-    });
+    // $(document).ready(function(){
+    //     $('#datatable-activity').DataTable({
+    //         "autoWidth": false
+    //     });
+    // });
   </script>
 </head>
 
@@ -69,7 +90,7 @@
         <div id="user-select-container">
             <select id="user-select"></select>
             <!-- <select id="user-select" class="selectpicker"></select> -->
-            <button id="login" onclick="populateActivityTable($('#user-select').val())">Activity</button>
+            <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
         </div>
 
     <script>
@@ -87,7 +108,7 @@
     <table id="datatable-activity" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>Common Name</th>
+                <th>Name</th>
                 <th>Action</th>
                 <th>Time</th>
                 <th>Channel</th>
