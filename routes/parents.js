@@ -12,7 +12,7 @@ function isParentLoggedIn(req) {
   }
 
 router.get('/', function (req, res, err) {
-    res.render('dashboard-parent', { title: 'NahTube' });
+    res.render('parents/dashboard-parent', { title: 'NahTube' });
 });
 
 router.get('/activity.json', function(req, res, next) {
