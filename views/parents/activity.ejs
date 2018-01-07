@@ -36,7 +36,17 @@
                 { 
                     data: 'action_time',
                     render: function (data, type, row) {
-                        return moment(data).tz('America/New_York').format('MM/DD/YY h:mma dddd');
+                        // If display or filter data is requested, format the date
+                        if ( type === 'display' || type === 'filter' ) {
+                            console.log(' 1 --> momented: ' + moment(data).format('MM/DD/YY h:mma dddd'));
+                            console.log(' 1 --> tzmented: ' + moment(data).tz('Pacific/Honolulu').format('MM/DD/YY h:mma dddd')); //WTH is this right in production?
+                            //return moment(data).tz('America/New_York').format('MM/DD/YY h:mma dddd');
+                            return moment(data).tz('Pacific/Honolulu').format('MM/DD/YY h:mma dddd'); //TODO: remove this hack!
+                        }
+
+                        // Otherwise the data type requested (`type`) is type detection or
+                        // sorting data, so just return the unaltered source data
+                        return data;
                     }
                 },
                 { data: 'channel_name' },
