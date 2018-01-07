@@ -6,6 +6,9 @@
 
   <script src="/js/jquery-3.2.1.min.js"></script>
 
+  <script src="/js/moment.min.js"></script>
+  <script src="/js/moment-timezone-with-data.min.js"></script>
+
     <!-- DataTables: https://datatables.net -->
     <link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.min.css">
     <script type="text/javascript" charset="utf8" src="/js/jquery.dataTables.min.js"></script>
@@ -30,7 +33,12 @@
             columns: [
                 { data: 'common_name' },
                 { data: 'action' },
-                { data: 'action_time' },
+                { 
+                    data: 'action_time',
+                    render: function (data, type, row) {
+                        return moment(data).tz('America/New_York').format('MM/DD/YY h:mma dddd');
+                    }
+                },
                 { data: 'channel_name' },
                 { 
                     data: 'details',
@@ -66,7 +74,7 @@
                 t.row.add([
                     common_name,
                     action,
-                    action_time,
+                    moment(action_time).tz('America/New_York').format('ha z'),
                     channel_name,
                     details ? formatDetails(details) : ''
                 ]).draw(false);
