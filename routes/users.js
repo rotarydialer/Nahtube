@@ -34,7 +34,7 @@ router.get('/role/:role', function(req, res, next) {
 
     if (rows.length) {
       //console.log('Returning list of users with the role "' + role + '".');
-      return res.send(rows);
+      return res.send(JSON.stringify(rows));
     } else {
       console.log('BAD REQUEST for role "' + role + '".');
       res.status(404);
