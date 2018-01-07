@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Activity</title>
+
+  <script src="/js/jquery-3.2.1.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/bootstrap-select.1.12.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js"></script>
+
+  <link href="/css/google-font-Roboto.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap-select.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+  <script>
+    function clearAll() {
+        $("#activity-list").empty();
+    }
+
+    function getActivityForUser(username) {
+        clearAll();
+
+        // AJAX call to populate the Allowed Channels div
+        $.get( "/parents/activity/" + username + '.json', function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
+                console.log(entry);
+                $("#activity-list").append(row);
+            });
+        });
+    }
+  </script>
+</head>
+
+<body>
+    <!-- TODO: restore login check -->
+
+        <!-- <div id="user-select-container"> -->
+            <select id="user-select"></select>
+            <!-- <select id="user-select" class="selectpicker"></select> -->
+            <!-- <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button> -->
+        <!-- </div> -->
+
+    <script>
+        // AJAX call to populate the user-select field above
+        $.get( "/users/role/child", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+                $("#user-select").append(option);
+            });
+        });
+    </script>
+  
+</body>
+
+</html>
