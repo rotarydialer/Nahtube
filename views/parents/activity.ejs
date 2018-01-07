@@ -18,6 +18,10 @@
     function populateActivityTableAjax(username) {
         console.log('AJAX populating activity table for "%s".', username);
         
+        var existingtable = $('#datatable-activity').DataTable();
+ 
+        if (existingtable) existingtable.destroy();
+        
         var t = $('#datatable-activity').DataTable({
             ajax: {
                 url: '/parents/activity/' + username + '.json',
