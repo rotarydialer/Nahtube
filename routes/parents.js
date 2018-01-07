@@ -85,7 +85,7 @@ router.get('/activity/:username.json', function(req, res, next) {
   
         //if (!startTime) {
             var { rows } = await pgpool.query(`
-                SELECT users.username, users.id, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details
+                SELECT users.common_name, act.action, act.action_time, ch.channel_name, act.details
                 FROM nahtube.user_activity act
                 INNER JOIN nahtube.users users
                     ON act.user_id = users.id
