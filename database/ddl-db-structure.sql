@@ -160,6 +160,7 @@ CREATE TABLE nahtube.user_activity
   action_time timestamp NOT NULL DEFAULT NOW(),
   channel_id character varying(64),
   details jsonb,
+  details_full jsonb,
   CONSTRAINT user_activity_pkey PRIMARY KEY (id),
   CONSTRAINT user_activity_user_fkey FOREIGN KEY (user_id)
       REFERENCES nahtube.users (id) MATCH SIMPLE
