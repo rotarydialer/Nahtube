@@ -254,11 +254,13 @@ router.post('/watch', function(req, res, next) {
   console.log(req.body.videoDetailsFull);
 
   var videoId = req.query.v;
-  var channelId = req.query.c;
+  var channelId = req.query.c || '';
+  var videoDetailsFull = req.body.videoDetailsFull || '';
+  var channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle || '';
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '' });
+  res.render('watch', { title: 'NahTube', videoId: videoId || '', channelTitle: channelTitle, channelId: channelId });
 
 });
 

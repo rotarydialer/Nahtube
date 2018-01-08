@@ -45,6 +45,10 @@
         margin-top: 3px;
     }
 
+    #channel-title {
+        margin-left: 50px;
+    }
+
     #related-videos-list {
         z-index: 1;
         float: right;
@@ -108,16 +112,23 @@
     <% include topbar.ejs %>
 
     <div class="row">
-    
-        <div id="player" class="col-8">
-            <iframe id="ytplayer" type="text/html" width="854" height="480"
-            src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1&rel=0"
-            frameborder="0"
-            allowfullscreen="allowfullscreen"
-            mozallowfullscreen="mozallowfullscreen" 
-            msallowfullscreen="msallowfullscreen" 
-            oallowfullscreen="oallowfullscreen" 
-            webkitallowfullscreen="webkitallowfullscreen"></iframe>
+
+        <div>
+            <div id="player" class="col-8">
+                <iframe id="ytplayer" type="text/html" width="854" height="480"
+                src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1&rel=0"
+                frameborder="0"
+                allowfullscreen="allowfullscreen"
+                mozallowfullscreen="mozallowfullscreen" 
+                msallowfullscreen="msallowfullscreen" 
+                oallowfullscreen="oallowfullscreen" 
+                webkitallowfullscreen="webkitallowfullscreen"></iframe>
+            </div>
+
+            <% if (channelTitle) { %>
+                <div id="channel-title"><a href="/youtube/videos/<%= channelId %>"><%= channelTitle %></a></div>
+            <% } %>
+            
         </div>
 
 
