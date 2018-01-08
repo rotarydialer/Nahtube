@@ -45,12 +45,17 @@
         margin-top: 3px;
     }
 
+    #video-title {
+        margin-left: 50px;
+        font-size: 20px;
+    }
+
     #channel-title {
         margin-left: 50px;
     }
 
     .channel-title {
-        font-size: 20px;
+        font-size: 14px;
     }
 
     #related-videos-list {
@@ -128,6 +133,10 @@
                 oallowfullscreen="oallowfullscreen" 
                 webkitallowfullscreen="webkitallowfullscreen"></iframe>
             </div>
+
+            <% if (locals.videoTitle) { %>
+                <div id="video-title"><%= videoTitle %></div>
+            <% } %>
 
             <% if (locals.channelTitle) { %>
                 <div id="channel-title"><a class="channel-title" href="/youtube/videos/<%= channelId %>"><%= channelTitle %></a></div>

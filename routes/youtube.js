@@ -257,10 +257,11 @@ router.post('/watch', function(req, res, next) {
   var channelId = req.query.c || '';
   var videoDetailsFull = req.body.videoDetailsFull || '';
   var channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle || '';
+  var videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '', channelTitle: channelTitle, channelId: channelId });
+  res.render('watch', { title: 'NahTube', videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
 
 });
 
