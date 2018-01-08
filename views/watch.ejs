@@ -66,7 +66,6 @@
             $.get( "/youtube/related/" + videoId, function( data ) {
                 $( ".result" ).html( data );
                 $.each(data.items, function(index, entry) {
-                    console.log('in here...');
 
                     var video_row = 
                         '<div class="related-video-container">' +

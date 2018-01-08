@@ -44,8 +44,6 @@
 
             qstr += (channelId ? '&c=' + channelId : '' );
 
-            console.log('Assembled "%s"', qstr);
-
             return qstr;
         }
 
@@ -55,29 +53,44 @@
                 url: "/youtube/videos/" + channelId + ".json",
                 data: {"channelId": this.value},
                 success: function (data) {
-                    console.log(data);
-
                     $('#channelTitle').text('Videos for ' + data.channelTitle);
 
                     $('#videos-list').empty();
 
                     $.each(data.items, function (i, item) {
-                        console.log(i + ': ' + item.snippet.title);
 
                         var videoId = item.snippet.resourceId.videoId;
 
+                        // $('#videos-list').append(
+                        //     '<div class="video-container">' +
+                        //     '  <input id="videoDetailsFull" type="hidden" value="' + JSON.stringify(item) + '">' +
+                        //     '  <a href="../watch' + assembleQueryString(videoId, channelId) + '">' +
+                        //     '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                        //     '  </a>\n' +
+                        //     '  <div class="video-content">' + 
+                        //     '    <h3 class="video-title">' + 
+                        //     '      <a href="../watch' + assembleQueryString(videoId, channelId) + '">' + item.snippet.title + '</a>\n' +
+                        //     '    </h3>\n' + 
+                        //     '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
+                        //     '  </div>' +
+                        //     '</div>'
+                        // );
+
                         $('#videos-list').append(
+                            '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
                             '<div class="video-container">' +
-                            '  <a href="../watch' + assembleQueryString(videoId, channelId) + '">' +
+                            '  <input name="videoDetailsFull" type="hidden" value=\'' + JSON.stringify(item) + '\'>' +
+                            '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
-                            '  </a>\n' +
+                            '  </div>\n' +
                             '  <div class="video-content">' + 
                             '    <h3 class="video-title">' + 
-                            '      <a href="../watch' + assembleQueryString(videoId, channelId) + '">' + item.snippet.title + '</a>\n' +
+                            '      <div class="video-link" onClick=$("#' + videoId + '").submit()">' + item.snippet.title + '</div>\n' +
                             '    </h3>\n' + 
                             '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
                             '  </div>' +
-                            '</div>'
+                            '</div>' +
+                            '</form>'
                         );
                     });
 
@@ -94,7 +107,7 @@
 <body>
     <% include topbar.ejs %>
     <!-- <h1><span id="channelTitle"></span></h1> -->
-    
+
     <div id="videos-list">
     </div>
 

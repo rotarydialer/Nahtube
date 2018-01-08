@@ -247,6 +247,21 @@ router.get('/watch', function(req, res, next) {
 
 });
 
+router.post('/watch', function(req, res, next) {
+  checkLoginAndRedirect(req, res);
+
+  console.log('POST watch handler');
+  console.log(req.body.videoDetailsFull);
+
+  var videoId = req.query.v;
+  var channelId = req.query.c;
+
+  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
+
+  res.render('watch', { title: 'NahTube', videoId: videoId || '' });
+
+});
+
 router.post('/save/:channelId/:username', function(req, res, next) {
   var channelId = req.params.channelId;
   var username = req.params.username;
