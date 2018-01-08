@@ -49,6 +49,10 @@
         margin-left: 50px;
     }
 
+    .channel-title {
+        font-size: 20px;
+    }
+
     #related-videos-list {
         z-index: 1;
         float: right;
@@ -126,7 +130,7 @@
             </div>
 
             <% if (channelTitle) { %>
-                <div id="channel-title"><a href="/youtube/videos/<%= channelId %>"><%= channelTitle %></a></div>
+                <div id="channel-title"><a class="channel-title" href="/youtube/videos/<%= channelId %>"><%= channelTitle %></a></div>
             <% } %>
             
         </div>
