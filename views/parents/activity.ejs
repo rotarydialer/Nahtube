@@ -50,6 +50,7 @@
                     }
                 },
                 { data: 'channel_name' },
+                { data: 'channel_id' },
                 { 
                     data: 'details',
                     render: function (data, type, row) {
@@ -86,7 +87,8 @@
                     action,
                     moment(action_time).tz('America/New_York').format('ha z'),
                     channel_name,
-                    details ? formatDetails(details) : ''
+                    details ? formatDetails(details) : '',
+                    channel_id
                 ]).draw(false);
             });
         });
@@ -130,6 +132,7 @@
                 <th>Action</th>
                 <th>Time</th>
                 <th>Channel</th>
+                <th>Channel ID</th>
                 <th>Details</th>
             </tr>
         </thead>
