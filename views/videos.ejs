@@ -33,8 +33,24 @@
     div.video-content {
 	    font-family: 'Roboto', sans-serif;
         margin-left: 10px;
+        margin-top: 15px;
         float: left;
         word-wrap: break-word;
+    }
+
+    .video-link {
+        font-size: 14px;
+        color: #007bff;
+    }
+
+    .video-link:hover {
+        text-decoration: underline;
+    }
+
+    div.video-meta {
+        font-family: 'Roboto', sans-serif;
+        font-size: 12px;
+        color: #9f9f9f;
     }
 
     </style>
@@ -76,17 +92,18 @@
                         //     '</div>'
                         // );
 
+                        // open watch links via POST
                         $('#videos-list').append(
                             '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
                             '<div class="video-container">' +
-                            '  <input name="videoDetailsFull" type="hidden" value=\'' + JSON.stringify(item) + '\'>' +
+                            '  <input name="videoDetailsFull" class="video-url" type="hidden" value=\'' + JSON.stringify(item) + '\'>' +
                             '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
                             '  </div>\n' +
                             '  <div class="video-content">' + 
-                            '    <h3 class="video-title">' + 
-                            '      <div class="video-link" onClick=$("#' + videoId + '").submit()">' + item.snippet.title + '</div>\n' +
-                            '    </h3>\n' + 
+                            '    <div class="video-title">' + 
+                            '      <div class="video-link" onClick=$("#' + videoId + '").submit()>' + item.snippet.title + '</div>\n' +
+                            '    </div>\n' + 
                             '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
                             '  </div>' +
                             '</div>' +
