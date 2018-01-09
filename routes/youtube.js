@@ -259,7 +259,7 @@ router.post('/watch', function(req, res, next) {
   var channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle || '';
   var videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
 
-  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
+  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}), videoDetailsFull);
 
   res.render('watch', { title: 'NahTube', videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
 

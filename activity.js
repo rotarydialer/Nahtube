@@ -1,5 +1,5 @@
 module.exports = {
-    track: function (action, userId, channelId, details) {
+    track: function (action, userId, channelId, details, detailsFull) {
         if (!userId || !action) {
             console.log('Invalid parameters. ACTIVITY NOT LOGGED');
             return;
@@ -10,13 +10,14 @@ module.exports = {
         console.log(' └─> userId: "%s"', userId);
         channelId ? console.log(' └─> channelId: "%s"', channelId) : '';
         details ? console.log(' └─> details: "%s"', details) : '';
+        detailsFull ? console.log(' └─> detailsFull: "%s"', detailsFull) : '';
 
         (async () => {
             
             const { rows } = await pgpool.query(`
-            INSERT INTO nahtube.user_activity (user_id, action, channel_id, details) 
-            VALUES ($1, $2, $3, $4);`,
-                [userId, action, channelId, details]);
+            INSERT INTO nahtube.user_activity (user_id, action, channel_id, details, details_full) 
+            VALUES ($1, $2, $3, $4, $5);`,
+                [userId, action, channelId, details, detailsFull]);
             if (rows) {
                 console.log('Activity logged to database.');
             } else {
