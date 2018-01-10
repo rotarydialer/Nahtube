@@ -4,10 +4,12 @@
 <head>
   <title><%= title %> Dashboard</title>
 
-  <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
   <script src="/js/jquery-3.2.1.min.js"></script>
 
-  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
+  <!-- bootstrap 3.3 (custom, full) -->
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+  <script src="/js/bootstrap33/bootstrap.min.js"></script>
+
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
@@ -27,7 +29,20 @@
         margin-left: 12px;
     }
 
+    .channel-tile {
+        margin: 10px;
+        padding: 10px;
+        height: 100px;
+        width: 100px;
+        background-color: #fcd8d8;
+    }
+
+    .channel-tile:hover {
+        background-color: #bde1ec;
+    }
+
     .list-title {
+        font-size: 18px;
         font-weight: bold;
         padding: 4px;
     }
@@ -43,10 +58,14 @@
         $.get( "/channels/" + userLoggedIn, function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
-                option = '<div>' + 
-                    ((index+1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' + 
-                    '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
-                    entry.channel_name + '</a> </div>');
+                option = 
+                '<div class="col-md-2 channel-tile">' + 
+                    '<a href="/youtube/videos/' + entry.channel_id + '"><div>' + 
+                    '<div>' +
+                    '   <img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
+                        entry.channel_name + 
+                '   </div></a>' +
+                '</div>';
                 $("#channels-allowed-list").append(option);
             });
         });
@@ -66,10 +85,12 @@
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
         </script>
 
-        <div id="content-container" class="row">
-            <div id="channels-allowed-container" class="col-3 channels-list">
+        <div id="content-container">
+            <div id="channels-allowed-container" class="channels-list">
                 <div class="list-title"><%= user.common_name %>'s Channels:</div>
-                <div id="channels-allowed-list"></div>
+                <div id="channels-allowed-list" class="row">
+
+                </div>
             </div>
 
             <div id="search-results" class="col">
