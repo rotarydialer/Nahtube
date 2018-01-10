@@ -50,3 +50,79 @@ pre {
 	font-weight: 400;
 	line-height: 18.5714px;
 }
+
+
+div.video-thumbnail {
+	font-family: 'Roboto', sans-serif;
+	margin: 10px;
+	float: left;
+}
+
+div.video-container {
+	/* border-style: solid;
+	border-width: 1px; */
+	overflow: hidden;
+}
+
+div.video-content {
+	font-family: 'Roboto', sans-serif;
+	margin-left: 10px;
+	margin-top: 15px;
+	float: left;
+	word-wrap: break-word;
+}
+
+.video-link {
+	font-size: 14px;
+	color: #007bff;
+	cursor: pointer;
+}
+
+.video-link:hover {
+	text-decoration: underline;
+}
+
+div.video-meta {
+	font-family: 'Roboto', sans-serif;
+	font-size: 12px;
+	color: #9f9f9f;
+}
+
+h3.video-title {
+	line-height: 2px;
+}
+
+div.video-meta {
+	font-family: 'Roboto', sans-serif;
+	font-size: 12px;
+	color: #9f9f9f;
+}
+
+div.related-video-container {
+	overflow: hidden;
+}
+
+#player {
+	z-index: 2;
+	margin-left: 20px;
+	margin-right: 10px;
+	margin-top: 3px;
+}
+
+#video-title {
+	margin-left: 50px;
+	font-size: 20px;
+}
+
+#channel-title {
+	margin-left: 50px;
+}
+
+.channel-title {
+	font-size: 14px;
+}
+
+#related-videos-list {
+	z-index: 1;
+	float: right;
+}
