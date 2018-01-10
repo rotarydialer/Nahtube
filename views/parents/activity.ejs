@@ -31,6 +31,9 @@
             },
             columns: [
                 { 
+                    data: 'id'
+                },
+                { 
                     data: 'common_name'
                 },
                 { data: 'action' },
@@ -113,17 +116,17 @@
             ],
             "columnDefs": [
                 { 
-                    "targets": 0,
+                    "targets": [0,1],
                     "width": "5%", 
                     "searchable": false,
                     "orderable": false
                 },
                 { 
-                    "targets": 1,
+                    "targets": [0,1,2],
                     "width": "10%"
                 }
             ],
-            "order": [[ 2, "desc" ]],
+            "order": [[ 3, "desc" ]],
             "lengthMenu": [ [10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"] ],
             "pageLength": 50
         });
@@ -216,6 +219,7 @@
     <table id="datatable-activity" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Action</th>
                 <th>Time</th>
