@@ -30,7 +30,9 @@
                 dataSrc: ''
             },
             columns: [
-                { data: 'common_name' },
+                { 
+                    data: 'common_name'
+                },
                 { data: 'action' },
                 { 
                     data: 'action_time',
@@ -49,31 +51,52 @@
                     }
                 },
                 { 
+                    // catch-all column, kinda
                     // channel name and link
+                    //    ... or ...
+                    // search string
                     className: "dt-center",
                     data: 'details_full',
                     render: function (data, type, row) {
+                        if (row.action == "search") {
+                            return formatDetails(row.details);
+                        }
+
                         return data ? formatChannel(data) : '';
                     }
                 },
                 { 
                     data: 'details',
+                    visible: false,
                     render: function (data, type, row) {
                         return data ? formatDetails(data) : '';
                     }
                 },
                 { 
+                    //video thumbnail and link
                     className: "dt-center",
                     data: 'details_full',
                     render: function (data, type, row) {
-                        if (row.details) {
-                            if (row.details.videoId) {
-                                console.log(' ' + row.details.videoId);
-                            }
-                        }
+                        // if (row.details) {
+                        //     if (row.details.videoId) {
+                        //         console.log(' ' + row.details.videoId);
+                        //     }
+                        // }
 
                         return data ? formatVideo(data, row.details.videoId) : '';
                     }
+                }
+            ],
+            "columnDefs": [
+                { 
+                    "targets": 0,
+                    "width": "5%", 
+                    "searchable": false,
+                    "orderable": false
+                },
+                { 
+                    "targets": 1,
+                    "width": "10%"
                 }
             ],
             "order": [[ 2, "desc" ]],
@@ -174,7 +197,7 @@
                 <th>Name</th>
                 <th>Action</th>
                 <th>Time</th>
-                <th>Channel/Search</th>
+                <th>Channel / Search</th>
                 <th>Details</th>
                 <th>Video</th>
             </tr>
