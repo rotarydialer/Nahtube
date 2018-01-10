@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Activity</title>
 
@@ -49,12 +48,31 @@
                         return data;
                     }
                 },
-                { data: 'channel_name' },
-                { data: 'channel_id' },
+                { 
+                    // channel name and link
+                    className: "dt-center",
+                    data: 'details_full',
+                    render: function (data, type, row) {
+                        return data ? formatChannel(data) : '';
+                    }
+                },
                 { 
                     data: 'details',
                     render: function (data, type, row) {
                         return data ? formatDetails(data) : '';
+                    }
+                },
+                { 
+                    className: "dt-center",
+                    data: 'details_full',
+                    render: function (data, type, row) {
+                        if (row.details) {
+                            if (row.details.videoId) {
+                                console.log(' ' + row.details.videoId);
+                            }
+                        }
+
+                        return data ? formatVideo(data, row.details.videoId) : '';
                     }
                 }
             ],
@@ -64,6 +82,7 @@
         });
     }
 
+    // NOT USED - prefer AJAX load above
     function populateActivityTable(username) {
         var t = $('#datatable-activity').DataTable();
 
@@ -79,16 +98,18 @@
                     action_time,
                     channel_id,
                     channel_name,
-                    details
+                    details,
+                    details_full
                 } = entry;
                 
                 t.row.add([
                     common_name,
                     action,
                     moment(action_time).tz('America/New_York').format('ha z'),
-                    channel_name,
+                    JSON.stringify({"channelName":channel_name, "channelId": channel_id}),
                     details ? formatDetails(details) : '',
-                    channel_id
+                    channel_id,
+                    details_full
                 ]).draw(false);
             });
         });
@@ -99,6 +120,28 @@
         if (details.searchstring) return details.searchstring;
 
         return JSON.stringify(details);
+    }
+
+    function formatVideo(item, videoId) {
+        if (item.snippet) {
+            var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : ''
+            var vidDiv = '<img src="' + item.snippet.thumbnails.default.url + '"> ' + 
+            '<div class="video-link">' + 
+                vidHref +
+                item.snippet.title + 
+            '</a></div>';
+
+            return vidDiv;
+        }
+    }
+
+    function formatChannel(item) {
+        if (item) {
+            var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + item.snippet.channelId + '" target="_blank">' + 
+                item.snippet.channelTitle + '</a></div>';
+
+            return chDiv;
+        }
     }
 
   </script>
@@ -131,9 +174,9 @@
                 <th>Name</th>
                 <th>Action</th>
                 <th>Time</th>
-                <th>Channel</th>
-                <th>Channel ID</th>
+                <th>Channel/Search</th>
                 <th>Details</th>
+                <th>Video</th>
             </tr>
         </thead>
     </table>
