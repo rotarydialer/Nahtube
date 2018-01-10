@@ -62,7 +62,27 @@
                             return formatDetails(row.details);
                         }
 
-                        return data ? formatChannel(data) : '';
+                        if (row.action == "watch video") {
+                            var chName = row.channel_name ? row.channel_name : '';
+
+                            if (!chName && data) {
+                                if (data.snippet) {
+                                    if (data.snippet.channelTitle) {
+                                        chName = '!!! ' +  data.snippet.channelTitle;                                        
+                                    }
+                                }
+                            }
+
+                            chName = !chName ? row.channel_id : chName;
+
+                            return formatChannel(row.channel_id, chName);
+                        }
+
+                        if (row.action == "list videos") {
+                            return formatChannel(row.channel_id, row.channel_name);
+                        }
+                        
+                        return '';
                     }
                 },
                 { 
@@ -162,13 +182,11 @@
         }
     }
 
-    function formatChannel(item) {
-        if (item) {
-            var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + item.snippet.channelId + '" target="_blank">' + 
-                item.snippet.channelTitle + '</a></div>';
+    function formatChannel(channel_id, channel_name) {
+        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
+            channel_name + '</a></div>';
 
-            return chDiv;
-        }
+        return chDiv;
     }
 
   </script>
