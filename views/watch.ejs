@@ -35,40 +35,10 @@
                 $( ".result" ).html( data );
                 $.each(data.items, function(index, entry) {
 
-                    /*
-                    var video_row = 
-                        '<div class="related-video-container">' +
-                        '  <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
-                        '    <div class="video-thumbnail"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
-                        '  </a>\n' +
-                        '  <div class="video-content">' + 
-                        '    <h3 class="video-title">' + 
-                        '      <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' + entry.snippet.title + '</a>\n' +
-                        '    </h3>\n' + 
-                        '    <div class="video-meta">' + entry.snippet.channelTitle + '</div>\n' +
-                        '  </div>' +
-                        '</div>';
-
-                    var tabular_video_row = 
-                        '<div class="related-video-container" class="row">' +
-                        '   <table border=0><tr><td>' +
-                        '       <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
-                        '           <div class="video-thumbnail" class="col"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
-                        '       </a>\n' +
-                        '   </td><td width="100%">' +
-                        '       <div class="video-content col">' + 
-                        '           <h3 class="video-title">' + 
-                        '               <a href="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' + entry.snippet.title + '</a>\n' +
-                        '           </h3>\n' + 
-                        '           <div class="video-meta">' + entry.snippet.channelTitle + '</div>\n' +
-                        '       </div>' +
-                        '   </td></tr></table>' +
-                        '</div>'; */
-
                     var video_row_post = 
                         '<form id= "' + entry.id.videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(entry.id.videoId, entry.snippet.channelId) + '">' +
                         '<div class="related-video-container" class="row">' +
-                        '  <input name="videoDetailsFull" type="hidden" value=\'' + JSON.stringify(entry) + '\'>' +
+                        '  <input id="' + entry.id.videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
                         '   <table border=0><tr><td>' +
                             '  <div class="video-link" onClick=$("#' + entry.id.videoId + '").submit()>' +
                             '    <div class="video-thumbnail"><img src="' + entry.snippet.thumbnails.default.url + '"></div>\n' +
@@ -85,6 +55,8 @@
                         '</form>';
 
                     $("#related-videos-list").append(video_row_post);
+
+                    $('#' + entry.id.videoId + '-json').val(JSON.stringify(entry)).html();
                 });
             });
         }
