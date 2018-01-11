@@ -5,6 +5,10 @@
 
   <script src="/js/jquery-3.2.1.min.js"></script>
 
+  <!-- bootstrap 3.3 (custom, full) -->
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+  <script src="/js/bootstrap33/bootstrap.min.js"></script>
+
   <script src="/js/moment.min.js"></script>
   <script src="/js/moment-timezone-with-data.min.js"></script>
 
@@ -14,6 +18,12 @@
 
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+  <style>
+      .glyphicon {
+            font-size: 24px;
+        }
+  </style>
 
   <script>
 
@@ -30,14 +40,16 @@
                 dataSrc: ''
             },
             columns: [
-                { 
+                { //0
                     data: 'id'
                 },
-                { 
+                { //1 
                     data: 'common_name'
                 },
-                { data: 'action' },
-                { 
+                { //2
+                    data: 'action' 
+                },
+                { //3
                     data: 'action_time',
                     render: function (data, type, row) {
                         // If display or filter data is requested, format the date
@@ -53,11 +65,8 @@
                         return data;
                     }
                 },
-                { 
-                    // catch-all column, kinda
+                { //4
                     // channel name and link
-                    //    ... or ...
-                    // search string
                     className: "dt-center",
                     data: 'details_full',
                     render: function (data, type, row) {
@@ -67,28 +76,31 @@
 
                         if (row.action == "watch video") {
                             var chName = row.channel_name ? row.channel_name : '';
+                            var isAllowedChannel = true;
 
                             if (!chName && data) {
+                                isAllowedChannel = false; //if there's no channel name, that means it's not in the allowed_channels table
+
                                 if (data.snippet) {
                                     if (data.snippet.channelTitle) {
-                                        chName = '!!! ' +  data.snippet.channelTitle;                                        
+                                        chName = data.snippet.channelTitle;                                        
                                     }
                                 }
                             }
 
                             chName = !chName ? row.channel_id : chName;
 
-                            return formatChannel(row.channel_id, chName);
+                            return formatChannel(row.channel_id, chName, isAllowedChannel);
                         }
 
                         if (row.action == "list videos") {
-                            return formatChannel(row.channel_id, row.channel_name);
+                            return formatChannel(row.channel_id, row.channel_name, true);
                         }
                         
                         return '';
                     }
                 },
-                { 
+                { //5
                     data: 'details',
                     visible: false,
                     render: function (data, type, row) {
@@ -99,16 +111,23 @@
                         return data;
                     }
                 },
-                { 
+                { //6
+                    // search string
+                    //className: "dt-center",
+                    data: 'details',
+                    render: function (data, type, row) {
+                        if (row.action == "search") {
+                            return formatDetails(data);
+                        }
+
+                        return '';
+                    }
+                },
+                { //7
                     //video thumbnail and link
                     className: "dt-center",
                     data: 'details_full',
                     render: function (data, type, row) {
-                        // if (row.details) {
-                        //     if (row.details.videoId) {
-                        //         console.log(' ' + row.details.videoId);
-                        //     }
-                        // }
 
                         return data ? formatVideo(data, row.details.videoId) : '';
                     }
@@ -185,9 +204,14 @@
         }
     }
 
-    function formatChannel(channel_id, channel_name) {
-        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
-            channel_name + '</a></div>';
+    function formatChannel(channel_id, channel_name, isAllowed) {
+        var addCh = !isAllowed ? '<span class="glyphicon glyphicon-plus"></span>' : '';
+        var chDiv = 
+            '<div>' +
+                addCh +
+                '<a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
+            channel_name + 
+            '</a></div>';
 
         return chDiv;
     }
@@ -223,8 +247,9 @@
                 <th>Name</th>
                 <th>Action</th>
                 <th>Time</th>
-                <th>Channel / Search</th>
+                <th>Channel</th>
                 <th>Details</th>
+                <th>Search</th>
                 <th>Video</th>
             </tr>
         </thead>
