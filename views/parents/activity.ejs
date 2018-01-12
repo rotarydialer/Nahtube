@@ -217,15 +217,21 @@
         return (videoId && videoId != 'undefined') ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' + videoId + '</a>' : '<b>undefined</b>';
     }
 
-    function formatChannel(channel_id, channel_name) {
-        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
+    function formatChannel(channelId, channel_name) {
+        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channelId + '" target="_blank">' + 
             channel_name + '</a></div>';
         return chDiv;
     }
 
-    function formatChannelWithDibbles(channel_id, channel_name, isAllowed) {
-        var addCh = (!isAllowed && channel_id) ? '<span class="glyphicon glyphicon-plus"></span>' : ' ';
-        var chLink = channel_id ? '<a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' : '';
+    function formatChannelWithDibbles(channelId, channel_name, isAllowed) {
+        var addCh = '';
+        if (!isAllowed && channelId) { 
+            addCh = 
+                '<form id= "channelAdd-' + channelId + '" method="POST" action="/youtube/save/' + channelId + '/' + $('#user-select').val() + '">' +
+                '   <span class="glyphicon glyphicon-plus" onClick=$("#channelAdd-' + channelId + '").submit()></span>'
+                '</form>'
+        }
+        var chLink = channelId ? '<a class="video-link" href="https://www.youtube.com/channel/' + channelId + '" target="_blank">' : '';
 
         var chDiv = 
             '<div>' +
