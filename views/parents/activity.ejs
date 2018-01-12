@@ -68,35 +68,31 @@
                 { //4
                     // channel name and link
                     className: "dt-center",
-                    data: 'details_full',
+                    data: 'details',
                     render: function (data, type, row) {
-                        if (row.action == "search") {
-                            return formatDetails(row.details);
-                        }
-
                         if (row.action == "watch video") {
-                            var chName = row.channel_name ? row.channel_name : '';
+                            if (row.channel_id == 'UCVQ9S8LoggEepxMYDiRpeeg') {
+                                console.log(row.details_full.snippet.channelTitle);
+                            }
                             var isAllowedChannel = true;
 
-                            if (!chName && data) {
-                                isAllowedChannel = false; //if there's no channel name, that means it's not in the allowed_channels table
+                            var chName = row.channel_name ? row.channel_name : '';
 
-                                if (data.snippet) {
-                                    if (data.snippet.channelTitle) {
-                                        chName = data.snippet.channelTitle;                                        
-                                    }
-                                }
+                            if (!chName && data) {
+                                // TODO: more robust actual check? Include in JSON?
+                                isAllowedChannel = false; //GEFN: if there's no channel name, that means it's not in the allowed_channels table
+                                chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
                             }
 
                             chName = !chName ? row.channel_id : chName;
-
-                            return formatChannel(row.channel_id, chName, isAllowedChannel);
+                            chName = !chName ? 'Not found' : chName;
+                            return formatChannelWithDibbles(row.channel_id, chName, isAllowedChannel);
                         }
 
                         if (row.action == "list videos") {
-                            return formatChannel(row.channel_id, row.channel_name, true);
+                            return formatChannelWithDibbles(row.channel_id, row.channel_name, true);
                         }
-                        
+
                         return '';
                     }
                 },
@@ -131,6 +127,10 @@
 
                         return data ? formatVideo(data, row.details.videoId) : '';
                     }
+                },
+                { //8
+                    visible: false,
+                    data: 'channel_name'
                 }
             ],
             "columnDefs": [
@@ -204,12 +204,20 @@
         }
     }
 
-    function formatChannel(channel_id, channel_name, isAllowed) {
-        var addCh = !isAllowed ? '<span class="glyphicon glyphicon-plus"></span>' : '';
+    function formatChannel(channel_id, channel_name) {
+        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
+            channel_name + '</a></div>';
+        return chDiv;
+    }
+
+    function formatChannelWithDibbles(channel_id, channel_name, isAllowed) {
+        var addCh = (!isAllowed && channel_id) ? '<span class="glyphicon glyphicon-plus"></span>' : ' ';
+        var chLink = channel_id ? '<a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' : '';
+
         var chDiv = 
             '<div>' +
                 addCh +
-                '<a class="video-link" href="https://www.youtube.com/channel/' + channel_id + '" target="_blank">' + 
+                chLink + 
             channel_name + 
             '</a></div>';
 
@@ -251,6 +259,7 @@
                 <th>Details</th>
                 <th>Search</th>
                 <th>Video</th>
+                <th>Channel Name</th>
             </tr>
         </thead>
     </table>
