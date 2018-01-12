@@ -127,7 +127,14 @@
                     data: 'details_full',
                     render: function (data, type, row) {
 
-                        return data ? formatVideo(data, row.details.videoId) : '';
+                        if (data) return formatVideo(data, row.details.videoId);
+                        if (row) {
+                            if (row.details) {
+                                return row.details.videoId ? formatVideoIdLink(row.details.videoId) : '';
+                            }
+                        }
+
+                        return '';
                     }
                 },
                 { //8
@@ -204,6 +211,10 @@
 
             return vidDiv;
         }
+    }
+
+    function formatVideoIdLink(videoId) {
+        return (videoId && videoId != 'undefined') ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' + videoId + '</a>' : '<b>undefined</b>';
     }
 
     function formatChannel(channel_id, channel_name) {
