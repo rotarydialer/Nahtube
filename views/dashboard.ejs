@@ -80,11 +80,20 @@
     }
     
     .message-video-container {
-        margin-top: 50px;
+        margin-top: 40px;
     }
 
     .message-video-thumbnail {
         text-align: center;
+    }
+
+    .caption {
+        margin-top: 1px;
+    }
+
+    .avatar-message {
+        margin: 4px;
+        float: left;
     }
 
   </style>
@@ -196,7 +205,7 @@
                 message = '<div class="row message">' +
                         '  <div class="col">' +
                         '    <div class="thumbnail message-thumbnail">' +
-                        '      <div class="avatar"><img src="/images/avatars/' + entry.from + '-avatar-md.png"></div>' +
+                        '      <div class="avatar-message"><img src="/images/avatars/' + entry.from + '-avatar-md.png"></div>' +
                         '      <div class="caption">' +
                         '        <div class="message message-subject">Hi Hannah!</div>' +
                         '        <p class="message-body">You will like this video. I love you!</p>' +
