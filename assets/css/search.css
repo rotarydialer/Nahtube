@@ -9,8 +9,10 @@
 }
 #search-results {
     margin-left: 10px;
-    display:block;
-    float:left;
+    min-width: 70px;
+    width: 400px;
+    display: block;
+    float: left;
 }
 #search-text {
     background: transparent;
