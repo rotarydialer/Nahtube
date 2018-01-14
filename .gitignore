@@ -66,3 +66,6 @@ typings/
 # dotenv environment variables file
 .env
 
+assets/images/tvws.svg
+database/db_notes.md
+database/dml-user-init.sql
