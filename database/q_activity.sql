@@ -13,3 +13,16 @@ FROM nahtube.user_activity
 WHERE date_trunc('day', action_time) >= current_date - INTERVAL '1 DAY' * 7
 GROUP BY action, dt
 ORDER BY action, dt DESC;
+
+-- messages to a given user in the last week
+SELECT users_from.username, users_to.username as to, 
+msg.message_time, msg.message_subject, msg.message_body,
+msg.video_id, msg.details_full
+FROM nahtube.user_messages msg
+   INNER JOIN nahtube.users users_from
+	ON msg.from_id = users_from.id
+   INNER JOIN nahtube.users users_to
+	ON msg.to_id = users_to.id
+WHERE users_to.username = 'daughter'
+AND msg.message_time >= DATE(NOW()) - INTERVAL '1 DAY' * 7
+ORDER BY msg.message_time DESC;
