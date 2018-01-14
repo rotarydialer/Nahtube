@@ -180,4 +180,66 @@ router.get('/created/:daysAgo', function(req, res, next) {
  
  });
 
+ router.get('/messages/to/:toUsername/:daysAgo?', function(req, res, next) {
+   var toUsername = req.params.toUsername;
+   var daysAgo = req.params.daysAgo;
+
+      (async () => {
+
+       if (daysAgo) {
+
+          const { rows } = await pgpool.query(`SELECT users_from.username, users_to.username as to, 
+            msg.message_time, msg.message_subject, msg.message_body, msg.video_id, msg.details_full
+            FROM nahtube.user_messages msg
+              INNER JOIN nahtube.users users_from
+              ON msg.from_id = users_from.id
+              INNER JOIN nahtube.users users_to
+              ON msg.to_id = users_to.id
+            WHERE users_to.username = $1
+            AND msg.message_time >= DATE(NOW()) - INTERVAL '1 DAY' * $2
+            ORDER BY msg.message_time DESC;`, 
+            [toUsername, daysAgo]);
+    
+          if (rows.length) {
+            console.log('Returning details for messages to ' + toUsername + ' sent in the last ' + [daysAgo] + ' days. Total: ' + rows.length);
+            return res.send(rows);
+          } else {
+            console.log('No messages to ' + toUsername + ' sent in the last ' + [daysAgo] + ' days.');
+            res.status(200);
+            return res.send();
+          }
+
+        } else {
+
+          const { rows } = await pgpool.query(`SELECT users_from.username, users_to.username as to, 
+            msg.message_time, msg.message_subject, msg.message_body, msg.video_id, msg.details_full
+            FROM nahtube.user_messages msg
+              INNER JOIN nahtube.users users_from
+              ON msg.from_id = users_from.id
+              INNER JOIN nahtube.users users_to
+              ON msg.to_id = users_to.id
+            WHERE users_to.username = $1
+            ORDER BY msg.message_time DESC;`, 
+            [toUsername]);
+    
+          if (rows.length) {
+            console.log('Returning details for messages to ' + toUsername + '. Total: ' + rows.length);
+            return res.send(rows);
+          } else {
+            console.log('No messages to ' + toUsername + '.');
+            res.status(200);
+            return res.send();
+          }
+          
+        }
+                      
+      })().catch(e => setImmediate(() => { 
+        //throw e 
+        res.status(500);
+        console.log(e);
+        return res.send('Error: ' + e.message);
+      } ))
+      
+  });
+
 module.exports = router;
