@@ -171,3 +171,32 @@ WITH (
 );
 ALTER TABLE nahtube.user_activity
   OWNER TO postgres;
+
+
+-- MESSAGES ---------------------------
+
+-- Table: nahtube.user_messages
+
+CREATE TABLE nahtube.user_messages
+(
+  id serial NOT NULL,
+  from_id integer NOT NULL,
+  to_id integer NOT NULL,
+  message_subject character varying(128),
+  message_body jsonb,
+  channel_id character varying(64),
+  video_id character varying(64),
+  details_full jsonb,
+  CONSTRAINT user_messages_pkey PRIMARY KEY (id),
+  CONSTRAINT user_messages_fromuser_fkey FOREIGN KEY (from_id)
+      REFERENCES nahtube.users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT user_messages_touser_fkey FOREIGN KEY (to_id)
+      REFERENCES nahtube.users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE nahtube.user_messages
+  OWNER TO postgres;
