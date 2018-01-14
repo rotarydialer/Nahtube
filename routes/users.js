@@ -188,7 +188,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
 
        if (daysAgo) {
 
-          const { rows } = await pgpool.query(`SELECT users_from.username, users_to.username as to, 
+          const { rows } = await pgpool.query(`SELECT users_from.username as from, users_to.username as to, 
             msg.message_time, msg.message_subject, msg.message_body, msg.video_id, msg.details_full
             FROM nahtube.user_messages msg
               INNER JOIN nahtube.users users_from
@@ -211,7 +211,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
 
         } else {
 
-          const { rows } = await pgpool.query(`SELECT users_from.username, users_to.username as to, 
+          const { rows } = await pgpool.query(`SELECT users_from.username as from, users_to.username as to, 
             msg.message_time, msg.message_subject, msg.message_body, msg.video_id, msg.details_full
             FROM nahtube.user_messages msg
               INNER JOIN nahtube.users users_from
