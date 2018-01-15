@@ -14,6 +14,25 @@ WHERE date_trunc('day', action_time) >= current_date - INTERVAL '1 DAY' * 7
 GROUP BY action, dt
 ORDER BY action, dt DESC;
 
+-- Summary report: videos watched by channel, by day, over the past week
+SELECT DATE(date_trunc('day', act.action_time)) as dt, ch.channel_name, count(act.action) as ch_count
+FROM nahtube.user_activity act
+   INNER JOIN nahtube.channels_allowed ch
+      ON ch.channel_id = act.channel_id
+WHERE action = 'watch video'
+AND date_trunc('day', act.action_time) >= current_date - INTERVAL '1 DAY' * 7
+GROUP BY dt, ch.channel_name
+ORDER BY dt DESC, ch_count DESC;
+
+-- Summary: most watched channels over all time
+SELECT ch.channel_name, count(act.action) as ch_count
+FROM nahtube.user_activity act
+   INNER JOIN nahtube.channels_allowed ch
+      ON ch.channel_id = act.channel_id
+WHERE action = 'watch video'
+GROUP BY ch.channel_name
+ORDER BY ch_count DESC;
+
 -- messages to a given user in the last week
 SELECT users_from.username, users_to.username as to, 
 msg.message_time, msg.message_subject, msg.message_body,
