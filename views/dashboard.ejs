@@ -135,7 +135,7 @@
 
         // AJAX call to populate the Messages div above
         // NOTE: the "/7" parameter is the number of days, meant to show messages sent in the last week.
-        $.get( "/users/messages/to/" + userLoggedIn + "/0", function( data ) {
+        $.get( "/users/messages/to/" + userLoggedIn + "/3", function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 var videoId;
