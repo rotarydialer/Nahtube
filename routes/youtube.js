@@ -191,7 +191,7 @@ router.get('/videos/:channelId.json', function(req, res, next) {
         auth: config.youtube.key,
         part: 'snippet,contentDetails',
         playlistId: playlistId,
-        maxResults: 30
+        maxResults: 50
       };
 
       youtube_base.playlistItems.list(playlistparams, function(err, response) {
@@ -347,7 +347,7 @@ router.get('/related/:videoId', function(req, res, next) {
     relatedToVideoId: videoId,
     type: 'video',
     safeSearch: 'strict',
-    maxResults: 30
+    maxResults: 50
   };
 
   youtube_base.search.list(searchparams, function(err, response) {
