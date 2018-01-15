@@ -135,7 +135,7 @@
 
         // AJAX call to populate the Messages div above
         // NOTE: the "/7" parameter is the number of days, meant to show messages sent in the last week.
-        $.get( "/users/messages/to/" + userLoggedIn + "/7", function( data ) {
+        $.get( "/users/messages/to/" + userLoggedIn + "/0", function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 var videoId;
@@ -145,8 +145,8 @@
                 var channelTitle;
 
                 //verify all the JSON values so as not to break the page
-                if (entry.videoId) {
-                    videoId = entry.videoId;
+                if (entry.video_id) {
+                    videoId = entry.video_id;
                 }
 
                 if (entry.channelId) {
@@ -202,13 +202,16 @@
                     '</div>';
                 }
 
+                var msgSubj = entry.message_subject ? entry.message_subject : '';
+                var msgBody = entry.message_body ? entry.message_body.messageBody : '';
+
                 message = '<div class="row message">' +
                         '  <div class="col">' +
                         '    <div class="thumbnail message-thumbnail">' +
                         '      <div class="avatar-message"><img src="/images/avatars/' + entry.from + '-avatar-md.png"></div>' +
                         '      <div class="caption">' +
-                        '        <div class="message message-subject">Hi Hannah!</div>' +
-                        '        <p class="message-body">You will like this video. I love you!</p>' +
+                        '        <div class="message message-subject">' + msgSubj + '</div>' +
+                        '        <p class="message-body">' + msgBody + '</p>' +
                        // '        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>' +
                         '      </div>' +
                                 videoContainer +
