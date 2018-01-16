@@ -30,6 +30,7 @@ router.get('/role/:role', function(req, res, next) {
             SELECT id, username, common_name, roles 
             FROM nahtube.users
             WHERE roles @> ARRAY[$1]::varchar[]
+            AND is_active
             ORDER BY common_name;`, [role]);
 
     if (rows.length) {
