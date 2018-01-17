@@ -44,6 +44,9 @@ app.use(function(req, res, next) {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// location of React elements (webpacked)
+app.use('/dist', express.static(__dirname + '/dist'));
+
 // static routes for images, css, etc.
 app.use('/images', express.static(__dirname + '/assets/images'));
 app.use('/css', express.static(__dirname + '/assets/css'));
