@@ -1,5 +1,8 @@
 assets/images/avatars/
 
+# Compiled code
+dist/
+
 # Environment
 .env
 client_secret.json
