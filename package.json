@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "docker-postgres": "docker run --name nahtube-db -p 5432:5432 -e POSTGRES_PASSWORD=nownowdontreallyusethis -d nah_pg:0.1",
-    "build": "webpack ./src/checkit.js ./dist/checkit.bundle.js"
+    "build": "webpack"
   },
   "dependencies": {
     "@types/react": "^16.0.34",
