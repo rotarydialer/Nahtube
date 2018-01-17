@@ -24,6 +24,15 @@ AND date_trunc('day', act.action_time) >= current_date - INTERVAL '1 DAY' * 7
 GROUP BY dt, ch.channel_name
 ORDER BY dt DESC, ch_count DESC;
 
+-- Summary: same as above, but include even channels that have not been added
+SELECT act.channel_id, ch.channel_name, count(act.action) as ch_count
+FROM nahtube.user_activity act
+   LEFT JOIN nahtube.channels_allowed ch
+      ON ch.channel_id = act.channel_id
+WHERE action = 'watch video'
+GROUP BY act.channel_id, ch.channel_name
+ORDER BY ch_count DESC;
+
 -- Summary: most watched channels over all time
 SELECT ch.channel_name, count(act.action) as ch_count
 FROM nahtube.user_activity act
