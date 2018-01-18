@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Activity</title>
+
+  <script src="/js/jquery-3.2.1.min.js"></script>
+
+  <!-- bootstrap 3.3 (custom, full) -->
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+  <script src="/js/bootstrap33/bootstrap.min.js"></script>
+
+  <script src="/js/moment.min.js"></script>
+  <script src="/js/moment-timezone-with-data.min.js"></script>
+
+    <!-- DataTables: https://datatables.net -->
+    <link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="/js/jquery.dataTables.min.js"></script>
+
+  <link href="/css/google-font-Roboto.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+  <style>
+      .glyphicon {
+            font-size: 18px;
+            margin: 5px;
+            vertical-align: sub;
+        }
+  </style>
+
+  <script>
+
+    function populateActivityTableAjax(username) {
+        console.log('AJAX populating activity table for "%s".', username);
+        
+        var existingtable = $('#datatable-activity').DataTable();
+ 
+        if (existingtable) existingtable.destroy();
+        
+        var t = $('#datatable-activity').DataTable({
+            ajax: {
+                url: '/parents/activity/type/watch%20video.json',
+                dataSrc: ''
+            },
+            columns: [
+                { 
+                    data: 'id'
+                },
+                { 
+                    data: 'common_name'
+                },
+                { 
+                    data: 'action_time',
+                    render: function (data, type, row) {
+                        // If display or filter data is requested, format the date
+                        if ( type === 'display' || type === 'filter' ) {
+                            //console.log(' 1 --> momented: ' + moment(data).format('MM/DD/YY h:mma dddd'));
+                            //console.log(' 1 --> tzmented: ' + moment(data).tz('Pacific/Honolulu').format('MM/DD/YY h:mma dddd')); // something to do with time zones between the app and db if on different boxes
+                            //return moment(data).tz('America/New_York').format('MM/DD/YY h:mma dddd');
+                            return moment(data).format('MM/DD/YY h:mma dddd');
+                        }
+
+                        // Otherwise the data type requested (`type`) is type detection or
+                        // sorting data, so just return the unaltered source data
+                        return data;
+                    }
+                },
+                { 
+                    // channel name and link
+                    className: "dt-center",
+                    data: 'details',
+                    render: function (data, type, row) {
+                        if (row.action == "watch video") {
+                            if (row.channel_id == 'UCVQ9S8LoggEepxMYDiRpeeg') {
+                                console.log(row.details_full.snippet.channelTitle);
+                            }
+                            var isAllowedChannel = true;
+
+                            var chName = row.channel_name ? row.channel_name : '';
+
+                            if (!chName && data) {
+                                // TODO: more robust actual check? Include in JSON?
+                                isAllowedChannel = false; //GEFN: if there's no channel name, that means it's not in the allowed_channels table
+                                chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
+                            }
+
+                            chName = !chName ? row.channel_id : chName;
+                            chName = !chName ? 'Not found' : chName;
+                            return formatChannelWithDibbles(row.channel_id, chName, isAllowedChannel);
+                        }
+
+                        if (row.action == "list videos") {
+                            return formatChannelWithDibbles(row.channel_id, row.channel_name, true);
+                        }
+
+                        return '';
+                    }
+                },
+                {
+                    data: 'details',
+                    visible: false,
+                    render: function (data, type, row) {
+                        if ( type === 'display' || type === 'filter' ) {
+                            return data ? formatDetails(data) : '';
+                        }
+
+                        return data;
+                    }
+                },
+                {
+                    //video thumbnail and link
+                    className: "dt-center",
+                    data: 'details_full',
+                    render: function (data, type, row) {
+
+                        if (data) return formatVideo(data, row.details.videoId);
+                        if (row) {
+                            if (row.details) {
+                                return row.details.videoId ? formatVideoIdLink(row.details.videoId) : '';
+                            }
+                        }
+
+                        return '';
+                    }
+                },
+                {
+                    visible: false,
+                    data: 'channel_name'
+                }
+            ],
+            "columnDefs": [
+                { 
+                    "targets": [0,1],
+                    "width": "5%", 
+                    "searchable": false,
+                    "orderable": false
+                },
+                { 
+                    "targets": [0,1],
+                    "width": "10%"
+                }
+            ],
+            "order": [[ 2, "desc" ]],
+            "lengthMenu": [ [10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"] ],
+            "pageLength": 50
+        });
+    }
+
+    function formatDetails(details) {
+        if (details.videoId) return '<a href="https://www.youtube.com/watch?v=' + details.videoId + '" target="_blank"">' + details.videoId + '</a>';
+        if (details.searchstring) return details.searchstring;
+
+        return JSON.stringify(details);
+    }
+
+    function formatVideo(item, videoId) {
+        if (item.snippet) {
+            var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : ''
+            var vidDiv = '<img src="' + item.snippet.thumbnails.default.url + '"> ' + 
+            '<div class="video-link">' + 
+                vidHref +
+                item.snippet.title + 
+            '</a></div>';
+
+            return vidDiv;
+        }
+    }
+
+    function formatVideoIdLink(videoId) {
+        return (videoId && videoId != 'undefined') ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' + videoId + '</a>' : '<b>undefined</b>';
+    }
+
+    function formatChannel(channelId, channel_name) {
+        var chDiv = '<div><a class="video-link" href="https://www.youtube.com/channel/' + channelId + '" target="_blank">' + 
+            channel_name + '</a></div>';
+        return chDiv;
+    }
+
+    function formatChannelWithDibbles(channelId, channel_name, isAllowed) {
+        var addCh = '';
+        if (!isAllowed && channelId) { 
+            addCh = 
+                '<form id= "channelAdd-' + channelId + '" method="POST" action="/youtube/save/' + channelId + '/' + $('#user-select').val() + '">' +
+                '   <span class="glyphicon glyphicon-plus" onClick=$("#channelAdd-' + channelId + '").submit()></span>'
+                '</form>'
+        }
+        var chLink = channelId ? '<a class="video-link" href="https://www.youtube.com/channel/' + channelId + '" target="_blank">' : '';
+
+        var chDiv = 
+            '<div>' +
+                addCh +
+                chLink + 
+            channel_name + 
+            '</a></div>';
+
+        return chDiv;
+    }
+
+  </script>
+</head>
+
+<body>
+    <!-- TODO: restore login check -->
+
+        <div id="user-select-container">
+            <select id="user-select"></select>
+            <!-- <select id="user-select" class="selectpicker"></select> -->
+            <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
+        </div>
+
+    <script>
+        // AJAX call to populate the user-select field above
+        $.get( "/users/role/child", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+                $("#user-select").append(option);
+            });
+        });
+    </script>
+
+    <table id="datatable-activity" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Channel</th>
+                <th>Details</th>
+                <th>Video</th>
+                <th>Channel Name</th>
+            </tr>
+        </thead>
+    </table>
+  
+</body>
+
+</html>
