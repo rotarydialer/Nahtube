@@ -134,8 +134,8 @@
         console.log('Fetching messages for ' + userLoggedIn);
 
         // AJAX call to populate the Messages div above
-        // NOTE: the "/7" parameter is the number of days, meant to show messages sent in the last week.
-        $.get( "/users/messages/to/" + userLoggedIn + "/3", function( data ) {
+        // NOTE: the "/14" parameter is the number of days, meant to show messages sent in the last 2 weeks.
+        $.get( "/users/messages/to/" + userLoggedIn + "/14", function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 var videoId;
