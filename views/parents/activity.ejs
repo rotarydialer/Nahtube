@@ -73,9 +73,6 @@
                     data: 'details',
                     render: function (data, type, row) {
                         if (row.action == "watch video") {
-                            if (row.channel_id == 'UCVQ9S8LoggEepxMYDiRpeeg') {
-                                console.log(row.details_full.snippet.channelTitle);
-                            }
                             var isAllowedChannel = true;
 
                             var chName = row.channel_name ? row.channel_name : '';
@@ -83,7 +80,16 @@
                             if (!chName && data) {
                                 // TODO: more robust actual check? Include in JSON?
                                 isAllowedChannel = false; //GEFN: if there's no channel name, that means it's not in the allowed_channels table
-                                chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
+                                                                
+                                if (!row.channel_name && row.details_full) {
+                                    if (row.details_full.snippet) {
+                                        if (row.details_full.snippet.channelTitle) {
+                                            chName = row.details_full.snippet.channelTitle;
+                                        }
+                                    }
+                                } else {
+                                    chName = row.channel_name;
+                                }
                             }
 
                             chName = !chName ? row.channel_id : chName;
@@ -201,16 +207,19 @@
     }
 
     function formatVideo(item, videoId) {
+        var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : '';
+
         if (item.snippet) {
-            var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : ''
             var vidDiv = '<img src="' + item.snippet.thumbnails.default.url + '"> ' + 
             '<div class="video-link">' + 
                 vidHref +
-                item.snippet.title + 
+                (item.snippet.title ? item.snippet.title : videoId) + 
             '</a></div>';
 
             return vidDiv;
         }
+
+        return vidHref + videoId + '</a>';
     }
 
     function formatVideoIdLink(videoId) {
