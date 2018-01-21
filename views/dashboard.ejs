@@ -59,6 +59,20 @@
         padding-top:calc(5%);
     }
 
+    .sort-buttons-container {
+        float: left;
+        margin-top: 7px;
+        margin-left: 10px;
+    }
+
+    .sort-button {
+        font-size: 10px;
+        color: #d1d1d1;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
     #messages-container {
         min-width: 360px;
         width: 430px;
@@ -116,6 +130,10 @@
                 channel = 
                 //'<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">' + 
                 '<div>' +
+                        '<div class="sort-buttons-container">' +
+                            '<div class="sort-button glyphicon glyphicon-menu-up"></div>' +
+                            '<div class="sort-button glyphicon glyphicon-menu-down"></div>' +
+                        '</div>' +
                     '<div class="dummy"><a href="/youtube/videos/' + entry.channel_id + '">' + 
                     '<div class="thumbnail">' +
                     //'   <img src="' + entry.channel_data.snippet.thumbnails.medium.url + '" align="middle" width="140" height="140"> ' +
