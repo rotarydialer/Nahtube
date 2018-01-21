@@ -4,7 +4,7 @@ FROM nahtube.user_activity act
 	ON act.user_id = users.id
    LEFT JOIN nahtube.channels_allowed ch
 	ON act.channel_id = ch.channel_id
-WHERE act.action_time >= '2017-12-28'
+WHERE act.action_time >= DATE(NOW()) - INTERVAL '1 DAY' * 3
 ORDER BY action_time;
 
 -- roll-up report of activity by type over the past week
