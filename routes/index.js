@@ -102,9 +102,22 @@ router.post('/login', function(req, res, next) {
     return res.send('Error: ' + e.message);
     } 
   ));
+});
 
+router.post('/logout', function(req, res, next) {
+  activity.track('logout', req.session.user.id);
+  //req.logout();
+  delete req.user;
+  req.session.destroy(function (err) {
+    if (err) { 
+      return next(err); 
+    }
+    // The response should indicate that the user is no longer authenticated.
+    //return res.send({ authenticated: req.isAuthenticated() });
 
-
+    // let the home route handle the login or whatever
+    return res.redirect('/login');
+  });
 });
 
 module.exports = router;
