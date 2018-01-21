@@ -27,14 +27,26 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// session -- using memory storage
-// look into postgres-based session storage
-// TODO: move secret to .env
+// store session info in postgres
+var pg = require('pg')
+  , session = require('express-session')
+  , pgSession = require('connect-pg-simple')(session);
+ 
+var pgpool = new pg.Pool({
+    connectionString: config.database.connectionString
+});
+ 
 app.use(session({
+  store: new pgSession({
+    pool : pgpool,
+    tableName : 'session'
+  }),
   secret: config.session.secret,
-  saveUninitialized: false,
-  resave: false
+  resave: false,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days 
 }));
+
+global.pgpool = pgpool;
 
 // middleware to make 'user' available to all templates
 app.use(function(req, res, next) {

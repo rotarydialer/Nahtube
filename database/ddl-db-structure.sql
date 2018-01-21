@@ -202,3 +202,16 @@ WITH (
 );
 ALTER TABLE nahtube.user_messages
   OWNER TO postgres;
+
+
+-- SESSION ---------------------------
+-- Used by npm package connect-pg-simple (https://www.npmjs.com/package/connect-pg-simple)
+
+-- Table: public.session
+CREATE TABLE "session" (
+  "sid" varchar NOT NULL COLLATE "default",
+	"sess" json NOT NULL,
+	"expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
