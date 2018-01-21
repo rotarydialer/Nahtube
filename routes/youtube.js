@@ -256,8 +256,14 @@ router.post('/watch', function(req, res, next) {
   var videoId = req.query.v;
   var channelId = req.query.c || '';
   var videoDetailsFull = req.body.videoDetailsFull || '';
-  var channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle || '';
-  var videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+  var channelTitle = '';
+  var videoTitle = '';
+  if (req.body) {
+    if (req.body.videoDetailsFull && req.body.videoDetailsFull != '{}') {
+      channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle;
+      videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+    }
+  }
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}), videoDetailsFull);
 
