@@ -31,7 +31,7 @@ app.use(cookieParser());
 // look into postgres-based session storage
 // TODO: move secret to .env
 app.use(session({
-  secret: "immaputthisonmorelinesilikemoarlinesmorelinesmoreclarityialwayssay",
+  secret: config.session.secret,
   saveUninitialized: false,
   resave: false
 }));
