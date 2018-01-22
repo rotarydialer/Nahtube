@@ -45,12 +45,12 @@ router.get('/:username', function(req, res, next) {
   
   (async () => {
       const { rows } = await pgpool.query(`
-        SELECT u.username, ch.channel_name, ch.channel_id, ch.channel_data
+        SELECT u.username, ch.sort, ch.id, ch.channel_name, ch.channel_id, ch.channel_data
         FROM nahtube.channels_allowed ch
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id
         WHERE u.username = $1
-        ORDER BY u.username, ch.id`, [username]);
+        ORDER BY u.username, ch.sort, ch.id`, [username]);
 
       if (rows.length) {
         console.log('Returning channels for "%s".', username);
