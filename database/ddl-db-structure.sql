@@ -123,6 +123,7 @@ ALTER TABLE nahtube.user_roles
 CREATE TABLE nahtube.channels_allowed
 (
   id serial NOT NULL,
+  sort integer DEFAULT 9999,
   channel_id character varying(64) NOT NULL,
   user_id integer NOT NULL,
   channel_name character varying(128) NOT NULL,
