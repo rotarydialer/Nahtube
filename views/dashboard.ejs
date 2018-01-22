@@ -121,27 +121,36 @@
     function getChannelsForUser(userLoggedIn) {
         $("#channels-allowed-list").empty();
 
-        console.log('Populating for ' + userLoggedIn);
-
         // AJAX call to populate the Allowed Channels div above
         $.get( "/channels/" + userLoggedIn, function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 channel = 
                 //'<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">' + 
-                '<div>' +
+                '<div>' + entry.sort + ' / ' + entry.id + '</div>' +
+                '<div id="' + entry.channel_id + '">' +
                         '<div class="sort-buttons-container">' +
-                            '<div class="sort-button glyphicon glyphicon-menu-up"></div>' +
-                            '<div class="sort-button glyphicon glyphicon-menu-down"></div>' +
+                            '<div class="sort-button glyphicon glyphicon-menu-up" id="' + entry.channel_id + '-sort-up">></div>' +
+                            '<div class="sort-button glyphicon glyphicon-menu-down" id="' + entry.channel_id + '-sort-dn"></div>' +
                         '</div>' +
                     '<div class="dummy"><a href="/youtube/videos/' + entry.channel_id + '">' + 
                     '<div class="thumbnail">' +
-                    //'   <img src="' + entry.channel_data.snippet.thumbnails.medium.url + '" align="middle" width="140" height="140"> ' +
                     '   <img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="88" height="88"> ' +
                         entry.channel_name + 
                 '   </div></a></div>' +
                 '</div>';
                 $("#channels-allowed-list").append(channel);
+
+                //$('#' + entry.channel_id + '-sort-dn').click( getNextSortId(entry.channel_id, data) );
+                //$('#' + entry.channel_id + '-sort-dn').bind("click", getNextSortId(entry.channel_id, data) );
+
+                // Yeah, let's not do this with jQuery
+                // $(document).on(
+                //     'click',
+                //     '#' + entry.channel_id + '-sort-dn',
+                //     getNextSortId
+                // );
+
             });
         });
     }
@@ -149,7 +158,7 @@
     function getMessagesForUser(userLoggedIn, daysAgo) {
         $("#messages-container").empty();
 
-        console.log('Fetching messages for ' + userLoggedIn);
+       // console.log('Fetching messages for ' + userLoggedIn);
 
         // AJAX call to populate the Messages div above
         // NOTE: the "/14" parameter is the number of days, meant to show messages sent in the last 2 weeks.
@@ -197,7 +206,7 @@
                     channelTitle = fullDetails.snippet.channelTitle ? fullDetails.snippet.channelTitle : '';
                 }
 
-                console.log('VideoId: "%s"...', videoId);
+                //console.log('VideoId: "%s"...', videoId);
 
                 var videoContainer='';
                 
@@ -259,7 +268,7 @@
         <script>
             // do these things when the page is loaded
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
-            getMessagesForUser($('#loggedinuser').val());
+            //getMessagesForUser($('#loggedinuser').val());
         </script>
 
         <div id="content-container">
