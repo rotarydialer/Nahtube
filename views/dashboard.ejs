@@ -163,100 +163,97 @@
 
         // AJAX call to populate the Messages div above
         // NOTE: the "/14" parameter is the number of days, meant to show messages sent in the last 2 weeks.
-        if (userLoggedIn) {
-            $.get( "/users/messages/to/" + userLoggedIn + "/14", function( data ) {
-                $( ".result" ).html( data );
-                $.each(data, function(index, entry) {
-                    var videoId;
-                    var videoThumbnail;
-                    var videoTitle;
-                    var channelId;
-                    var channelTitle;
+        $.get( "/users/messages/to/" + userLoggedIn + "/14", function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                var videoId;
+                var videoThumbnail;
+                var videoTitle;
+                var channelId;
+                var channelTitle;
 
-                    //verify all the JSON values so as not to break the page
-                    if (entry.video_id) {
-                        videoId = entry.video_id;
+                //verify all the JSON values so as not to break the page
+                if (entry.video_id) {
+                    videoId = entry.video_id;
+                }
+
+                if (entry.channelId) {
+                    channelId = entry.channelId;
+                }
+
+                var fullDetails = entry.details_full ? entry.details_full : '';
+                
+                if (fullDetails.snippet) {
+                    if (fullDetails.snippet.resourceId) {
+                        if (!videoId) {
+                            videoId = fullDetails.snippet.resourceId.videoId ? fullDetails.snippet.resourceId.videoId : '';
+                        }
                     }
 
-                    if (entry.channelId) {
-                        channelId = entry.channelId;
+                    if (fullDetails.snippet.thumbnails) {
+                        videoThumbnail = fullDetails.snippet.thumbnails.medium.url ? fullDetails.snippet.thumbnails.medium.url : '';
                     }
 
-                    var fullDetails = entry.details_full ? entry.details_full : '';
-                    
-                    if (fullDetails.snippet) {
-                        if (fullDetails.snippet.resourceId) {
-                            if (!videoId) {
-                                videoId = fullDetails.snippet.resourceId.videoId ? fullDetails.snippet.resourceId.videoId : '';
-                            }
-                        }
-
-                        if (fullDetails.snippet.thumbnails) {
-                            videoThumbnail = fullDetails.snippet.thumbnails.medium.url ? fullDetails.snippet.thumbnails.medium.url : '';
-                        }
-
-                        if (fullDetails.snippet.title) {
-                            videoTitle = fullDetails.snippet.title;
-                        }
-
-                        if (!channelId) {
-                            if (fullDetails.snippet.channelId) {
-                                channelId = fullDetails.snippet.channelId;
-                            }
-                        }
-
-                        channelTitle = fullDetails.snippet.channelTitle ? fullDetails.snippet.channelTitle : '';
+                    if (fullDetails.snippet.title) {
+                        videoTitle = fullDetails.snippet.title;
                     }
 
-                    //console.log('VideoId: "%s"...', videoId);
+                    if (!channelId) {
+                        if (fullDetails.snippet.channelId) {
+                            channelId = fullDetails.snippet.channelId;
+                        }
+                    }
 
-                    var videoContainer='';
-                    
-                    if (videoId) {
-                        videoContainer = '<div class="message-video-container">' +
-                        '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
-                        '<div class="video-container">' +
-                        '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
-                        '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
-                        '    <div class="message-video-thumbnail"><img src="' + videoThumbnail + '"></div>\n' +
-                        '  </div>\n' +
-                        '  <div class="video-content">' + 
-                        '    <div class="video-title">' + 
-                        '      <div class="video-link" onClick=$("#' + videoId + '").submit()>' + videoTitle + '</div>\n' +
-                        '    </div>\n' + 
-                        //'    <div class="video-meta">' + channelTitle + '</div>\n' +
+                    channelTitle = fullDetails.snippet.channelTitle ? fullDetails.snippet.channelTitle : '';
+                }
+
+                //console.log('VideoId: "%s"...', videoId);
+
+                var videoContainer='';
+                
+                if (videoId) {
+                    videoContainer = '<div class="message-video-container">' +
+                    '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+                    '<div class="video-container">' +
+                    '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
+                    '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
+                    '    <div class="message-video-thumbnail"><img src="' + videoThumbnail + '"></div>\n' +
+                    '  </div>\n' +
+                    '  <div class="video-content">' + 
+                    '    <div class="video-title">' + 
+                    '      <div class="video-link" onClick=$("#' + videoId + '").submit()>' + videoTitle + '</div>\n' +
+                    '    </div>\n' + 
+                    //'    <div class="video-meta">' + channelTitle + '</div>\n' +
+                    '  </div>' +
+                    '</div>' +
+                    '</form>'+
+                    '</div>';
+                }
+
+                var msgSubj = entry.message_subject ? entry.message_subject : '';
+                var msgBody = entry.message_body ? entry.message_body.messageBody : '';
+
+                message = '<div class="row message">' +
+                        '  <div class="col">' +
+                        '    <div class="thumbnail message-thumbnail">' +
+                        '      <div class="avatar-message"><img src="/images/avatars/' + entry.from + '-avatar-md.png"></div>' +
+                        '      <div class="caption">' +
+                        '        <div class="message message-subject">' + msgSubj + '</div>' +
+                        '        <p class="message-body">' + msgBody + '</p>' +
+                       // '        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>' +
+                        '      </div>' +
+                                videoContainer +
+                        '    </div>' +
                         '  </div>' +
-                        '</div>' +
-                        '</form>'+
                         '</div>';
-                    }
 
-                    var msgSubj = entry.message_subject ? entry.message_subject : '';
-                    var msgBody = entry.message_body ? entry.message_body.messageBody : '';
+                $("#messages-container").append(message);
 
-                    message = '<div class="row message">' +
-                            '  <div class="col">' +
-                            '    <div class="thumbnail message-thumbnail">' +
-                            '      <div class="avatar-message"><img src="/images/avatars/' + entry.from + '-avatar-md.png"></div>' +
-                            '      <div class="caption">' +
-                            '        <div class="message message-subject">' + msgSubj + '</div>' +
-                            '        <p class="message-body">' + msgBody + '</p>' +
-                        // '        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>' +
-                            '      </div>' +
-                                    videoContainer +
-                            '    </div>' +
-                            '  </div>' +
-                            '</div>';
-
-                    $("#messages-container").append(message);
-
-                    if (videoId) {
-                        $('#' + videoId + '-json').val(JSON.stringify(fullDetails)).html();
-                    }
-                });
+                if (videoId) {
+                    $('#' + videoId + '-json').val(JSON.stringify(fullDetails)).html();
+                }
             });
-
-        }
+        });
     }
   </script>
 </head>

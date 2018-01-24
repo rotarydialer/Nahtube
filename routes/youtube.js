@@ -240,10 +240,15 @@ router.get('/watch', function(req, res, next) {
 
   var videoId = req.query.v;
   var channelId = req.query.c;
+  var startTime = req.query.t || ''; //e.g., &t=125; TODO: translate from "&t=2m05s"
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { title: req.session.user.common_name, videoId: videoId || '' });
+  res.render('watch', { 
+    title: req.session.user.common_name, 
+    videoId: videoId || '',
+    startParam: startTime ? '&start=' + startTime : ' ' 
+  });
 
 });
 
@@ -256,6 +261,7 @@ router.post('/watch', function(req, res, next) {
   var videoId = req.query.v;
   var channelId = req.query.c || '';
   var videoDetailsFull = req.body.videoDetailsFull || '';
+  var startTime = req.query.t || '';  //e.g., &t=125; TODO: translate from "&t=2m05s"
   var channelTitle = '';
   var videoTitle = '';
   if (req.body) {
@@ -267,7 +273,14 @@ router.post('/watch', function(req, res, next) {
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}), videoDetailsFull);
 
-  res.render('watch', { title: req.session.user.common_name, videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
+  res.render('watch', { 
+    title: req.session.user.common_name, 
+    videoId: videoId || '', 
+    videoTitle: videoTitle, 
+    channelTitle: channelTitle, 
+    channelId: channelId,
+    startParam: startTime ? '&start=' + startTime : ' '
+  });
 
 });
 
