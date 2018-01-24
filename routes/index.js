@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
   } else {
     activity.track('dashboard', req.session.user.id);
 
-    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+    res.render('dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
   }
 
 });

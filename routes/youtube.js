@@ -44,7 +44,7 @@ router.get('/', function(req, res, next) {
   } else {
     activity.track('dashboard', req.session.user.id);
 
-    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+    res.render('dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
   }
 });
 
@@ -231,7 +231,7 @@ router.get('/videos/:channelId', function(req, res, next) {
 
   activity.track('list videos', req.session.user.id, req.params.channelId);
 
-  res.render('videos', { channelId: req.params.channelId });
+  res.render('videos', { title: req.session.user.common_name, channelId: req.params.channelId });
 
 });
 
@@ -243,7 +243,7 @@ router.get('/watch', function(req, res, next) {
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '' });
+  res.render('watch', { title: req.session.user.common_name, videoId: videoId || '' });
 
 });
 
@@ -267,7 +267,7 @@ router.post('/watch', function(req, res, next) {
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}), videoDetailsFull);
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
+  res.render('watch', { title: req.session.user.common_name, videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
 
 });
 
