@@ -127,7 +127,7 @@
             $.each(data, function(index, entry) {
                 channel = 
                 //'<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">' + 
-                '<div>' + entry.sort + ' / ' + entry.id + '</div>' +
+                // '<div>' + entry.sort + ' / ' + entry.id + '</div>' + // sort debugging - abandoning this for now 
                 '<div id="' + entry.channel_id + '">' +
                         '<div class="sort-buttons-container">' +
                             '<div class="sort-button glyphicon glyphicon-menu-up" id="' + entry.channel_id + '-sort-up">></div>' +
@@ -268,7 +268,7 @@
         <script>
             // do these things when the page is loaded
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
-            //getMessagesForUser($('#loggedinuser').val());
+            getMessagesForUser($('#loggedinuser').val());
         </script>
 
         <div id="content-container">

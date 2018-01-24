@@ -80,7 +80,14 @@
                             if (!chName && data) {
                                 // TODO: more robust actual check? Include in JSON?
                                 isAllowedChannel = false; //GEFN: if there's no channel name, that means it's not in the allowed_channels table
-                                chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
+                                //chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
+                                if (!row.channel_name && row.details_full) { // ugh, these checks
+                                    if (row.details_full.snippet) {
+                                        if (row.details_full.snippet.channelTitle) {
+                                            chName = row.details_full.snippet.channelTitle;
+                                        }
+                                    }
+                                }
                             }
 
                             chName = !chName ? row.channel_id : chName;
