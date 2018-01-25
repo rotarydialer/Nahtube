@@ -171,6 +171,7 @@
                 var videoTitle;
                 var channelId;
                 var channelTitle;
+                var startTime;
 
                 //verify all the JSON values so as not to break the page
                 if (entry.video_id) {
@@ -182,6 +183,13 @@
                 }
 
                 var fullDetails = entry.details_full ? entry.details_full : '';
+
+                if (fullDetails) {
+                    if (fullDetails.start) {
+                        console.log('This one has a start time of ' + fullDetails.start);
+                        startTime = '&t=' + fullDetails.start;
+                    }
+                }
                 
                 if (fullDetails.snippet) {
                     if (fullDetails.snippet.resourceId) {
@@ -213,7 +221,7 @@
                 
                 if (videoId) {
                     videoContainer = '<div class="message-video-container">' +
-                    '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+                    '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + startTime + '">' +
                     '<div class="video-container">' +
                     '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
                     '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
