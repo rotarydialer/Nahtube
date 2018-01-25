@@ -2,9 +2,18 @@
 <html>
 
 <head>
-  <title><%= title %></title>
+  <title>Login: <%= title %></title>
 
   <script src="/js/jquery-3.2.1.min.js"></script>
+
+  <!-- bootstrap 3.3 (custom, full) -->
+  <!-- <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+  <script src="/js/bootstrap33/bootstrap.min.js"></script> -->
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
@@ -15,8 +24,6 @@
     html,
     body {
       height: 100%;
-      margin: 200;
-      padding: 0;
     }
 
     #search-section {
@@ -38,47 +45,36 @@
 <body>
     <h1><%= title %> Login</h1>
 
-    <form method="POST" action="/login">
-        <input type="hidden" name="referer" value=<%= referer %>>
-        <div id="mock-user-select">
-            <select id="user-mock" name="username"></select>
-            <button id="login">Login</button>
-        </div>
-    </form>
+    <div id="user-cards-container" class="row" align="center"></div>
 
     <!-- Populate the fields and divs above -->
     <script>
-        // AJAX call to populate the user-mock field above
+        // AJAX call to populate the user field above
         $.get( "/users/role/child", function( data ) {
             $( ".result" ).html( data );
     
             $.each(JSON.parse(data), function(index, entry) {
-                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
-                $("#user-mock").append(option);
+                //option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+
+                var card = `<form method="POST" action="/login">
+                                <input type="hidden" name="referer" value=<%= referer %>>
+                                <input type="hidden" name="username" value=` + entry.username + `>
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="card" style="width: 15rem;">
+                                    <div class="card-block">
+                                        <img class="card-img-top" src="/images/avatars/` + entry.username + `-avatar-lg.png" alt="Card image cap">
+                                        <h2 class="card-title">` + entry.common_name + `</h2>
+                                        <button id="login" class="btn btn-primary">Log In</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </form>`;
+
+                //$("#user").append(option);
+                $("#user-cards-container").append(card);
             });
 
         });
-
-        // refresh on field changes
-        $("#user-mock").change( function () {
-            // do something else... pass on to the dashboard
-            //getChannelsForUser(this.value);
-        });
-
-        function getChannelsForUser(userLoggedIn) {
-            $("#channels-allowed-list").empty();
-
-            console.log('Populating for ' + userLoggedIn);
-
-            // AJAX call to populate the Allowed Channels div above
-            $.get( "/channels/" + userLoggedIn, function( data ) {
-                $( ".result" ).html( data );
-                $.each(JSON.parse(data), function(index, entry) {
-                    option = ((index+1) + ': <a href="https://youtube.com/channel/' + entry.channel_id + '">' + entry.channel_name + '</a> <br>');
-                    $("#channels-allowed-list").append(option);
-                });
-            });
-        }
     </script>
   
 </body>
