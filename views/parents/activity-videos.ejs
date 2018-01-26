@@ -35,10 +35,17 @@
         var existingtable = $('#datatable-activity').DataTable();
  
         if (existingtable) existingtable.destroy();
+
+        var username = $('#user-select').val();
+        var dataUrl = '/parents/activity/type/watch%20video.json';
+        dataUrl += username ? '?u=' + username : '';
+
+        console.log('username selected: "%s", thus:', username);
+        console.log(dataUrl);
         
         var t = $('#datatable-activity').DataTable({
             ajax: {
-                url: '/parents/activity/type/watch%20video.json',
+                url: dataUrl,
                 dataSrc: ''
             },
             columns: [
@@ -70,9 +77,6 @@
                     data: 'details',
                     render: function (data, type, row) {
                         if (row.action == "watch video") {
-                            if (row.channel_id == 'UCVQ9S8LoggEepxMYDiRpeeg') {
-                                console.log(row.details_full.snippet.channelTitle);
-                            }
                             var isAllowedChannel = true;
 
                             var chName = row.channel_name ? row.channel_name : '';
@@ -209,7 +213,9 @@
     <!-- TODO: restore login check -->
 
         <div id="user-select-container">
-            <select id="user-select"></select>
+            <select id="user-select">
+                <option value=""></option>
+            </select>
             <!-- <select id="user-select" class="selectpicker"></select> -->
             <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
         </div>
