@@ -18,8 +18,6 @@
     html,
     body {
       height: 100%;
-      margin: 200;
-      padding: 0;
     }
 
     .channels-list {
@@ -267,64 +265,37 @@
 </head>
 
 <body>
+    <% include topbar.ejs %>
 
-    <%if (loggedinuser) { %>
+    <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
 
-        <% include topbar.ejs %>
-        
-        <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
+    <script>
+        // do these things when the page is loaded
+        $( document ).ready(function() {
+            getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
+            getMessagesForUser($('#loggedinuser').val());
+        });
+    </script>
 
-        <script>
-            // do these things when the page is loaded
-            $( document ).ready(function() {
-                getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
-                getMessagesForUser($('#loggedinuser').val());
-            });
-        </script>
+    <div id="content-container">
+        <!-- Column 1 -->
+        <!-- <div id="channels-allowed-container" class="channels-list col-4"> --> <!-- Enable tiling of channel thumbnails -->
+        <div id="channels-allowed-container" class="channels-list">
+            <div class="list-title"><%= user.common_name %>'s Channels:</div>
+            <div id="channels-allowed-list">
 
-        <div id="content-container">
-            <!-- Column 1 -->
-            <!-- <div id="channels-allowed-container" class="channels-list col-4"> --> <!-- Enable tiling of channel thumbnails -->
-            <div id="channels-allowed-container" class="channels-list">
-                <div class="list-title"><%= user.common_name %>'s Channels:</div>
-                <div id="channels-allowed-list">
-
-                </div>
-            </div>
-
-            <!-- Column 2 -->
-            <div id="search-results" class="col">
-            </div>
-
-            <!-- Column 3 -->
-            <div id="messages-container" class="col">
             </div>
         </div>
-    <% } else{ %>
-       <form method="POST" action="/login">
-           <div id="mock-user-select">
-               <select id="user-mock" name="username"></select>
-               <button id="login">Login</button>
-           </div>
-       </form>
-    <% } %>
 
-    
+        <!-- Column 2 -->
+        <div id="search-results" class="col">
+        </div>
 
-    <!-- Populate the fields and divs above -->
-    <script>
-        // AJAX call to populate the user-mock field above
-        $.get( "/users/role/child", function( data ) {
-            $( ".result" ).html( data );
-    
-            $.each(JSON.parse(data), function(index, entry) {
-                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
-                $("#user-mock").append(option);
-            });
-        });
-
-    </script>
-  
+        <!-- Column 3 -->
+        <div id="messages-container" class="col">
+        </div>
+    </div>
+     
 </body>
 
 </html>
