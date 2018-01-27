@@ -47,7 +47,6 @@
                             '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
                             '<div class="video-container">' +
                             '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
-                            //'  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden" value=' + JSON.stringify(item) + '>' +
                             '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
                             '  </div>\n' +
@@ -65,9 +64,58 @@
 
                     });
 
-                    // the jQuery definition determines these, and the params of the callback
-                    // http://api.jquery.com/jquery.each/
-                    //$.each(data.items, constructVideoResult);
+                    // append a "more results" button
+                    console.log(data);
+
+                    if (data.nextPageToken) {
+                        console.log('I can get more results...');
+                        var npt = '?pageToken=' + data.nextPageToken;
+
+                        $('#more-btn').append(
+                            //'<button id="more" onclick="window.location.href=\'/youtube/videos/' + channelId + npt + '\';" class="btn btn-info">More</button>' +
+                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-info">More Here</button>'
+                        );
+
+                    }
+
+                }
+            });
+
+        }
+
+        function getNextPage(channelId, pageToken) {
+            console.log('fetching next page with "%s"', pageToken);
+            $.ajax({
+                type: "GET",
+                url: "/youtube/videos/" + channelId + ".json",
+                data: {"channelId": this.value},
+                success: function (data) {
+
+                    $.each(data.items, function (i, item) {
+
+                        var videoId = item.snippet.resourceId.videoId;
+
+                        $('#videos-list').append(
+                            '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+                            '<div class="video-container">' +
+                            '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
+                            '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
+                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  </div>\n' +
+                            '  <div class="video-content">' + 
+                            '    <div class="video-title">' + 
+                            '      <div class="video-link" onClick=$("#' + videoId + '").submit()>' + item.snippet.title + '</div>\n' +
+                            '    </div>\n' + 
+                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
+                            '  </div>' +
+                            '</div>' +
+                            '</form>'
+                        );
+
+                        $('#' + videoId + '-json').val(JSON.stringify(item)).html();
+
+                    });
+
                 }
             });
 
@@ -81,6 +129,8 @@
 
     <div id="videos-list">
     </div>
+
+    <div id="more-btn"></div>
 
     <script>
         getVideosForChannelId( '<%= channelId %>' ); // this looks pretty bad to me...
