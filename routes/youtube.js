@@ -158,6 +158,7 @@ router.get('/user/:ytuser', function(req, res, next) {
 
 router.get('/videos/:channelId.json', function(req, res, next) {
   var channelId = req.params.channelId;
+  var pageToken = req.query.pageToken || '';
 
   var channelparams = {
     auth: config.youtube.key,
@@ -191,7 +192,8 @@ router.get('/videos/:channelId.json', function(req, res, next) {
         auth: config.youtube.key,
         part: 'snippet,contentDetails',
         playlistId: playlistId,
-        maxResults: 50
+        maxResults: 50,
+        pageToken: pageToken
       };
 
       youtube_base.playlistItems.list(playlistparams, function(err, response) {

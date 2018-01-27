@@ -64,18 +64,11 @@
 
                     });
 
-                    // append a "more results" button
-                    console.log(data);
-
+                    // add a "More Results" button if appropriate
                     if (data.nextPageToken) {
-                        console.log('I can get more results...');
-                        var npt = '?pageToken=' + data.nextPageToken;
-
                         $('#more-btn').append(
-                            //'<button id="more" onclick="window.location.href=\'/youtube/videos/' + channelId + npt + '\';" class="btn btn-info">More</button>' +
-                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-info">More Here</button>'
+                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-success">More Videos</button>'
                         );
-
                     }
 
                 }
@@ -116,6 +109,15 @@
                         $('#' + videoId + '-json').val(JSON.stringify(item)).html();
 
                     });
+                    
+                    // update the More Results button
+                    $('#more-btn').empty();
+
+                    if (data.nextPageToken) {
+                        $('#more-btn').append(
+                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-success">More Videos</button>'
+                        );
+                    }
 
                 }
             });
