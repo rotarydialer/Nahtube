@@ -84,10 +84,11 @@
         }
 
         function getNextPage(channelId, pageToken) {
+            var qsPageToken = '?pageToken=' + pageToken;
             console.log('fetching next page with "%s"', pageToken);
             $.ajax({
                 type: "GET",
-                url: "/youtube/videos/" + channelId + ".json",
+                url: "/youtube/videos/" + channelId + ".json" + qsPageToken,
                 data: {"channelId": this.value},
                 success: function (data) {
 
