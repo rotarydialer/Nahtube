@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title><%= title %> Dashboard</title>
+  <title><%= title %>: Dashboard</title>
 
   <script src="/js/jquery-3.2.1.min.js"></script>
 
@@ -18,8 +18,6 @@
     html,
     body {
       height: 100%;
-      margin: 200;
-      padding: 0;
     }
 
     .channels-list {
@@ -56,7 +54,21 @@
         left: 15px;
         right: 0;
         text-align:center;
-        padding-top:calc(5%);
+        padding-top:calc(5%); 
+    }
+
+    .sort-buttons-container {
+        float: left;
+        margin-top: 7px;
+        margin-left: 10px;
+    }
+
+    .sort-button {
+        font-size: 10px;
+        color: #d1d1d1;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 20px;
     }
 
     #messages-container {
@@ -107,23 +119,37 @@
     function getChannelsForUser(userLoggedIn) {
         $("#channels-allowed-list").empty();
 
-        console.log('Populating for ' + userLoggedIn);
-
         // AJAX call to populate the Allowed Channels div above
         $.get( "/channels/" + userLoggedIn, function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 channel = 
+                // '<div>' + entry.sort + ' / ' + entry.id + '</div>' + // sort debugging - abandoning this for now 
                 //'<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">' + 
-                '<div>' +
+                //'<div id="' + entry.channel_id + '" class="col-lg-5 col-md-6 col-sm-12 col-xs-12">' + // this will enable tiling of channel thumbnails
+                '<div id="' + entry.channel_id + '">' +
+                        // '<div class="sort-buttons-container">' +
+                        //     '<div class="sort-button glyphicon glyphicon-menu-up" id="' + entry.channel_id + '-sort-up">></div>' +
+                        //     '<div class="sort-button glyphicon glyphicon-menu-down" id="' + entry.channel_id + '-sort-dn"></div>' +
+                        // '</div>' +
                     '<div class="dummy"><a href="/youtube/videos/' + entry.channel_id + '">' + 
                     '<div class="thumbnail">' +
-                    //'   <img src="' + entry.channel_data.snippet.thumbnails.medium.url + '" align="middle" width="140" height="140"> ' +
                     '   <img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="88" height="88"> ' +
                         entry.channel_name + 
                 '   </div></a></div>' +
                 '</div>';
                 $("#channels-allowed-list").append(channel);
+
+                //$('#' + entry.channel_id + '-sort-dn').click( getNextSortId(entry.channel_id, data) );
+                //$('#' + entry.channel_id + '-sort-dn').bind("click", getNextSortId(entry.channel_id, data) );
+
+                // Yeah, let's not do this with jQuery
+                // $(document).on(
+                //     'click',
+                //     '#' + entry.channel_id + '-sort-dn',
+                //     getNextSortId
+                // );
+
             });
         });
     }
@@ -131,11 +157,11 @@
     function getMessagesForUser(userLoggedIn, daysAgo) {
         $("#messages-container").empty();
 
-        console.log('Fetching messages for ' + userLoggedIn);
+       // console.log('Fetching messages for ' + userLoggedIn);
 
         // AJAX call to populate the Messages div above
-        // NOTE: the "/7" parameter is the number of days, meant to show messages sent in the last week.
-        $.get( "/users/messages/to/" + userLoggedIn + "/3", function( data ) {
+        // NOTE: the "/14" parameter is the number of days, meant to show messages sent in the last 2 weeks.
+        $.get( "/users/messages/to/" + userLoggedIn + "/14", function( data ) {
             $( ".result" ).html( data );
             $.each(data, function(index, entry) {
                 var videoId;
@@ -143,6 +169,7 @@
                 var videoTitle;
                 var channelId;
                 var channelTitle;
+                var startTime='';
 
                 //verify all the JSON values so as not to break the page
                 if (entry.video_id) {
@@ -154,6 +181,13 @@
                 }
 
                 var fullDetails = entry.details_full ? entry.details_full : '';
+
+                if (fullDetails) {
+                    if (fullDetails.start) {
+                        console.log('This one has a start time of ' + fullDetails.start);
+                        startTime = '&t=' + fullDetails.start;
+                    }
+                }
                 
                 if (fullDetails.snippet) {
                     if (fullDetails.snippet.resourceId) {
@@ -179,13 +213,13 @@
                     channelTitle = fullDetails.snippet.channelTitle ? fullDetails.snippet.channelTitle : '';
                 }
 
-                console.log('VideoId: "%s"...', videoId);
+                //console.log('VideoId: "%s"...', videoId);
 
                 var videoContainer='';
                 
                 if (videoId) {
                     videoContainer = '<div class="message-video-container">' +
-                    '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+                    '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + startTime + '">' +
                     '<div class="video-container">' +
                     '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
                     '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
@@ -231,61 +265,37 @@
 </head>
 
 <body>
+    <% include topbar.ejs %>
 
-    <%if (loggedinuser) { %>
+    <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
 
-        <% include topbar.ejs %>
-        
-        <input id="loggedinuser" type="hidden" value="<%= user.username %>"> <!-- UGH! -->
-
-        <script>
-            // do these things when the page is loaded
+    <script>
+        // do these things when the page is loaded
+        $( document ).ready(function() {
             getChannelsForUser($('#loggedinuser').val()); // SO MUCH UGH!
             getMessagesForUser($('#loggedinuser').val());
-        </script>
+        });
+    </script>
 
-        <div id="content-container">
-            <!-- Column 1 -->
-            <div id="channels-allowed-container" class="channels-list">
-                <div class="list-title"><%= user.common_name %>'s Channels:</div>
-                <div id="channels-allowed-list">
+    <div id="content-container">
+        <!-- Column 1 -->
+        <!-- <div id="channels-allowed-container" class="channels-list col-4"> --> <!-- Enable tiling of channel thumbnails -->
+        <div id="channels-allowed-container" class="channels-list">
+            <div class="list-title"><%= user.common_name %>'s Channels:</div>
+            <div id="channels-allowed-list">
 
-                </div>
-            </div>
-
-            <!-- Column 2 -->
-            <div id="search-results" class="col">
-            </div>
-
-            <!-- Column 3 -->
-            <div id="messages-container" class="col">
             </div>
         </div>
-    <% } else{ %>
-       <form method="POST" action="/login">
-           <div id="mock-user-select">
-               <select id="user-mock" name="username"></select>
-               <button id="login">Login</button>
-           </div>
-       </form>
-    <% } %>
 
-    
+        <!-- Column 2 -->
+        <div id="search-results" class="col">
+        </div>
 
-    <!-- Populate the fields and divs above -->
-    <script>
-        // AJAX call to populate the user-mock field above
-        $.get( "/users/role/child", function( data ) {
-            $( ".result" ).html( data );
-    
-            $.each(JSON.parse(data), function(index, entry) {
-                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
-                $("#user-mock").append(option);
-            });
-        });
-
-    </script>
-  
+        <!-- Column 3 -->
+        <div id="messages-container" class="col">
+        </div>
+    </div>
+     
 </body>
 
 </html>

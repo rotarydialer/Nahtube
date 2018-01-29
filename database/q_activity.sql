@@ -4,7 +4,20 @@ FROM nahtube.user_activity act
 	ON act.user_id = users.id
    LEFT JOIN nahtube.channels_allowed ch
 	ON act.channel_id = ch.channel_id
-WHERE act.action_time >= '2017-12-28'
+WHERE act.action_time >= DATE(NOW()) - INTERVAL '1 DAY' * 3
+ORDER BY action_time;
+
+-- troubleshoot the rendering of a specific activity
+SELECT act.id, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details, act.details_full
+FROM nahtube.user_activity act
+      INNER JOIN nahtube.users users
+            ON act.user_id = users.id
+      LEFT JOIN nahtube.channels_allowed ch
+            ON act.channel_id = ch.channel_id
+WHERE users.username = $1
+AND act.action_time >= DATE(NOW()) - INTERVAL '1 DAY'
+AND act.action = 'watch video'
+AND act.id = 1525
 ORDER BY action_time;
 
 -- roll-up report of activity by type over the past week
@@ -23,6 +36,14 @@ WHERE action = 'watch video'
 AND date_trunc('day', act.action_time) >= current_date - INTERVAL '1 DAY' * 7
 GROUP BY dt, ch.channel_name
 ORDER BY dt DESC, ch_count DESC;
+
+SELECT date_trunc('day', act.action_time)::date as date, ch.channel_name, count(act.action) as ch_count
+FROM nahtube.user_activity act
+   INNER JOIN nahtube.channels_allowed ch
+      ON ch.channel_id = act.channel_id
+WHERE action = 'watch video'
+GROUP BY date, ch.channel_name
+ORDER BY date DESC, ch_count DESC;
 
 -- Summary: same as above, but include even channels that have not been added
 SELECT act.channel_id, ch.channel_name, count(act.action) as ch_count

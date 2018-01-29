@@ -23,7 +23,7 @@
 <link rel="stylesheet" type="text/css" href="/css/search.css">
 
 <div id="topbar">
-    <table>
+    <table width="100%">
         <tr>
             <td>
                 <div class="avatar">
@@ -109,6 +109,13 @@
                     </div>
                 </section>
             </td>
+            <td width="75%">
+                <form id="logout" method="POST" action="/logout">
+                    <div style="float: right;">
+                        <button id="logout" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-log-out"></span> Log out</button>
+                    </div>
+                </form>
+            </td>
         </tr>
     </table>
 </div>
@@ -144,17 +151,15 @@
 
     function postSearch(searchString) {
         $.ajax({
-                type: "POST",
-                url: "/youtube/search",
-                data: {"searchstring": searchString},
-                success: function (data) {
-                    //console.log(data);
-
-                    $('#search-results').empty();
-                    
-                    $.each(data.items, constructVideoResult);
-                }
-            });
+            type: "POST",
+            url: "/youtube/search",
+            data: {"searchstring": searchString},
+            success: function (data) {
+                $('#search-results').empty();
+                
+                $.each(data.items, constructVideoResult);
+            }
+        });
     }
 
     $('#search-text').on('keypress', function (e) {
@@ -168,5 +173,9 @@
             postSearch(this.value);
 
         }
+    });
+
+    $('#logout').on('click', function (e ) {
+        $("#logout").submit();
     });
 </script>

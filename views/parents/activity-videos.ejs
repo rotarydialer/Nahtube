@@ -25,33 +25,47 @@
             margin: 5px;
             vertical-align: sub;
         }
+
+        body {
+            margin: 15px;
+        }
+
+        #user-select {
+            float: left;
+        }
   </style>
 
   <script>
 
     function populateActivityTableAjax(username) {
         console.log('AJAX populating activity table for "%s".', username);
-        
+                
         var existingtable = $('#datatable-activity').DataTable();
  
         if (existingtable) existingtable.destroy();
+
+        console.log('selected button: ' + $('.btn-group > .btn.active').html());
+
+        var username = $('#user-select').val();
+        var dataUrl = '/parents/activity/type/watch%20video.json';
+        dataUrl += username ? '?u=' + username : '';
+
+        console.log('username selected: "%s", thus:', username);
+        console.log(dataUrl);
         
         var t = $('#datatable-activity').DataTable({
             ajax: {
-                url: '/parents/activity/' + username + '.json',
+                url: dataUrl,
                 dataSrc: ''
             },
             columns: [
-                { //0
+                { 
                     data: 'id'
                 },
-                { //1 
+                { 
                     data: 'common_name'
                 },
-                { //2
-                    data: 'action' 
-                },
-                { //3
+                { 
                     data: 'action_time',
                     render: function (data, type, row) {
                         // If display or filter data is requested, format the date
@@ -67,7 +81,7 @@
                         return data;
                     }
                 },
-                { //4
+                { 
                     // channel name and link
                     className: "dt-center",
                     data: 'details',
@@ -80,15 +94,13 @@
                             if (!chName && data) {
                                 // TODO: more robust actual check? Include in JSON?
                                 isAllowedChannel = false; //GEFN: if there's no channel name, that means it's not in the allowed_channels table
-                                                                
-                                if (!row.channel_name && row.details_full) {
+                                //chName = (!row.channel_name && row.details_full) ? row.details_full.snippet.channelTitle : row.channel_name;
+                                if (!row.channel_name && row.details_full) { // ugh, these checks
                                     if (row.details_full.snippet) {
                                         if (row.details_full.snippet.channelTitle) {
                                             chName = row.details_full.snippet.channelTitle;
                                         }
                                     }
-                                } else {
-                                    chName = row.channel_name;
                                 }
                             }
 
@@ -104,7 +116,7 @@
                         return '';
                     }
                 },
-                { //5
+                {
                     data: 'details',
                     visible: false,
                     render: function (data, type, row) {
@@ -115,19 +127,7 @@
                         return data;
                     }
                 },
-                { //6
-                    // search string
-                    //className: "dt-center",
-                    data: 'details',
-                    render: function (data, type, row) {
-                        if (row.action == "search") {
-                            return formatDetails(data);
-                        }
-
-                        return '';
-                    }
-                },
-                { //7
+                {
                     //video thumbnail and link
                     className: "dt-center",
                     data: 'details_full',
@@ -143,7 +143,7 @@
                         return '';
                     }
                 },
-                { //8
+                {
                     visible: false,
                     data: 'channel_name'
                 }
@@ -156,46 +156,13 @@
                     "orderable": false
                 },
                 { 
-                    "targets": [0,1,2],
+                    "targets": [0,1],
                     "width": "10%"
                 }
             ],
-            "order": [[ 3, "desc" ]],
+            "order": [[ 2, "desc" ]],
             "lengthMenu": [ [10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"] ],
             "pageLength": 50
-        });
-    }
-
-    // NOT USED - prefer AJAX load above
-    function populateActivityTable(username) {
-        var t = $('#datatable-activity').DataTable();
-
-        $.get( "/parents/activity/" + username + '.json', function( data ) {
-            $( ".result" ).html( data );
-
-            $.each(data, function(index, entry) {
-                const {
-                    username,
-                    id,
-                    common_name,
-                    action,
-                    action_time,
-                    channel_id,
-                    channel_name,
-                    details,
-                    details_full
-                } = entry;
-                
-                t.row.add([
-                    common_name,
-                    action,
-                    moment(action_time).tz('America/New_York').format('ha z'),
-                    JSON.stringify({"channelName":channel_name, "channelId": channel_id}),
-                    details ? formatDetails(details) : '',
-                    channel_id,
-                    details_full
-                ]).draw(false);
-            });
         });
     }
 
@@ -207,19 +174,16 @@
     }
 
     function formatVideo(item, videoId) {
-        var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : '';
-
         if (item.snippet) {
+            var vidHref = videoId ? '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank"">' : ''
             var vidDiv = '<img src="' + item.snippet.thumbnails.default.url + '"> ' + 
             '<div class="video-link">' + 
                 vidHref +
-                (item.snippet.title ? item.snippet.title : videoId) + 
+                item.snippet.title + 
             '</a></div>';
 
             return vidDiv;
         }
-
-        return vidHref + videoId + '</a>';
     }
 
     function formatVideoIdLink(videoId) {
@@ -256,13 +220,22 @@
 </head>
 
 <body>
-    <!-- TODO: restore login check -->
-
-        <div id="user-select-container">
-            <select id="user-select"></select>
-            <!-- <select id="user-select" class="selectpicker"></select> -->
-            <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
+    <div id="user-select-container" class="form-group col-lg-2">
+        <div class="row">
+            <table>
+                <tr>
+                    <td>
+                        <select id="user-select" class="form-control col-xs-3">
+                            <option value=""></option>
+                        </select>
+                    </td>
+                    <td>
+                        <button id="activity" onclick="populateActivityTableAjax($('#user-select').val())" class="btn btn-info">Activity</button>
+                    </td>
+                </tr>
+            </table>
         </div>
+    </div>
 
     <script>
         // AJAX call to populate the user-select field above
@@ -272,6 +245,9 @@
             $.each(JSON.parse(data), function(index, entry) {
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
                 $("#user-select").append(option);
+
+                var userbtn = $('<button type="button" class="btn btn-secondary">' + entry.username + ' / ' + entry.common_name + '</button>');
+                $("#user-select-buttons").append(userbtn);
             });
         });
     </script>
@@ -281,11 +257,9 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Action</th>
                 <th>Time</th>
                 <th>Channel</th>
                 <th>Details</th>
-                <th>Search</th>
                 <th>Video</th>
                 <th>Channel Name</th>
             </tr>

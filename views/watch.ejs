@@ -2,9 +2,13 @@
 <html>
 
 <head>
-    <title><%= title %> - Watch</title>
+    <title><%= title %>: Watch</title>
 
     <script src="/js/jquery-3.2.1.min.js"></script>
+
+    <!-- bootstrap 3.3 (custom, full) -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+    <script src="/js/bootstrap33/bootstrap.min.js"></script>
     
     <link href="/css/google-font-Roboto.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
@@ -72,7 +76,7 @@
         <div>
             <div id="player" class="col-8">
                 <iframe id="ytplayer" type="text/html" width="854" height="480"
-                src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1&rel=0"
+                src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1&rel=0<%= startParam %>"
                 frameborder="0"
                 allowfullscreen="allowfullscreen"
                 mozallowfullscreen="mozallowfullscreen" 

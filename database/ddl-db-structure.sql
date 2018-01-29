@@ -123,6 +123,7 @@ ALTER TABLE nahtube.user_roles
 CREATE TABLE nahtube.channels_allowed
 (
   id serial NOT NULL,
+  sort integer DEFAULT 9999,
   channel_id character varying(64) NOT NULL,
   user_id integer NOT NULL,
   channel_name character varying(128) NOT NULL,
@@ -202,3 +203,16 @@ WITH (
 );
 ALTER TABLE nahtube.user_messages
   OWNER TO postgres;
+
+
+-- SESSION ---------------------------
+-- Used by npm package connect-pg-simple (https://www.npmjs.com/package/connect-pg-simple)
+
+-- Table: public.session
+CREATE TABLE "session" (
+  "sid" varchar NOT NULL COLLATE "default",
+	"sess" json NOT NULL,
+	"expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;

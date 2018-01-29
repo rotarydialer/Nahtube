@@ -44,7 +44,7 @@ router.get('/', function(req, res, next) {
   } else {
     activity.track('dashboard', req.session.user.id);
 
-    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+    res.render('dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
   }
 });
 
@@ -158,6 +158,7 @@ router.get('/user/:ytuser', function(req, res, next) {
 
 router.get('/videos/:channelId.json', function(req, res, next) {
   var channelId = req.params.channelId;
+  var pageToken = req.query.pageToken || '';
 
   var channelparams = {
     auth: config.youtube.key,
@@ -191,7 +192,8 @@ router.get('/videos/:channelId.json', function(req, res, next) {
         auth: config.youtube.key,
         part: 'snippet,contentDetails',
         playlistId: playlistId,
-        maxResults: 50
+        maxResults: 50,
+        pageToken: pageToken
       };
 
       youtube_base.playlistItems.list(playlistparams, function(err, response) {
@@ -231,7 +233,7 @@ router.get('/videos/:channelId', function(req, res, next) {
 
   activity.track('list videos', req.session.user.id, req.params.channelId);
 
-  res.render('videos', { channelId: req.params.channelId });
+  res.render('videos', { title: req.session.user.common_name, channelId: req.params.channelId });
 
 });
 
@@ -240,10 +242,15 @@ router.get('/watch', function(req, res, next) {
 
   var videoId = req.query.v;
   var channelId = req.query.c;
+  var startTime = req.query.t || ''; //e.g., &t=125; TODO: translate from "&t=2m05s"
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '' });
+  res.render('watch', { 
+    title: req.session.user.common_name, 
+    videoId: videoId || '',
+    startParam: startTime ? '&start=' + startTime : ' ' 
+  });
 
 });
 
@@ -256,12 +263,26 @@ router.post('/watch', function(req, res, next) {
   var videoId = req.query.v;
   var channelId = req.query.c || '';
   var videoDetailsFull = req.body.videoDetailsFull || '';
-  var channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle || '';
-  var videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+  var startTime = req.query.t || '';  //e.g., &t=125; TODO: translate from "&t=2m05s"
+  var channelTitle = '';
+  var videoTitle = '';
+  if (req.body) {
+    if (req.body.videoDetailsFull && req.body.videoDetailsFull != '{}') {
+      channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle;
+      videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+    }
+  }
 
   activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}), videoDetailsFull);
 
-  res.render('watch', { title: 'NahTube', videoId: videoId || '', videoTitle: videoTitle, channelTitle: channelTitle, channelId: channelId });
+  res.render('watch', { 
+    title: req.session.user.common_name, 
+    videoId: videoId || '', 
+    videoTitle: videoTitle, 
+    channelTitle: channelTitle, 
+    channelId: channelId,
+    startParam: startTime ? '&start=' + startTime : ' '
+  });
 
 });
 

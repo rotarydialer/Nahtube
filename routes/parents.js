@@ -19,11 +19,15 @@ router.get('/activity', function (req, res, err) {
     res.render('parents/activity');
 });
 
+router.get('/activity/videos', function (req, res, err) {
+    res.render('parents/activity-videos');
+});
+
 router.get('/activity.json', function(req, res, next) {
  
     (async () => {
         var { rows } = await pgpool.query(`
-            SELECT users.username, users.id, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details
+            SELECT users.username, act.id, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details
             FROM nahtube.user_activity act
             INNER JOIN nahtube.users users
                 ON act.user_id = users.id
@@ -48,10 +52,13 @@ router.get('/activity.json', function(req, res, next) {
 
 router.get('/activity/type/:action.json', function(req, res, next) {
     var action = req.params.action;
- 
-    (async () => {
+    var username = req.query.u;
+
+    if (!username) {
+
+        (async () => {
             var { rows } = await pgpool.query(`
-                SELECT users.username, users.id, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details
+                SELECT act.id, users.username, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details, act.details_full
                 FROM nahtube.user_activity act
                 INNER JOIN nahtube.users users
                     ON act.user_id = users.id
@@ -60,19 +67,48 @@ router.get('/activity/type/:action.json', function(req, res, next) {
                 WHERE act.action = $1
                 ORDER BY action_time;`, [action]);
   
-        if (rows.length) {
-          return res.send(rows);
-        } else {
-          console.log('BAD REQUEST for action type "' + action + '".');
-          res.status(404);
-          return res.send('No activity for action type "' + action + '" found.');
-        }      
-    })().catch(e => setImmediate(() => { 
-      //throw e 
-      res.status(500);
-      console.log(e);
-      return res.send('Error: ' + e.message);
-    } ));
+            if (rows.length) {
+                return res.send(rows);
+            } else {
+                console.log('BAD REQUEST for action type "' + action + '".');
+                res.status(404);
+                return res.send('No activity for action type "' + action + '" found.');
+            }      
+        })().catch(e => setImmediate(() => { 
+            res.status(500);
+            console.log(e);
+            return res.send('Error: ' + e.message);
+        } ));
+
+    } else {
+
+        (async () => {
+            var { rows } = await pgpool.query(`
+                SELECT act.id, users.username, users.common_name, act.action, act.action_time, act.channel_id, ch.channel_name, act.details, act.details_full
+                FROM nahtube.user_activity act
+                INNER JOIN nahtube.users users
+                    ON act.user_id = users.id
+                LEFT JOIN nahtube.channels_allowed ch
+                    ON act.channel_id = ch.channel_id
+                WHERE act.action = $1
+                AND users.username = $2
+                ORDER BY action_time;`, [action, username]);
+  
+            if (rows.length) {
+                return res.send(rows);
+            } else {
+                console.log('BAD REQUEST for action type "' + action + '".');
+                res.status(404);
+                return res.send('No activity for action type "' + action + '" found.');
+            }      
+        })().catch(e => setImmediate(() => { 
+            res.status(500);
+            console.log(e);
+            return res.send('Error: ' + e.message);
+        } ));
+
+    }
+    
     
   });
 

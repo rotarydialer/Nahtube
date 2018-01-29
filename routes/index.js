@@ -3,13 +3,6 @@ var session = require('express-session');
 var config = require('../config/config');
 var router = express.Router();
 
-const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: config.database.connectionString
-});
-
-global.pgpool = pool;
-
 // activity tracking functions
 var activity = require('../activity');
 
@@ -28,11 +21,11 @@ router.get('/', function(req, res, next) {
   req.session.returnTo = req.path; 
 
   if (!isLoggedIn(req)) {
-    res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
+    res.redirect('/login');
   } else {
     activity.track('dashboard', req.session.user.id);
 
-    res.render('dashboard', { title: 'NahTube', loggedinuser: req.session.user.username, userObject: req.session.user });
+    res.render('dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
   }
 
 });
@@ -109,9 +102,22 @@ router.post('/login', function(req, res, next) {
     return res.send('Error: ' + e.message);
     } 
   ));
+});
 
+router.post('/logout', function(req, res, next) {
+  activity.track('logout', req.session.user.id);
+  //req.logout();
+  delete req.user;
+  req.session.destroy(function (err) {
+    if (err) { 
+      return next(err); 
+    }
+    // The response should indicate that the user is no longer authenticated.
+    //return res.send({ authenticated: req.isAuthenticated() });
 
-
+    // let the home route handle the login or whatever
+    return res.redirect('/login');
+  });
 });
 
 module.exports = router;

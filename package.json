@@ -11,6 +11,7 @@
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
     "body-parser": "^1.18.2",
+    "connect-pg-simple": "^4.2.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",

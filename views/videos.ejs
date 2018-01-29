@@ -2,9 +2,13 @@
 <html>
 
 <head>
-    <title>Videos</title>
+    <title><%= title %>: Videos</title>
 
     <script src="/js/jquery-3.2.1.min.js"></script>
+
+    <!-- bootstrap 3.3 (custom, full) -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap33/bootstrap.min.css">
+    <script src="/js/bootstrap33/bootstrap.min.js"></script>
     
     <link href="/css/google-font-Roboto.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
@@ -47,7 +51,6 @@
                             '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
                             '<div class="video-container">' +
                             '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
-                            //'  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden" value=' + JSON.stringify(item) + '>' +
                             '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
                             '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
                             '  </div>\n' +
@@ -65,9 +68,61 @@
 
                     });
 
-                    // the jQuery definition determines these, and the params of the callback
-                    // http://api.jquery.com/jquery.each/
-                    //$.each(data.items, constructVideoResult);
+                    // add a "More Results" button if appropriate
+                    if (data.nextPageToken) {
+                        $('#more-btn').append(
+                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-success">More Videos</button>'
+                        );
+                    }
+
+                }
+            });
+
+        }
+
+        function getNextPage(channelId, pageToken) {
+            var qsPageToken = '?pageToken=' + pageToken;
+            console.log('fetching next page with "%s"', pageToken);
+            $.ajax({
+                type: "GET",
+                url: "/youtube/videos/" + channelId + ".json" + qsPageToken,
+                data: {"channelId": this.value},
+                success: function (data) {
+
+                    $.each(data.items, function (i, item) {
+
+                        var videoId = item.snippet.resourceId.videoId;
+
+                        $('#videos-list').append(
+                            '<form id= "' + videoId + '" method="POST" action="/youtube/watch' + assembleQueryString(videoId, channelId) + '">' +
+                            '<div class="video-container">' +
+                            '  <input id="' + videoId + '-json" name="videoDetailsFull" class="video-url" type="hidden">' +
+                            '  <div class="video-link" onClick=$("#' + videoId + '").submit()>' +
+                            '    <div class="video-thumbnail"><img src="' + item.snippet.thumbnails.medium.url + '"></div>\n' +
+                            '  </div>\n' +
+                            '  <div class="video-content">' + 
+                            '    <div class="video-title">' + 
+                            '      <div class="video-link" onClick=$("#' + videoId + '").submit()>' + item.snippet.title + '</div>\n' +
+                            '    </div>\n' + 
+                            '    <div class="video-meta">' + data.channelTitle + '</div>\n' +
+                            '  </div>' +
+                            '</div>' +
+                            '</form>'
+                        );
+
+                        $('#' + videoId + '-json').val(JSON.stringify(item)).html();
+
+                    });
+                    
+                    // update the More Results button
+                    $('#more-btn').empty();
+
+                    if (data.nextPageToken) {
+                        $('#more-btn').append(
+                            '<button id="activity" onclick="getNextPage(\'' + channelId + '\', \'' + data.nextPageToken + '\')" class="btn btn-success">More Videos</button>'
+                        );
+                    }
+
                 }
             });
 
@@ -81,6 +136,8 @@
 
     <div id="videos-list">
     </div>
+
+    <div id="more-btn"></div>
 
     <script>
         getVideosForChannelId( '<%= channelId %>' ); // this looks pretty bad to me...
