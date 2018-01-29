@@ -181,6 +181,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
  
  });
 
+ // TODO: secure this with an identity check
  router.get('/messages/to/:toUsername/:daysAgo?', function(req, res, next) {
    var toUsername = req.params.toUsername;
    var daysAgo = req.params.daysAgo;
