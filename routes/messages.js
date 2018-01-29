@@ -1,8 +1,26 @@
 var express = require('express');
+var session = require('express-session');
 var router = express.Router();
 
+function isLoggedIn(req) {
+  if (req.session.user) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 router.get('/', function (req, res, next) {
-    return res.render('messages');
+    if (!isLoggedIn(req)) {
+        console.log('redirecting to login...');
+        res.redirect('/login');
+    } else {
+        console.log(req.session.user);
+        return res.render('messages', { 
+            username: req.session.user.username,
+            commonName: req.session.user.common_name
+         });
+    }
 });
 
 router.get('/inbox', function (req, res, next) {

@@ -6,14 +6,17 @@ export interface MessagesProps {
 
 export interface MessagesState {
     username: string;
-
 }
 
 export class Messages extends React.Component<MessagesProps, {}> {
     render() {
         return ( 
             <div>
-                <h1>List and send messages.</h1>
+                <h4>List and send messages.</h4>
+
+                <p>Mock up?</p>
+
+                
 
             {/* <MessageViewer /> */}
             </div>
