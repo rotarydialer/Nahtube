@@ -15,7 +15,6 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
         this.state = {
             username: undefined
         }
-
     }
 
     render() {
@@ -23,7 +22,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             username
         } = this.state;
 
-        if (!username || username) return <div>Not logged in.</div>;
+        if (!username) return <div>Not logged in.</div>;
 
         return ( 
                 <div className="col-md-4">
