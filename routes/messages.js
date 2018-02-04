@@ -23,7 +23,12 @@ router.get('/', function (req, res, next) {
     }
 });
 
-router.get('/inbox', function (req, res, next) {
+router.get('/inbox.json', function (req, res, next) {
+
+    if (!isLoggedIn(req)) {
+        return res.send().status(403);
+    }
+
     var username = req.session.user.username;
 
     if (username) {
