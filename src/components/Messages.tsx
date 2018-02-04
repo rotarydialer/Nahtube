@@ -1,6 +1,5 @@
 import * as React from "react";
 import Axios from 'axios';
-//import MessageViewer from "./MessageViewer";
 import Message_YouTube from "./Message_YouTube";
 
 export interface MessagesProps { 
