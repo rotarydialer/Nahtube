@@ -6,6 +6,9 @@ export interface MessageProps {
     fromUsername: string;
     videoId: string;
     thumbnail: string;
+    channelId: string;
+    fullDetails: string;
+    start: number;
 }
 
 export interface MessageState {
@@ -25,28 +28,45 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             body,
             fromUsername,
             videoId,
-            thumbnail
+            thumbnail,
+            channelId,
+            fullDetails,
+            start
         } = this.props;
 
-        var fromAvatar = '/images/avatars/'+ fromUsername + '-avatar-sm.png'
+        var fromAvatar = '/images/avatars/'+ fromUsername + '-avatar-sm.png';
+        var watchUrl = '/youtube/watch?v=' + videoId;
+        watchUrl += channelId ? '&c=' + channelId : '';
+
+        if (start) {
+            watchUrl += '&t=' + start;
+        }
+
+        var jsonFieldName = videoId + '-json';
 
         return ( 
                 <div className="col-md-4">
-                    <div className="card mb-4 box-shadow">
-                        <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
-                        <div className="card-body">
-                            <strong>{subject}</strong>
-                            <p className="card-text">This is a React YouTube video message from another user.</p>
-                            <div className="avatar-message"><img src={fromAvatar} /></div>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <div className="btn-group">
-                            <button type="button" className="btn btn-sm btn-outline-secondary">Reply</button>
-                            <button type="button" className="btn btn-sm btn-outline-secondary">Delete</button>
+                    <form id={videoId} method="POST" action={watchUrl}>
+                        <input id={jsonFieldName} name="videoDetailsFull" type="hidden" />
+                        {/* <div className="card mb-4 box-shadow" onClick=$("#").submit() > */}
+                        <div className="card mb-4 box-shadow">
+                            <a href={watchUrl}>
+                                <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
+                            </a>
+                            <div className="card-body">
+                                <strong>{subject}</strong>
+                                <p className="card-text">{body}</p>
+                                <div className="avatar-message"><img src={fromAvatar} /></div>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div className="btn-group">
+                                <button type="button" className="btn btn-sm btn-outline-secondary">Reply</button>
+                                <button type="button" className="btn btn-sm btn-outline-secondary">Delete</button>
+                                </div>
+                                <small className="text-muted">9 mins</small>
                             </div>
-                            <small className="text-muted">9 mins</small>
+                            </div>
                         </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
         )
     }
