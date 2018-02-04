@@ -1,4 +1,6 @@
 import * as React from "react";
+import { watch } from "fs";
+import Axios from 'axios';
 
 export interface MessageProps { 
     subject: string;
@@ -20,6 +22,21 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
     }
 
     componentDidMount () {
+    }
+
+    watchViaPost (postUrl, payload) {
+        console.log('postUrl: ' + postUrl);
+        
+        Axios.post(postUrl, payload)
+        .then(res => {
+            console.log(res);
+            console.log(res.data);
+
+            return res.data;
+        })
+        .catch(err => {
+            console.log('ERROR:' + err);
+        });
     }
 
     render() {
@@ -48,11 +65,11 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                 <div className="col-md-4">
                     <form id={videoId} method="POST" action={watchUrl}>
                         <input id={jsonFieldName} name="videoDetailsFull" type="hidden" />
-                        {/* <div className="card mb-4 box-shadow" onClick=$("#").submit() > */}
-                        <div className="card mb-4 box-shadow">
-                            <a href={watchUrl}>
+                        <div className="card mb-4 box-shadow" onClick={ e => this.watchViaPost(watchUrl, fullDetails) } >
+                        {/* <div className="card mb-4 box-shadow"> */}
+                            {/* <a href={watchUrl}> */}
                                 <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
-                            </a>
+                            {/* </a> */}
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
