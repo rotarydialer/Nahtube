@@ -9,6 +9,7 @@ export interface MessagesProps {
 export interface MessagesState {
     username: string;
     commonName: string;
+    messages: string[];
 }
 
 export class Messages extends React.Component<MessagesProps, MessagesState> {
@@ -17,7 +18,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         this.state = {
             username: undefined,
-            commonName: undefined
+            commonName: undefined,
+            messages: []
         }
     }
 
@@ -30,11 +32,33 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         username: resp.data.username,
                         commonName: resp.data.common_name
                     });
+
+                    //now get the messages and map over them
+                    Axios.get('/messages/inbox.json')
+                    .then(
+                        (inboxMessages) => {
+                            console.log('Inbox messages:');
+                            console.log(inboxMessages.data);
+                            let messages = inboxMessages.data.map(message =>
+                                
+                                <Message_YouTube key={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body}
+                                videoId={message.videoId} thumbnail={message.details_full.snippet.thumbnails.default.url} />
+
+                            )
+
+                            this.setState({messages: messages});
+                        }
+                    )
+                    .catch((err) => {
+                        console.log('Inbox error: ' + err);
+                    })
                 }
             )
             .catch((err) => {
-                console.log('ERROR: ' + err);
+                console.log('Session error: ' + err);
             });
+
+
         }
 
     }
@@ -52,8 +76,10 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             // fetch messages, loop through
             // for each, check its type and render the appropriate component.
 
-            <Message_YouTube subject='This is a hard-coded subject' fromUsername='daddy' />
-
+            //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
+            <div className="row">
+                {this.state.messages}
+            </div>
         )
     }
 }

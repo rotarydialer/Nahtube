@@ -35,8 +35,8 @@ router.get('/inbox.json', function (req, res, next) {
 
         (async () => {
 
-            const { rows } = await pgpool.query(`SELECT users_from.username as from, users_to.username as to, 
-                msg.message_time, msg.message_subject, msg.message_body, msg.video_id, msg.details_full
+            const { rows } = await pgpool.query(`SELECT msg.id, users_from.username as from, users_to.username as to, 
+                msg.message_time, msg.message_subject, msg.message_body, msg.message_type, msg.video_id, msg.details_full
                 FROM nahtube.user_messages msg
                 INNER JOIN nahtube.users users_from
                 ON msg.from_id = users_from.id

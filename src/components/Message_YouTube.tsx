@@ -2,7 +2,10 @@ import * as React from "react";
 
 export interface MessageProps { 
     subject: string;
+    body: string;
     fromUsername: string;
+    videoId: string;
+    thumbnail: string;
 }
 
 export interface MessageState {
@@ -19,7 +22,10 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
     render() {
         const {
             subject,
-            fromUsername
+            body,
+            fromUsername,
+            videoId,
+            thumbnail
         } = this.props;
 
         var fromAvatar = '/images/avatars/'+ fromUsername + '-avatar-sm.png'
@@ -27,7 +33,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         return ( 
                 <div className="col-md-4">
                     <div className="card mb-4 box-shadow">
-                        <img className="card-img-top" src="" data-holder-rendered="true" />
+                        <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
                         <div className="card-body">
                             <strong>{subject}</strong>
                             <p className="card-text">This is a React YouTube video message from another user.</p>
