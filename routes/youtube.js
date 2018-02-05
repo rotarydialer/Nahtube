@@ -243,8 +243,9 @@ router.get('/watch', function(req, res, next) {
   var videoId = req.query.v;
   var channelId = req.query.c;
   var startTime = req.query.t || ''; //e.g., &t=125; TODO: translate from "&t=2m05s"
+  var logAct = req.query.logact || ''; // TODO: remove/rework this, as it's a weakness
 
-  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
+  if (logAct != 'no') activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
   res.render('watch', { 
     title: req.session.user.common_name, 

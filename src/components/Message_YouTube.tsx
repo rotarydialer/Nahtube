@@ -2,12 +2,12 @@ import * as React from "react";
 import { watch } from "fs";
 import Axios from 'axios';
 //import { Router } from 'react-router';
-import { BrowserRouter as Router,
-    Route,
-    Link,
-    Redirect,
-    Switch,
-    withRouter } from 'react-router-dom';
+// import { BrowserRouter as Router,
+//     Route,
+//     Link,
+//     Redirect,
+//     Switch,
+//     withRouter } from 'react-router-dom';
 
 export interface MessageProps { 
     subject: string;
@@ -36,21 +36,15 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
     }
 
     watchViaPost (postUrl, payload) { //do this in handleSubmit?
-        console.log('postUrl: ' + postUrl);
-        console.log('payload:');
-        console.log(payload);
         
         Axios.post(postUrl, payload)
         .then(res => {
-            //console.log(res);
-            console.log(res.data);
+            console.log(res);
+            //console.log(res.data);
 
-            window.location.href= postUrl; // this routes, but as a GET (the payload isn't picked up)
-            //this.context.router.replaceWith(postUrl);
+            window.location.href = postUrl; // this routes, but as a GET (the payload isn't picked up)
 
-            // withRouter(({history}) => (
-            //     history.push(postUrl)
-            // ))
+            //this.context.router.replaceWith(postUrl); // doesn't work
 
             // This returns an error:
             // Warning: You tried to redirect to the same route you're currently on: "/youtube/watch?v=..."
@@ -85,23 +79,19 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             watchUrl += '&t=' + start;
         }
 
-        // if (videoDetailsFull) {
-        //     watchUrl += '&videoDetailsFull=' + JSON.stringify(videoDetailsFull);
-        // }
-
-        //var encodedWatchUrl = encodeURI(watchUrl);
+        watchUrl += '&logact=no';
 
         var jsonFieldName = videoId + '-json';
 
-        if (this.state.redirectToWatch) {
-            return (
-                <Router>
-                    <Switch>
-                        <Redirect to={watchUrl}/>
-                    </Switch>
-                </Router>
-            )
-        }
+        // if (this.state.redirectToWatch) {
+        //     return (
+        //         <Router>
+        //             <Switch>
+        //                 <Redirect to={watchUrl}/>
+        //             </Switch>
+        //         </Router>
+        //     )
+        // }
 
         return ( 
                 <div className="col-md-4">
@@ -109,9 +99,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                         <input id={jsonFieldName} name="videoDetailsFull" type="hidden" />
                         <div className="card mb-4 box-shadow" onClick={ e => this.watchViaPost(watchUrl, this.props) } >
                         {/* <div className="card mb-4 box-shadow"> */}
-                            {/* <a href={encodedWatchUrl}> */}
                                 <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
-                            {/* </a> */}
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
