@@ -1,7 +1,8 @@
 assets/images/avatars/
 
 # Compiled code
-dist/
+# shortcut... it's late. TODO: redo this properly later
+dist/*.map
 
 # Environment
 .env
