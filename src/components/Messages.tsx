@@ -36,14 +36,14 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     Axios.get('/messages/inbox.json')
                     .then(
                         (inboxMessages) => {
-                            console.log('Inbox messages:');
-                            console.log(inboxMessages.data);
+                            // console.log('Inbox messages:');
+                            // console.log(inboxMessages.data);
                             let messages = inboxMessages.data.map(message =>
                                 
                                 <Message_YouTube key={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
                                 videoId={message.details_full.id} thumbnail={message.details_full.snippet.thumbnails.medium.url} start={message.details_full.start}
                                 channelId={message.details_full.snippet.channelId}
-                                fullDetails={message.details_full} />
+                                videoDetailsFull={message.details_full} />
 
                             )
 
