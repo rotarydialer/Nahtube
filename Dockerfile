@@ -7,6 +7,8 @@ COPY package*.json ./
 
 RUN npm install --only=production
 
+RUN npm run build --only=production
+
 # bundle app source code
 COPY . .
 
