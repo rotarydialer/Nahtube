@@ -267,9 +267,12 @@ router.post('/watch', function(req, res, next) {
   var channelTitle = '';
   var videoTitle = '';
   if (req.body) {
-    if (req.body.videoDetailsFull && req.body.videoDetailsFull != '{}') {
-      channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle;
-      videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+    if (videoDetailsFull && videoDetailsFull != '{}') {
+      if (typeof(videoDetailsFull)==='string') {
+        videoDetailsFull = JSON.parse(videoDetailsFull);
+      }
+      channelTitle = videoDetailsFull.snippet.channelTitle;
+      videoTitle = videoDetailsFull.snippet.title || '';
     }
   }
 
