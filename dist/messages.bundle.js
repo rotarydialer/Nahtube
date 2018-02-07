@@ -1031,7 +1031,7 @@ var Messages = /** @class */ (function (_super) {
                     // console.log('Inbox messages:');
                     console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
+                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
                     });
                     _this.setState({ messages: messages });
                 })
@@ -1053,7 +1053,9 @@ var Messages = /** @class */ (function (_super) {
         // fetch messages, loop through
         // for each, check its type and render the appropriate component.
         //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
-        React.createElement("div", { className: "row" }, this.state.messages));
+        React.createElement("div", null,
+            React.createElement("a", { className: "btn btn-secondary btn-sm", href: "#", role: "button" }, "New Message"),
+            React.createElement("div", { className: "row" }, this.state.messages)));
     };
     return Messages;
 }(React.Component));
@@ -1966,17 +1968,22 @@ var axios_1 = __webpack_require__(3);
 var Message_YouTube = /** @class */ (function (_super) {
     __extends(Message_YouTube, _super);
     function Message_YouTube(props) {
-        return _super.call(this, props) || this;
+        var _this = _super.call(this, props) || this;
+        _this.onDelete = _this.onDelete.bind(_this);
+        return _this;
     }
+    Message_YouTube.prototype.onDelete = function (messageId, e) {
+        console.log('Let\'s delete messageId ' + messageId + '...');
+        // show a confirmation modal.
+        // delete if confirmed.
+    };
     Message_YouTube.prototype.componentWillMount = function () {
-        this.setState({
-            redirectToWatch: false
-        });
+        this.setState({});
     };
     Message_YouTube.prototype.watchViaPost = function (postUrl, payload) {
         axios_1.default.post(postUrl, payload)
             .then(function (res) {
-            console.log(res);
+            //console.log(res);
             //console.log(res.data);
             window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
         })
@@ -1986,7 +1993,7 @@ var Message_YouTube = /** @class */ (function (_super) {
     };
     Message_YouTube.prototype.render = function () {
         var _this = this;
-        var _a = this.props, subject = _a.subject, body = _a.body, fromUsername = _a.fromUsername, videoId = _a.videoId, thumbnail = _a.thumbnail, channelId = _a.channelId, videoDetailsFull = _a.videoDetailsFull, start = _a.start;
+        var _a = this.props, messageId = _a.messageId, subject = _a.subject, body = _a.body, fromUsername = _a.fromUsername, videoId = _a.videoId, thumbnail = _a.thumbnail, channelId = _a.channelId, videoDetailsFull = _a.videoDetailsFull, start = _a.start;
         var fromAvatar = '/images/avatars/' + fromUsername + '-avatar-sm.png';
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
@@ -1998,9 +2005,9 @@ var Message_YouTube = /** @class */ (function (_super) {
         return (React.createElement("div", { className: "col-md-4" },
             React.createElement("form", { id: videoId, method: "POST", action: watchUrl },
                 React.createElement("input", { id: jsonFieldName, name: "videoDetailsFull", type: "hidden" }),
-                React.createElement("div", { className: "card mb-4 box-shadow", onClick: function (e) { return _this.watchViaPost(watchUrl, _this.props); } },
+                React.createElement("div", { className: "card mb-4 box-shadow" },
                     thumbnail &&
-                        React.createElement("img", { className: "card-img-top", src: thumbnail, "data-holder-rendered": "true" }),
+                        React.createElement("img", { className: "card-img-top", src: thumbnail, "data-holder-rendered": "true", onClick: function (e) { return _this.watchViaPost(watchUrl, _this.props); } }),
                     React.createElement("div", { className: "card-body" },
                         React.createElement("strong", null, subject),
                         React.createElement("p", { className: "card-text" }, body),
@@ -2008,8 +2015,8 @@ var Message_YouTube = /** @class */ (function (_super) {
                             React.createElement("img", { src: fromAvatar })),
                         React.createElement("div", { className: "d-flex justify-content-between align-items-center" },
                             React.createElement("div", { className: "btn-group" },
-                                React.createElement("button", { type: "button", className: "btn btn-sm btn-outline-secondary" }, "Reply"),
-                                React.createElement("button", { type: "button", className: "btn btn-sm btn-outline-secondary" }, "Delete")),
+                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary" }, "Reply"),
+                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete")),
                             React.createElement("small", { className: "text-muted" }, "9 mins")))))));
     };
     return Message_YouTube;

@@ -104,8 +104,11 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             // for each, check its type and render the appropriate component.
 
             //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
-            <div className="row">
-                {this.state.messages}
+            <div>
+                <a className="btn btn-secondary btn-sm" href="#" role="button">New Message</a>
+                <div className="row">
+                    {this.state.messages}
+                </div>
             </div>
         )
     }
