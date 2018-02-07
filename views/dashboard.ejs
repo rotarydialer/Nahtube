@@ -99,6 +99,10 @@
         text-align: center;
     }
 
+    .messages-nav-link {
+        text-align: right;
+    }
+
     .caption {
         margin-top: 1px;
     }
@@ -156,6 +160,8 @@
 
     function getMessagesForUser(userLoggedIn, daysAgo) {
         $("#messages-container").empty();
+
+        $("#messages-container").append('<div class="messages-nav-link"><strong><a href="/messages">All Messages</a></strong></div>');
 
        // console.log('Fetching messages for ' + userLoggedIn);
 
