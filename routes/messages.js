@@ -43,6 +43,7 @@ router.get('/inbox.json', function (req, res, next) {
                 INNER JOIN nahtube.users users_to
                 ON msg.to_id = users_to.id
                 WHERE users_to.username = $1
+                AND NOT is_deleted
                 ORDER BY msg.message_time DESC;`, 
                 [username]);
         
