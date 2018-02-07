@@ -2,6 +2,8 @@ var express = require('express');
 var session = require('express-session');
 var router = express.Router();
 
+var activity = require('../activity');
+
 function isLoggedIn(req) {
   if (req.session.user) {
     return true;
