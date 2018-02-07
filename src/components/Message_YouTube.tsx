@@ -3,6 +3,7 @@ import { watch } from "fs";
 import Axios from 'axios';
 
 export interface MessageProps { 
+    messageId: number;
     subject: string;
     body: string;
     fromUsername: string;
@@ -14,7 +15,6 @@ export interface MessageProps {
 }
 
 export interface MessageState {
-    redirectToWatch: boolean;
 }
 
 export default class Message_YouTube extends React.Component<MessageProps, MessageState> {
@@ -24,14 +24,15 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         this.onDelete = this.onDelete.bind(this);
     }
 
-    onDelete (e) {
-        console.log('Clicked delete!');
-        console.log(e);
+    onDelete (messageId, e) {
+        console.log('Let\'s delete messageId ' + messageId + '...');
+
+        // show a confirmation modal.
+        // delete if confirmed.
     }
 
     componentWillMount () {
         this.setState({
-            redirectToWatch: false
         });
     }
 
@@ -39,7 +40,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         
         Axios.post(postUrl, payload)
         .then(res => {
-            console.log(res);
+            //console.log(res);
             //console.log(res.data);
 
             window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
@@ -52,6 +53,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
 
     render() {
         const {
+            messageId,
             subject,
             body,
             fromUsername,
@@ -91,7 +93,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="btn-group">
                                     <div className="btn btn-sm btn-outline-secondary">Reply</div>
-                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(e)}}>Delete</div>
+                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
                                 </div>
                                 <small className="text-muted">9 mins</small>
                             </div>
