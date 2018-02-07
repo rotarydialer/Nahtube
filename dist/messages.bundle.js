@@ -983,6 +983,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
 var axios_1 = __webpack_require__(3);
 var Message_YouTube_1 = __webpack_require__(31);
+function checkVideoThumbnail(video) {
+    if (video.details_full) {
+        if (video.details_full.snippet) {
+            if (video.details_full.snippet.thumbnails) {
+                if (video.details_full.snippet.thumbnails.medium.url) {
+                    return video.details_full.snippet.thumbnails.medium.url;
+                }
+            }
+        }
+    }
+    return '';
+}
+function checkChannelId(video) {
+    if (video.details_full) {
+        if (video.details_full.snippet) {
+            if (video.details_full.snippet.channelId) {
+                return video.details_full.snippet.channelId;
+            }
+        }
+    }
+    return '';
+}
 var Messages = /** @class */ (function (_super) {
     __extends(Messages, _super);
     function Messages(props) {
@@ -1007,9 +1029,9 @@ var Messages = /** @class */ (function (_super) {
                 axios_1.default.get('/messages/inbox.json')
                     .then(function (inboxMessages) {
                     // console.log('Inbox messages:');
-                    // console.log(inboxMessages.data);
+                    console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: message.details_full.snippet.thumbnails.medium.url, start: message.details_full.start, channelId: message.details_full.snippet.channelId, videoDetailsFull: message.details_full });
+                        return React.createElement(Message_YouTube_1.default, { key: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
                     });
                     _this.setState({ messages: messages });
                 })
@@ -1956,14 +1978,7 @@ var Message_YouTube = /** @class */ (function (_super) {
             .then(function (res) {
             console.log(res);
             //console.log(res.data);
-            window.location.href = postUrl; // this routes, but as a GET (the payload isn't picked up)
-            //this.context.router.replaceWith(postUrl); // doesn't work
-            // This returns an error:
-            // Warning: You tried to redirect to the same route you're currently on: "/youtube/watch?v=..."
-            // Refreshing the page takes you there but... ugh.
-            // this.setState({
-            //     redirectToWatch: true
-            // });
+            window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
         })
             .catch(function (err) {
             console.log('ERROR:' + err);
@@ -1980,20 +1995,12 @@ var Message_YouTube = /** @class */ (function (_super) {
         }
         watchUrl += '&logact=no';
         var jsonFieldName = videoId + '-json';
-        // if (this.state.redirectToWatch) {
-        //     return (
-        //         <Router>
-        //             <Switch>
-        //                 <Redirect to={watchUrl}/>
-        //             </Switch>
-        //         </Router>
-        //     )
-        // }
         return (React.createElement("div", { className: "col-md-4" },
             React.createElement("form", { id: videoId, method: "POST", action: watchUrl },
                 React.createElement("input", { id: jsonFieldName, name: "videoDetailsFull", type: "hidden" }),
                 React.createElement("div", { className: "card mb-4 box-shadow", onClick: function (e) { return _this.watchViaPost(watchUrl, _this.props); } },
-                    React.createElement("img", { className: "card-img-top", src: thumbnail, "data-holder-rendered": "true" }),
+                    thumbnail &&
+                        React.createElement("img", { className: "card-img-top", src: thumbnail, "data-holder-rendered": "true" }),
                     React.createElement("div", { className: "card-body" },
                         React.createElement("strong", null, subject),
                         React.createElement("p", { className: "card-text" }, body),

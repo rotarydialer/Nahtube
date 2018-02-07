@@ -11,6 +11,32 @@ export interface MessagesState {
     messages: string[];
 }
 
+function checkVideoThumbnail(video) {
+    if (video.details_full) {
+        if (video.details_full.snippet) {
+            if (video.details_full.snippet.thumbnails) {
+                if (video.details_full.snippet.thumbnails.medium.url) {
+                    return video.details_full.snippet.thumbnails.medium.url;                        
+                }
+            }
+        }
+    }
+
+    return '';
+}
+
+function checkChannelId(video) {
+    if (video.details_full) {
+        if (video.details_full.snippet) {
+            if (video.details_full.snippet.channelId) {
+                return video.details_full.snippet.channelId;
+            }
+        }
+    }
+
+    return '';
+}
+
 export class Messages extends React.Component<MessagesProps, MessagesState> {
     constructor (props: MessagesProps) {
         super(props);
@@ -37,14 +63,14 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     .then(
                         (inboxMessages) => {
                             // console.log('Inbox messages:');
-                            // console.log(inboxMessages.data);
-                            let messages = inboxMessages.data.map(message =>
+                            console.log(inboxMessages.data);
+                            let messages = inboxMessages.data.map( (message) => 
                                 
                                 <Message_YouTube key={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
-                                videoId={message.details_full.id} thumbnail={message.details_full.snippet.thumbnails.medium.url} start={message.details_full.start}
-                                channelId={message.details_full.snippet.channelId}
-                                videoDetailsFull={message.details_full} />
-
+                                videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
+                                channelId={checkChannelId(message)}
+                                videoDetailsFull={message.details_full || {}} />
+                            
                             )
 
                             this.setState({messages: messages});

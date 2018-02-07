@@ -42,16 +42,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             console.log(res);
             //console.log(res.data);
 
-            window.location.href = postUrl; // this routes, but as a GET (the payload isn't picked up)
-
-            //this.context.router.replaceWith(postUrl); // doesn't work
-
-            // This returns an error:
-            // Warning: You tried to redirect to the same route you're currently on: "/youtube/watch?v=..."
-            // Refreshing the page takes you there but... ugh.
-            // this.setState({
-            //     redirectToWatch: true
-            // });
+            window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
 
         })
         .catch(err => {
@@ -83,23 +74,16 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
 
         var jsonFieldName = videoId + '-json';
 
-        // if (this.state.redirectToWatch) {
-        //     return (
-        //         <Router>
-        //             <Switch>
-        //                 <Redirect to={watchUrl}/>
-        //             </Switch>
-        //         </Router>
-        //     )
-        // }
-
         return ( 
                 <div className="col-md-4">
                     <form id={videoId} method="POST" action={watchUrl}>
                         <input id={jsonFieldName} name="videoDetailsFull" type="hidden" />
                         <div className="card mb-4 box-shadow" onClick={ e => this.watchViaPost(watchUrl, this.props) } >
                         {/* <div className="card mb-4 box-shadow"> */}
-                                <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
+                            {/* Conditionally render the image only if thumbnail has a value */}
+                            { thumbnail &&
+                               <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
+                            }
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
