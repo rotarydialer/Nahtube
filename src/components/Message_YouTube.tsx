@@ -1,13 +1,6 @@
 import * as React from "react";
 import { watch } from "fs";
 import Axios from 'axios';
-//import { Router } from 'react-router';
-// import { BrowserRouter as Router,
-//     Route,
-//     Link,
-//     Redirect,
-//     Switch,
-//     withRouter } from 'react-router-dom';
 
 export interface MessageProps { 
     subject: string;
@@ -27,6 +20,13 @@ export interface MessageState {
 export default class Message_YouTube extends React.Component<MessageProps, MessageState> {
     constructor (props: MessageProps) {
         super(props);
+
+        this.onDelete = this.onDelete.bind(this);
+    }
+
+    onDelete (e) {
+        console.log('Clicked delete!');
+        console.log(e);
     }
 
     componentWillMount () {
@@ -35,7 +35,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         });
     }
 
-    watchViaPost (postUrl, payload) { //do this in handleSubmit?
+    watchViaPost (postUrl, payload) {
         
         Axios.post(postUrl, payload)
         .then(res => {
@@ -78,11 +78,11 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                 <div className="col-md-4">
                     <form id={videoId} method="POST" action={watchUrl}>
                         <input id={jsonFieldName} name="videoDetailsFull" type="hidden" />
-                        <div className="card mb-4 box-shadow" onClick={ e => this.watchViaPost(watchUrl, this.props) } >
-                        {/* <div className="card mb-4 box-shadow"> */}
+                        {/* <div className="card mb-4 box-shadow" onClick={ e => this.watchViaPost(watchUrl, this.props) } > */}
+                        <div className="card mb-4 box-shadow">
                             {/* Conditionally render the image only if thumbnail has a value */}
                             { thumbnail &&
-                               <img className="card-img-top" src={thumbnail} data-holder-rendered="true" />
+                               <img className="card-img-top" src={thumbnail} data-holder-rendered="true" onClick={ e => this.watchViaPost(watchUrl, this.props) } />
                             }
                             <div className="card-body">
                                 <strong>{subject}</strong>
@@ -90,8 +90,8 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                                 <div className="avatar-message"><img src={fromAvatar} /></div>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="btn-group">
-                                <button type="button" className="btn btn-sm btn-outline-secondary">Reply</button>
-                                <button type="button" className="btn btn-sm btn-outline-secondary">Delete</button>
+                                    <div className="btn btn-sm btn-outline-secondary">Reply</div>
+                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(e)}}>Delete</div>
                                 </div>
                                 <small className="text-muted">9 mins</small>
                             </div>
