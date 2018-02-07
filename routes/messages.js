@@ -15,7 +15,9 @@ router.get('/', function (req, res, next) {
         console.log('redirecting to login...');
         res.redirect('/login');
     } else {
-        console.log(req.session.user);
+        //console.log(req.session.user);
+        activity.track('view messages', req.session.user.id);
+
         return res.render('messages', { 
             username: req.session.user.username,
             commonName: req.session.user.common_name
