@@ -1,6 +1,7 @@
 import * as React from "react";
 import Axios from 'axios';
 import Message_YouTube from "./Message_YouTube";
+import NewMessage from "./NewMessage";
 
 export interface MessagesProps { 
 }
@@ -9,6 +10,7 @@ export interface MessagesState {
     username: string;
     commonName: string;
     messages: string[];
+    composeNew: boolean;
 }
 
 function checkVideoThumbnail(video) {
@@ -44,8 +46,18 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
         this.state = {
             username: undefined,
             commonName: undefined,
-            messages: []
+            messages: [],
+            composeNew: false
         }
+
+        this.composeNewMessage.bind(this);
+    }
+
+
+    composeNewMessage() {
+        this.setState({
+            composeNew: true
+        });
     }
 
     componentDidMount () {
@@ -92,10 +104,18 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
     render() {
         const {
-            username
+            username,
+            composeNew
         } = this.state;
 
         if (!username) return <div>Not logged in.</div>;
+
+        if (composeNew) {
+            return (
+                <NewMessage />
+            )
+        }
+
 
         return ( 
 
@@ -105,7 +125,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
             //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
             <div>
-                <a className="btn btn-secondary btn-sm" href="#" role="button">New Message</a>
+                <a className="btn btn-secondary btn-sm" href="#" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
                 <div className="row">
                     {this.state.messages}
                 </div>
