@@ -16,7 +16,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
     render() {
         return (
-            <div>This will be a new message.</div>
+            <div className="newmessage col">
+                <h2>New Message</h2>
+                <p>And stuff will go here. Have a border.</p>
+            </div>
         )
 
     }
