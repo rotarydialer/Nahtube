@@ -24,15 +24,27 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                         <div className="form-group row">
                             <label className="col-1 col-form-label">To</label>
+
                             <div className="col-11">
-                                <input type="email" className="form-control" id="messageTo" aria-describedby="toHelp" placeholder="Username" />
-                                <small id="toHelp" className="form-text text-muted">Who would you like to send this message to?</small>
+
+                                <select className="form-control" id="messageTo">
+                                    <option></option>
+                                    <option>Mommy</option>
+                                    <option>Daddy</option>
+                                    <option>Son</option>
+                                    <option>Daughter</option>
+                                </select>
+
                             </div>
                         </div>
+                        
                         <div className="form-group row">
                             <label className="col-1 col-form-label">Subject</label>
+
                             <div className="col-11">
+
                                 <input className="form-control" type="text" id="subject" />
+
                             </div>
                         </div>
                     
