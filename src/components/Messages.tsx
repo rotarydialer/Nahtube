@@ -75,7 +75,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     .then(
                         (inboxMessages) => {
                             // console.log('Inbox messages:');
-                            console.log(inboxMessages.data);
+                            //console.log(inboxMessages.data);
                             let messages = inboxMessages.data.map( (message) => 
                                 
                                 <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
