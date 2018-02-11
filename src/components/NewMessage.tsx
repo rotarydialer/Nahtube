@@ -10,6 +10,10 @@ export interface MessageState {
     searchString: string;
 }
 
+// TODO: remove these hamfisted crutches in favor of something more elegant
+var currentSearchTerm;
+var currentSearchExecuted = false;
+
 export default class NewMessage extends React.Component<MessageProps, MessageState> {
         constructor (props: MessageProps) {
         super(props);
@@ -27,9 +31,26 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.setState({[e.target.name]: e.target.value});
         this.setState({isSearching: true});
 
-        console.log('searchString: "%s"', this.state.searchString);
+        // wait 2 seconds before submitting the search
+        setTimeout(() => this.checkSearchTerms(this.state.searchString), 2000);
 
-        // wait 3 seconds or so before submitting the search
+     }
+
+     checkSearchTerms(incoming) {
+         if (currentSearchTerm === incoming) {
+             if (!currentSearchExecuted) {
+                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                currentSearchExecuted = true;
+                this.doSearch(currentSearchTerm);
+             }
+         } else {
+             currentSearchTerm = incoming;
+         }
+     }
+
+     doSearch(searchTerm) {
+         console.log('Searching for "%s"...', searchTerm);
+         setTimeout(() => currentSearchExecuted = false, 1000);
      }
 
     render() {
@@ -51,7 +72,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             </div>
 
                             {
-                                isSearching ? <h2><span className="badge badge-danger"><strong>Searching...</strong></span></h2> : <span>&nbsp;</span>
+                                isSearching ? <h2><span className="badge badge-info"><strong>Searching...</strong></span></h2> : <span>&nbsp;</span>
                             }
 
                         </div>
