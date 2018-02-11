@@ -86,6 +86,43 @@ router.post('/search', function(req, res, next) {
 
 });
 
+router.get('/search/:searchstring', function(req, res, next) {
+  var searchstr = req.params.searchstring;
+  
+    if(!isLoggedIn(req)) {
+      res.status(401);
+      return res.send('ERROR: Not authorized. User must login.');
+    }
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    safeSearch: 'strict',
+    maxResults: 25,
+    q: searchstr
+  };
+
+  activity.track('search - get', req.session.user.id, '', JSON.stringify({"searchstring": searchstr}) );
+
+  youtube_base.search.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No results found for id "' + searchstr + '".');
+      res.status(404);
+      return res.send('ERROR: No results found for id "' + searchstr + '".');
+    } else {
+      console.log('Found %d results for "%s".', results.length, searchstr);
+
+      return res.send(response);
+    }
+  }); 
+
+});
+
 // Test using the YouTube API directly
 router.get('/direct/:channelId', function(req, res, next) {
   var channelId = req.params.channelId;

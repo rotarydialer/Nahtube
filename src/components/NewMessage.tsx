@@ -8,9 +8,11 @@ export interface MessageProps {
 export interface MessageState {
     isSearching: boolean;
     searchString: string;
+    searchResults: string[];
 }
 
 // TODO: remove these hamfisted crutches in favor of something more elegant
+// I mean, you've already got one of these in the state! :P
 var currentSearchTerm;
 var currentSearchExecuted = false;
 
@@ -20,7 +22,8 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
         this.state = {
             isSearching: false,
-            searchString: undefined
+            searchString: undefined,
+            searchResults: []
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
@@ -29,7 +32,6 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
     onSearchChange(e){
         this.setState({[e.target.name]: e.target.value});
-        this.setState({isSearching: true});
 
         // wait 2 seconds before submitting the search
         setTimeout(() => this.checkSearchTerms(this.state.searchString), 2000);
@@ -38,7 +40,8 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
      checkSearchTerms(incoming) {
          if (currentSearchTerm === incoming) {
-             if (!currentSearchExecuted) {
+             //if (!currentSearchExecuted) {
+             if (!this.state.isSearching) {
                 console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
                 currentSearchExecuted = true;
                 this.doSearch(currentSearchTerm);
@@ -49,8 +52,37 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
      }
 
      doSearch(searchTerm) {
+         this.setState({searchResults: []});
          console.log('Searching for "%s"...', searchTerm);
-         setTimeout(() => currentSearchExecuted = false, 1000);
+         this.setState({isSearching: true});
+
+         Axios.get('/youtube/search/' + searchTerm )
+                    .then(
+                        (resultsFound) => {
+                            console.log(resultsFound.data);
+                            let searchResults = resultsFound.data.items.map( (result) => 
+
+                                <div className="col">{result.snippet.title || 'No title'}</div>
+                                
+                                // <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
+                                // videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
+                                // channelId={checkChannelId(message)}
+                                // videoDetailsFull={message.details_full || {}} />
+                            
+                            )
+
+                            this.setState({searchResults: searchResults});
+                            setTimeout(() => currentSearchExecuted = false, 1000);
+                            setTimeout(() => this.setState({isSearching: false}), 1000);
+                        }
+                    )
+                    .catch((err) => {
+                        console.log('Send Message error: ' + err);
+                        setTimeout(() => currentSearchExecuted = false, 1000);
+                        setTimeout(() => this.setState({isSearching: false}), 1000);
+                    })
+
+         //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
      }
 
     render() {
@@ -65,7 +97,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                     <div className="form-group">
 
                         <div className="form-group row">
-                            <label className="col-1 col-form-label">Link</label>
+                            <label className="col-1 col-form-label">Search</label>
 
                             <div className="col-8">
                                 <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} />
@@ -75,6 +107,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                 isSearching ? <h2><span className="badge badge-info"><strong>Searching...</strong></span></h2> : <span>&nbsp;</span>
                             }
 
+                        </div>
+
+                        <div className="row">
+                            {this.state.searchResults}
                         </div>
 
                         <div className="form-group row">
