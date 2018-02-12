@@ -205,7 +205,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             {this.state.searchResults}
                         </div>
 
-                        <div className="form-group row">
+                        <div className="form-group row recipient-row">
                             <label className="col-1 col-form-label">To</label>
 
                             <div className="col-4">
