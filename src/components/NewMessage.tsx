@@ -162,7 +162,8 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
     render() {
         const {
-            isSearching
+            isSearching,
+            sendToUsername
         } = this.state;
         return (
             <div className="newmessage col">
@@ -199,6 +200,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                 </select>
 
                             </div>
+
+                            {
+                                sendToUsername ? <div className="col"><img src={'/images/avatars/' + sendToUsername + '-avatar-sm.png'} /></div> : <div className="col">&nbsp;</div>
+                            }
                         </div>
 
                         <div className="form-group row">
