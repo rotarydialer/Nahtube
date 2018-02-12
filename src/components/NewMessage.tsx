@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Axios from 'axios';
+import UserSelector from './UserSelector';
 
 export interface MessageProps {
 
@@ -9,12 +10,25 @@ export interface MessageState {
     isSearching: boolean;
     searchString: string;
     searchResults: string[];
+    users: string[];
 }
 
 // TODO: remove these hamfisted crutches in favor of something more elegant
 // I mean, you've already got one of these in the state! :P
 var currentSearchTerm;
 var currentSearchExecuted = false;
+
+function formatVideoThumbnail(video) {
+        if (video.snippet) {
+            if (video.snippet.thumbnails) {
+                if (video.snippet.thumbnails.medium.url) {
+                    return video.snippet.thumbnails.medium.url;
+                }
+            }
+        }
+
+    return '';
+}
 
 export default class NewMessage extends React.Component<MessageProps, MessageState> {
         constructor (props: MessageProps) {
@@ -23,10 +37,38 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.state = {
             isSearching: false,
             searchString: undefined,
-            searchResults: []
+            searchResults: [],
+            users: []
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
+
+    }
+
+    componentDidMount () {
+        console.log('New Message component mounted.');
+
+        Axios.get('/users')
+        .then(
+            (userData) => {
+                let usersFound = userData.data.map( (userFound) => 
+                    
+                    <UserSelector 
+                        key={userFound.id} 
+                        userid={userFound.id} 
+                        username={userFound.username} 
+                        common_name={userFound.common_name} 
+                        roles={userFound.roles} 
+                    />
+                
+                )
+
+                this.setState({users: usersFound});
+            }
+        )
+        .catch((err) => {
+            console.log('Inbox error: ' + err);
+        })
 
     }
 
@@ -62,13 +104,8 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             console.log(resultsFound.data);
                             let searchResults = resultsFound.data.items.map( (result) => 
 
-                                <div className="col">{result.snippet.title || 'No title'}</div>
-                                
-                                // <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
-                                // videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
-                                // channelId={checkChannelId(message)}
-                                // videoDetailsFull={message.details_full || {}} />
-                            
+                                <div key={result.id.videoId} data-detailsFull={result} className="col searchResultThumb"><img className="searchResultThumb" src={formatVideoThumbnail(result)} /></div>
+                                                            
                             )
 
                             this.setState({searchResults: searchResults});
@@ -116,14 +153,11 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                         <div className="form-group row">
                             <label className="col-1 col-form-label">To</label>
 
-                            <div className="col-11">
+                            <div className="col-4">
 
                                 <select className="form-control" id="messageTo">
                                     <option></option>
-                                    <option>Mommy</option>
-                                    <option>Daddy</option>
-                                    <option>Son</option>
-                                    <option>Daughter</option>
+                                    {this.state.users}
                                 </select>
 
                             </div>
