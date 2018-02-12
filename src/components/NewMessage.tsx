@@ -11,6 +11,7 @@ export interface MessageState {
     searchString: string;
     searchResults: string[];
     users: string[];
+    sendToUsername: string;
 }
 
 // TODO: remove these hamfisted crutches in favor of something more elegant
@@ -38,11 +39,12 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             isSearching: false,
             searchString: undefined,
             searchResults: [],
-            users: []
+            users: [],
+            sendToUsername: undefined
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
-
+        this.onSelectUser = this.onSelectUser.bind(this);
     }
 
     componentDidMount () {
@@ -122,6 +124,12 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
     }
 
+    onSelectUser(selectedUser) {
+        this.setState({
+            sendToUsername: selectedUser.target.value
+        });
+    }
+
     render() {
         const {
             isSearching
@@ -155,7 +163,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                             <div className="col-4">
 
-                                <select className="form-control" id="messageTo">
+                                <select className="form-control" id="messageTo" onChange={this.onSelectUser}>
                                     <option></option>
                                     {this.state.users}
                                 </select>

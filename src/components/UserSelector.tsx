@@ -19,7 +19,7 @@ export default class UserSelector extends React.Component<Props, State> {
 
     render() {
         return (
-                <option value={this.props.userid}>{this.props.common_name}</option>
+                <option value={this.props.username}>{this.props.common_name}</option>
         )
     }
 
