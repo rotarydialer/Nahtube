@@ -72,15 +72,15 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
     }
 
-    onSearchChange(e){
+    onSearchChange(e) {
         this.setState({[e.target.name]: e.target.value});
 
         // wait 2 seconds before submitting the search
         setTimeout(() => this.checkSearchTerms(this.state.searchString), 2000);
 
-     }
+    }
 
-     checkSearchTerms(incoming) {
+    checkSearchTerms(incoming) {
          if (currentSearchTerm === incoming) {
              //if (!currentSearchExecuted) {
              if (!this.state.isSearching) {
@@ -91,36 +91,36 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
          } else {
              currentSearchTerm = incoming;
          }
-     }
+    }
 
-     doSearch(searchTerm) {
-         this.setState({searchResults: []});
-         console.log('Searching for "%s"...', searchTerm);
-         this.setState({isSearching: true});
+    doSearch(searchTerm) {
+        this.setState({searchResults: []});
+        console.log('Searching for "%s"...', searchTerm);
+        this.setState({isSearching: true});
 
-         Axios.get('/youtube/search/' + searchTerm )
-                    .then(
-                        (resultsFound) => {
-                            console.log(resultsFound.data);
-                            let searchResults = resultsFound.data.items.map( (result) => 
+        Axios.get('/youtube/search/' + searchTerm )
+            .then(
+                (resultsFound) => {
+                    console.log(resultsFound.data);
+                    let searchResults = resultsFound.data.items.map( (result) => 
 
-                                <div key={result.id.videoId} data-detailsFull={result} className="col searchResultThumb"><img className="searchResultThumb" src={formatVideoThumbnail(result)} /></div>
-                                                            
-                            )
-
-                            this.setState({searchResults: searchResults});
-                            setTimeout(() => currentSearchExecuted = false, 1000);
-                            setTimeout(() => this.setState({isSearching: false}), 1000);
-                        }
+                        <div key={result.id.videoId} data-detailsFull={result} className="col searchResultThumb"><img className="searchResultThumb" src={formatVideoThumbnail(result)} /></div>
+                                                    
                     )
-                    .catch((err) => {
-                        console.log('Send Message error: ' + err);
-                        setTimeout(() => currentSearchExecuted = false, 1000);
-                        setTimeout(() => this.setState({isSearching: false}), 1000);
-                    })
 
-         //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
-     }
+                    this.setState({searchResults: searchResults});
+                    setTimeout(() => currentSearchExecuted = false, 1000);
+                    setTimeout(() => this.setState({isSearching: false}), 1000);
+                }
+            )
+            .catch((err) => {
+                console.log('Send Message error: ' + err);
+                setTimeout(() => currentSearchExecuted = false, 1000);
+                setTimeout(() => this.setState({isSearching: false}), 1000);
+            });
+
+        //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
+    }
 
     render() {
         const {
