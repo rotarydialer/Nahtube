@@ -202,7 +202,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             </div>
 
                             {
-                                sendToUsername ? <div className="col"><img src={'/images/avatars/' + sendToUsername + '-avatar-sm.png'} /></div> : <div className="col">&nbsp;</div>
+                                sendToUsername ? <div className="col"><img src={'/images/avatars/' + sendToUsername + '-avatar-md.png'} /></div> : <div className="col">&nbsp;</div>
                             }
                         </div>
 

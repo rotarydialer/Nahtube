@@ -433,4 +433,37 @@ router.get('/related/:videoId', function(req, res, next) {
 
 });
 
+router.get('/videodetails/:videoId', function(req, res, next) {
+  var videoId = req.params.videoId;
+  
+  if(!isLoggedIn(req)) {
+    res.status(401);
+    return res.send('ERROR: Not authorized. User must login.');
+  }
+
+  console.log('Getting details for video id "%s"...', videoId);
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    id: videoId
+  };
+
+  youtube_base.videos.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No video found with the ID "' + videoId + '".');
+      res.status(404);
+      return res.send('ERROR: No video found with that ID.');
+    } else {
+      return res.send(response);
+    }
+  }); 
+
+});
+
 module.exports = router;
