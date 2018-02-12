@@ -60,8 +60,9 @@ router.post('/search', function(req, res, next) {
   var searchparams = {
     auth: config.youtube.key,
     part: 'snippet',
+    type: 'video',
     safeSearch: 'strict',
-    maxResults: 25,
+    maxResults: 28,
     q: searchstr
   };
 
@@ -97,8 +98,9 @@ router.get('/search/:searchstring', function(req, res, next) {
   var searchparams = {
     auth: config.youtube.key,
     part: 'snippet',
+    type: 'video',
     safeSearch: 'strict',
-    maxResults: 25,
+    maxResults: 28,
     q: searchstr
   };
 
