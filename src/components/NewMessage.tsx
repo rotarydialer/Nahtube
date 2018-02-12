@@ -78,7 +78,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             }
         )
         .catch((err) => {
-            console.log('Inbox error: ' + err);
+            console.log('Error getting users: ' + err);
         })
 
     }
@@ -136,6 +136,22 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         let selectedVideoId = e.target.dataset.videoid;
         if (selectedVideoId) {
             this.setState({videoId: selectedVideoId});
+
+            Axios.get('/youtube/videodetails/' + selectedVideoId)
+            .then(
+                (response) => {
+                    console.log(response.data.items[0]);
+
+                    // TODO: check value
+                    this.setState({
+                        detailsFull: response.data.items[0]
+                    });
+                }
+            )
+            .catch((err) => {
+                console.log('Error getting users: ' + err);
+            });
+
         } else {
             console.log('ERROR: No video ID found for the selected video.');
         }
@@ -219,6 +235,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                 <textarea className="form-control" id="messageBody" rows={5} onChange={this.onChangeBody}></textarea>
                             </div>
                         </div>
+
+                        {
+                            this.state.videoId ? <div>I have a video. Show a preview here.</div> : ''
+                        }
                     
                         <button type="submit" className="btn btn-primary" onClick={this.sendMessage}>Send</button> <button className="btn btn-secondary">Cancel</button>
                     </div>
