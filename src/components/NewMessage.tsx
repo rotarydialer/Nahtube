@@ -56,6 +56,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.onSelectUser = this.onSelectUser.bind(this);
         this.onChangeSubject = this.onChangeSubject.bind(this);
         this.onChangeBody = this.onChangeBody.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
     }
 
     componentDidMount () {
@@ -174,6 +175,17 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     sendMessage(e) {
         console.log('Preparing to send the message:');
         console.log(this.state);
+
+        Axios.post('messages/send', this.state)
+        .then(res => {
+            console.log('Message sent. Response:');
+            console.log(res);
+        })
+        .catch(err => {
+            console.log('Error sending message: ' + err);
+
+        });
+
     }
 
     render() {
@@ -240,7 +252,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             this.state.videoId ? <div>I have a video. Show a preview here.</div> : ''
                         }
                     
-                        <button type="submit" className="btn btn-primary" onClick={this.sendMessage}>Send</button> <button className="btn btn-secondary">Cancel</button>
+                        <div className="btn btn-primary" onClick={this.sendMessage}>Send</div> <button className="btn btn-secondary">Cancel</button>
                     </div>
                 </form>
             </div>

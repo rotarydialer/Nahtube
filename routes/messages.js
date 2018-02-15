@@ -72,4 +72,15 @@ router.get('/inbox.json', function (req, res, next) {
 
 });
 
+router.post('/send', function (req, res, next) {
+    if (!isLoggedIn(req)) {
+        return res.send('Not logged in.').status(401);
+    } else {
+        console.log(req);
+
+        return res.send('Message sent.').status(200);
+
+    }
+});
+
 module.exports = router;
