@@ -176,14 +176,30 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         console.log('Preparing to send the message:');
         console.log(this.state);
 
-        Axios.post('messages/send', this.state)
+        const {
+            sendToUsername,
+            subject,
+            messageBody,
+            videoId,
+            detailsFull
+        } = this.state;
+
+        let msgPayload = {
+            "toUsername": sendToUsername,
+            "subject": subject,
+            "messageBody": 
+                {"messageBody": messageBody},
+            "videoId": videoId,
+            "detailsFull": detailsFull
+        }
+
+        Axios.post('messages/send', msgPayload)
         .then(res => {
             console.log('Message sent. Response:');
             console.log(res);
         })
         .catch(err => {
             console.log('Error sending message: ' + err);
-
         });
 
     }

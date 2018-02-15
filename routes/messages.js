@@ -76,9 +76,39 @@ router.post('/send', function (req, res, next) {
     if (!isLoggedIn(req)) {
         return res.send('Not logged in.').status(401);
     } else {
-        console.log(req);
+        const {
+            toUsername,
+            subject,
+            messageBody,
+            videoId,
+            detailsFull
+        } = req.body;
 
-        return res.send('Message sent.').status(200);
+        (async () => {
+
+            const { rows } = await pgpool.query(`
+            WITH userids as (SELECT id, username FROM nahtube.users)
+
+            INSERT INTO nahtube.user_messages (
+                from_id, to_id, message_subject, message_body, video_id, details_full
+            )
+            VALUES (
+                (SELECT id FROM userids WHERE username=$1),
+                (SELECT id FROM userids WHERE username=$2),
+                $3,
+                $4,
+                $5,
+                $6
+            );`,
+            [req.session.user.username, toUsername, subject, messageBody, videoId, detailsFull]);
+
+            return res.send('Message sent.').status(200);
+
+        })().catch(e => setImmediate(() => {
+            res.status(500);
+            console.log('Message send error:', e);
+            return res.send('There was an error: ' + e);
+        } ))
 
     }
 });

@@ -383,6 +383,12 @@ module.exports = React;
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = __webpack_require__(13);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
@@ -478,12 +484,6 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(13);
 
 /***/ }),
 /* 4 */
@@ -981,8 +981,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
-var axios_1 = __webpack_require__(3);
+var axios_1 = __webpack_require__(2);
 var Message_YouTube_1 = __webpack_require__(31);
+var NewMessage_1 = __webpack_require__(32);
 function checkVideoThumbnail(video) {
     if (video.details_full) {
         if (video.details_full.snippet) {
@@ -1012,10 +1013,17 @@ var Messages = /** @class */ (function (_super) {
         _this.state = {
             username: undefined,
             commonName: undefined,
-            messages: []
+            messages: [],
+            composeNew: false
         };
+        _this.composeNewMessage.bind(_this);
         return _this;
     }
+    Messages.prototype.composeNewMessage = function () {
+        this.setState({
+            composeNew: true
+        });
+    };
     Messages.prototype.componentDidMount = function () {
         var _this = this;
         if (!this.state.username) {
@@ -1029,7 +1037,7 @@ var Messages = /** @class */ (function (_super) {
                 axios_1.default.get('/messages/inbox.json')
                     .then(function (inboxMessages) {
                     // console.log('Inbox messages:');
-                    console.log(inboxMessages.data);
+                    //console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
                         return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
                     });
@@ -1045,16 +1053,20 @@ var Messages = /** @class */ (function (_super) {
         }
     };
     Messages.prototype.render = function () {
-        var username = this.state.username;
+        var _this = this;
+        var _a = this.state, username = _a.username, composeNew = _a.composeNew;
         if (!username)
             return React.createElement("div", null, "Not logged in.");
+        if (composeNew) {
+            return (React.createElement(NewMessage_1.default, null));
+        }
         return (
         // TODO:
         // fetch messages, loop through
         // for each, check its type and render the appropriate component.
         //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
         React.createElement("div", null,
-            React.createElement("a", { className: "btn btn-secondary btn-sm", href: "#", role: "button" }, "New Message"),
+            React.createElement("a", { className: "btn btn-secondary btn-sm", href: "#", role: "button", onClick: function (e) { _this.composeNewMessage(); } }, "New Message"),
             React.createElement("div", { className: "row" }, this.state.messages)));
     };
     return Messages;
@@ -1072,7 +1084,7 @@ exports.Messages = Messages;
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(4);
 var Axios = __webpack_require__(15);
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 
 /**
  * Create an instance of Axios
@@ -1155,7 +1167,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(24);
 var dispatchRequest = __webpack_require__(25);
@@ -1696,7 +1708,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(26);
 var isCancel = __webpack_require__(8);
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 var isAbsoluteURL = __webpack_require__(27);
 var combineURLs = __webpack_require__(28);
 
@@ -1964,7 +1976,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
-var axios_1 = __webpack_require__(3);
+var axios_1 = __webpack_require__(2);
 var Message_YouTube = /** @class */ (function (_super) {
     __extends(Message_YouTube, _super);
     function Message_YouTube(props) {
@@ -2022,6 +2034,245 @@ var Message_YouTube = /** @class */ (function (_super) {
     return Message_YouTube;
 }(React.Component));
 exports.default = Message_YouTube;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(1);
+var axios_1 = __webpack_require__(2);
+var UserSelector_1 = __webpack_require__(33);
+// TODO: remove these hamfisted crutches in favor of something more elegant
+// I mean, you've already got one of these in the state! :P
+var currentSearchTerm;
+var currentSearchExecuted = false;
+function formatVideoThumbnail(video) {
+    if (video.snippet) {
+        if (video.snippet.thumbnails) {
+            if (video.snippet.thumbnails.medium.url) {
+                return video.snippet.thumbnails.medium.url;
+            }
+        }
+    }
+    return '';
+}
+var NewMessage = /** @class */ (function (_super) {
+    __extends(NewMessage, _super);
+    function NewMessage(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            isSearching: false,
+            searchString: undefined,
+            searchResults: [],
+            users: [],
+            sendToUsername: undefined,
+            subject: undefined,
+            messageBody: undefined,
+            videoId: undefined,
+            detailsFull: {}
+        };
+        _this.onSearchChange = _this.onSearchChange.bind(_this);
+        _this.selectVideoToSend = _this.selectVideoToSend.bind(_this);
+        _this.onSelectUser = _this.onSelectUser.bind(_this);
+        _this.onChangeSubject = _this.onChangeSubject.bind(_this);
+        _this.onChangeBody = _this.onChangeBody.bind(_this);
+        _this.sendMessage = _this.sendMessage.bind(_this);
+        return _this;
+    }
+    NewMessage.prototype.componentDidMount = function () {
+        var _this = this;
+        axios_1.default.get('/users')
+            .then(function (userData) {
+            var usersFound = userData.data.map(function (userFound) {
+                return React.createElement(UserSelector_1.default, { key: userFound.id, userid: userFound.id, username: userFound.username, common_name: userFound.common_name, roles: userFound.roles });
+            });
+            _this.setState({ users: usersFound });
+        })
+            .catch(function (err) {
+            console.log('Error getting users: ' + err);
+        });
+    };
+    NewMessage.prototype.onSearchChange = function (e) {
+        var _this = this;
+        this.setState((_a = {}, _a[e.target.name] = e.target.value, _a));
+        // wait 2 seconds before submitting the search
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 2000);
+        var _a;
+    };
+    NewMessage.prototype.checkSearchTerms = function (incoming) {
+        if (currentSearchTerm === incoming) {
+            //if (!currentSearchExecuted) {
+            if (!this.state.isSearching) {
+                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                currentSearchExecuted = true;
+                this.doSearch(currentSearchTerm);
+            }
+        }
+        else {
+            currentSearchTerm = incoming;
+        }
+    };
+    NewMessage.prototype.doSearch = function (searchTerm) {
+        var _this = this;
+        this.setState({ searchResults: [] });
+        console.log('Searching for "%s"...', searchTerm);
+        this.setState({ isSearching: true });
+        axios_1.default.get('/youtube/search/' + searchTerm)
+            .then(function (resultsFound) {
+            console.log(resultsFound.data);
+            var searchResults = resultsFound.data.items.map(function (result) {
+                // <div key={result.id.videoId} className="col searchResultThumb" onClick={this.selectVideoToSend.bind(this)}><img data-videoid={result.id.videoId} data-fulldetails={result} className="searchResultThumb" src={formatVideoThumbnail(result)} /></div>
+                // ideally, I should probably serialize and store the full details result above, but in the interest of time I'll just grab the videoId and do a separate request on send :/
+                return React.createElement("div", { key: result.id.videoId, className: "col searchResultThumb" },
+                    React.createElement("img", { onClick: _this.selectVideoToSend, "data-videoid": result.id.videoId, className: "searchResultThumb", src: formatVideoThumbnail(result) }));
+            });
+            _this.setState({ searchResults: searchResults });
+            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
+            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
+        })
+            .catch(function (err) {
+            console.log('Send Message error: ' + err);
+            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
+            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
+        });
+        //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
+    };
+    NewMessage.prototype.selectVideoToSend = function (e) {
+        var _this = this;
+        var selectedVideoId = e.target.dataset.videoid;
+        if (selectedVideoId) {
+            this.setState({ videoId: selectedVideoId });
+            axios_1.default.get('/youtube/videodetails/' + selectedVideoId)
+                .then(function (response) {
+                console.log(response.data.items[0]);
+                // TODO: check value
+                _this.setState({
+                    detailsFull: response.data.items[0]
+                });
+            })
+                .catch(function (err) {
+                console.log('Error getting users: ' + err);
+            });
+        }
+        else {
+            console.log('ERROR: No video ID found for the selected video.');
+        }
+    };
+    NewMessage.prototype.onSelectUser = function (selectedUser) {
+        this.setState({
+            sendToUsername: selectedUser.target.value
+        });
+    };
+    NewMessage.prototype.onChangeSubject = function (e) {
+        this.setState((_a = {}, _a[e.target.id] = e.target.value, _a));
+        var _a;
+    };
+    NewMessage.prototype.onChangeBody = function (e) {
+        this.setState((_a = {}, _a[e.target.id] = e.target.value, _a));
+        var _a;
+    };
+    NewMessage.prototype.sendMessage = function (e) {
+        console.log('Preparing to send the message:');
+        console.log(this.state);
+        var _a = this.state, sendToUsername = _a.sendToUsername, subject = _a.subject, messageBody = _a.messageBody, videoId = _a.videoId, detailsFull = _a.detailsFull;
+        var msgPayload = {
+            "toUsername": sendToUsername,
+            "subject": subject,
+            "messageBody": { "messageBody": messageBody },
+            "videoId": videoId,
+            "detailsFull": detailsFull
+        };
+        axios_1.default.post('messages/send', msgPayload)
+            .then(function (res) {
+            console.log('Message sent. Response:');
+            console.log(res);
+        })
+            .catch(function (err) {
+            console.log('Error sending message: ' + err);
+        });
+    };
+    NewMessage.prototype.render = function () {
+        var _a = this.state, isSearching = _a.isSearching, sendToUsername = _a.sendToUsername;
+        return (React.createElement("div", { className: "newmessage col" },
+            React.createElement("h2", null, "Send a Message"),
+            React.createElement("form", null,
+                React.createElement("div", { className: "form-group" },
+                    React.createElement("div", { className: "form-group row" },
+                        React.createElement("label", { className: "col-1 col-form-label" }, "Search"),
+                        React.createElement("div", { className: "col-8" },
+                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange })),
+                        isSearching ? React.createElement("h2", null,
+                            React.createElement("span", { className: "badge badge-info" },
+                                React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
+                    React.createElement("div", { className: "row" }, this.state.searchResults),
+                    React.createElement("div", { className: "form-group row recipient-row" },
+                        React.createElement("label", { className: "col-1 col-form-label" }, "To"),
+                        React.createElement("div", { className: "col-4" },
+                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser },
+                                React.createElement("option", null),
+                                this.state.users)),
+                        sendToUsername ? React.createElement("div", { className: "col" },
+                            React.createElement("img", { src: '/images/avatars/' + sendToUsername + '-avatar-md.png' })) : React.createElement("div", { className: "col" }, "\u00A0")),
+                    React.createElement("div", { className: "form-group row" },
+                        React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
+                        React.createElement("div", { className: "col-11" },
+                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject }))),
+                    React.createElement("div", { className: "form-group row" },
+                        React.createElement("div", { className: "col-12" },
+                            React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
+                    this.state.videoId ? React.createElement("div", null, "I have a video. Show a preview here.") : '',
+                    React.createElement("div", { className: "btn btn-primary", onClick: this.sendMessage }, "Send"),
+                    " ",
+                    React.createElement("button", { className: "btn btn-secondary" }, "Cancel")))));
+    };
+    return NewMessage;
+}(React.Component));
+exports.default = NewMessage;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(1);
+var UserSelector = /** @class */ (function (_super) {
+    __extends(UserSelector, _super);
+    function UserSelector(props) {
+        return _super.call(this, props) || this;
+    }
+    UserSelector.prototype.render = function () {
+        return (React.createElement("option", { value: this.props.username }, this.props.common_name));
+    };
+    return UserSelector;
+}(React.Component));
+exports.default = UserSelector;
 
 
 /***/ })
