@@ -102,6 +102,9 @@ router.post('/send', function (req, res, next) {
             );`,
             [req.session.user.username, toUsername, subject, messageBody, videoId, detailsFull]);
 
+            // TODO: add the channel ID possibly
+            activity.track('send message', req.session.user.id, '', JSON.stringify({"videoId": videoId}), req.body);
+
             return res.send('Message sent.').status(200);
 
         })().catch(e => setImmediate(() => {
