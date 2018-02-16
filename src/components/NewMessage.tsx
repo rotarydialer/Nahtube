@@ -105,7 +105,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     }
 
     doSearch(searchTerm) {
-        this.setState({searchResults: []});
+        this.setState({
+            searchResults: [],
+            videoId: ''
+        });
         console.log('Searching for "%s"...', searchTerm);
         this.setState({isSearching: true});
 
@@ -216,23 +219,6 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                 <form>
                     <div className="form-group">
 
-                        <div className="form-group row">
-                            <label className="col-1 col-form-label">Search</label>
-
-                            <div className="col-8">
-                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} />
-                            </div>
-
-                            {
-                                isSearching ? <h2><span className="badge badge-info"><strong>Searching...</strong></span></h2> : <span>&nbsp;</span>
-                            }
-
-                        </div>
-
-                        <div className="row">
-                            {this.state.searchResults}
-                        </div>
-
                         <div className="form-group row recipient-row">
                             <label className="col-1 col-form-label">To</label>
 
@@ -248,7 +234,42 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             {
                                 sendToUsername ? <div className="col"><img src={'/images/avatars/' + sendToUsername + '-avatar-md.png'} /></div> : <div className="col">&nbsp;</div>
                             }
+
+                            {
+                                this.state.videoId &&
+                                <div id="player" className="col text-right yt-player-upper-right">
+                                    <iframe id="ytplayer" width="350" height="200"
+                                    src={"https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0"}
+                                    frameBorder="0"></iframe>
+                                </div>
+                            }
                         </div>
+
+                        <div className="form-group row">
+                            <label className="col-1 col-form-label"><strong>Search</strong></label>
+
+                            <div className="col-4">
+                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} />
+                            </div>
+
+                            {
+                                isSearching ? <h2><span className="badge badge-info"><strong>Searching...</strong></span></h2> : <span>&nbsp;</span>
+                            }
+
+                        </div>
+
+                        <div className="row">
+                            {this.state.searchResults}
+                        </div>
+
+                        {/* <div className="row">
+                            {this.state.videoId &&
+                                <div id="player" className="col-8">
+                                    <iframe id="ytplayer" width="500" height="282"
+                                    src={"https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0"}></iframe>
+                                </div>
+                            }
+                        </div> */}
 
                         <div className="form-group row">
                             <label className="col-1 col-form-label">Subject</label>
@@ -263,10 +284,6 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                 <textarea className="form-control" id="messageBody" rows={5} onChange={this.onChangeBody}></textarea>
                             </div>
                         </div>
-
-                        {
-                            this.state.videoId ? <div>I have a video. Show a preview here.</div> : ''
-                        }
                     
                         <div className="btn btn-primary" onClick={this.sendMessage}>Send</div> <button className="btn btn-secondary">Cancel</button>
                     </div>

@@ -2128,7 +2128,10 @@ var NewMessage = /** @class */ (function (_super) {
     };
     NewMessage.prototype.doSearch = function (searchTerm) {
         var _this = this;
-        this.setState({ searchResults: [] });
+        this.setState({
+            searchResults: [],
+            videoId: ''
+        });
         console.log('Searching for "%s"...', searchTerm);
         this.setState({ isSearching: true });
         axios_1.default.get('/youtube/search/' + searchTerm)
@@ -2211,14 +2214,6 @@ var NewMessage = /** @class */ (function (_super) {
             React.createElement("h2", null, "Send a Message"),
             React.createElement("form", null,
                 React.createElement("div", { className: "form-group" },
-                    React.createElement("div", { className: "form-group row" },
-                        React.createElement("label", { className: "col-1 col-form-label" }, "Search"),
-                        React.createElement("div", { className: "col-8" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange })),
-                        isSearching ? React.createElement("h2", null,
-                            React.createElement("span", { className: "badge badge-info" },
-                                React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
-                    React.createElement("div", { className: "row" }, this.state.searchResults),
                     React.createElement("div", { className: "form-group row recipient-row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "To"),
                         React.createElement("div", { className: "col-4" },
@@ -2226,7 +2221,19 @@ var NewMessage = /** @class */ (function (_super) {
                                 React.createElement("option", null),
                                 this.state.users)),
                         sendToUsername ? React.createElement("div", { className: "col" },
-                            React.createElement("img", { src: '/images/avatars/' + sendToUsername + '-avatar-md.png' })) : React.createElement("div", { className: "col" }, "\u00A0")),
+                            React.createElement("img", { src: '/images/avatars/' + sendToUsername + '-avatar-md.png' })) : React.createElement("div", { className: "col" }, "\u00A0"),
+                        this.state.videoId &&
+                            React.createElement("div", { id: "player", className: "col text-right yt-player-upper-right" },
+                                React.createElement("iframe", { id: "ytplayer", width: "350", height: "200", src: "https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0", frameBorder: "0" }))),
+                    React.createElement("div", { className: "form-group row" },
+                        React.createElement("label", { className: "col-1 col-form-label" },
+                            React.createElement("strong", null, "Search")),
+                        React.createElement("div", { className: "col-4" },
+                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange })),
+                        isSearching ? React.createElement("h2", null,
+                            React.createElement("span", { className: "badge badge-info" },
+                                React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
+                    React.createElement("div", { className: "row" }, this.state.searchResults),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
                         React.createElement("div", { className: "col-11" },
@@ -2234,7 +2241,6 @@ var NewMessage = /** @class */ (function (_super) {
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("div", { className: "col-12" },
                             React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
-                    this.state.videoId ? React.createElement("div", null, "I have a video. Show a preview here.") : '',
                     React.createElement("div", { className: "btn btn-primary", onClick: this.sendMessage }, "Send"),
                     " ",
                     React.createElement("button", { className: "btn btn-secondary" }, "Cancel")))));

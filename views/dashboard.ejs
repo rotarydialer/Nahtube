@@ -243,7 +243,12 @@
                 }
 
                 var msgSubj = entry.message_subject ? entry.message_subject : '';
-                var msgBody = entry.message_body ? entry.message_body.messageBody : '';
+                var msgBody = '';
+                if (entry.message_body) {
+                    if (entry.message_body.messageBody) {
+                        msgBody = entry.message_body.messageBody;
+                    }
+                }
 
                 message = '<div class="row message">' +
                         '  <div class="col">' +
