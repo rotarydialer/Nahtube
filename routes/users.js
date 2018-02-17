@@ -50,6 +50,31 @@ router.get('/role/:role', function(req, res, next) {
 
 });
 
+router.get('/su', function(req, res, next) {
+ 
+  (async () => {
+
+    const { rows } = await pgpool.query(`
+      SELECT id, username, common_name, roles 
+      FROM nahtube.users
+      WHERE (roles @> ARRAY['parent']::varchar[] AND is_active)
+      OR (roles @> ARRAY['child']::varchar[] AND NOT is_active)
+      ORDER BY roles DESC;`);
+
+    if (rows.length) {
+      return res.send(JSON.stringify(rows));
+    } else {
+      res.status(404);
+      return res.send('/su: No such user found.');
+    }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
 router.get('/names', function(req, res, next) {  
   (async () => {
       const { rows } = await pgpool.query(`
