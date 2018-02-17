@@ -16,10 +16,10 @@ youtube_node.setKey(config.youtube.key);
 
 function isLoggedIn(req) {
   if (req.session.user) {
-    console.log('Logged in as "%s".', req.session.user.username);
+    //console.log('Logged in as "%s".', req.session.user.username);
     return true;
   } else {
-    console.log('Not logged in.');
+    //console.log('Not logged in.');
     return false;
   }
 }
@@ -441,7 +441,7 @@ router.get('/videodetails/:videoId', function(req, res, next) {
     return res.send('ERROR: Not authorized. User must login.');
   }
 
-  console.log('Getting details for video id "%s"...', videoId);
+  //console.log('Getting details for video id "%s"...', videoId);
 
   var searchparams = {
     auth: config.youtube.key,
