@@ -51,7 +51,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
         }
 
         this.composeNewMessage.bind(this);
-        this.handleCancelMessage = this.handleCancelMessage.bind(this);
+        this.handleCloseMessage = this.handleCloseMessage.bind(this);
     }
 
     composeNewMessage() {
@@ -102,7 +102,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
     }
 
-    handleCancelMessage () {
+    handleCloseMessage () {
         this.setState({ composeNew: false });
     }
 
@@ -116,7 +116,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         if (composeNew) {
             return (
-                <NewMessage onCancel={this.handleCancelMessage} />
+                <NewMessage onCloseMessage={this.handleCloseMessage} />
             )
         }
 

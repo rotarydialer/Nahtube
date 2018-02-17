@@ -3,7 +3,7 @@ import Axios from 'axios';
 import UserSelector from './UserSelector';
 
 export interface MessageProps {
-    onCancel: (composeNew: boolean) => void;
+    onCloseMessage: (composeNew: boolean) => void;
 }
 
 export interface MessageState {
@@ -57,11 +57,11 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.onChangeSubject = this.onChangeSubject.bind(this);
         this.onChangeBody = this.onChangeBody.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-        this.onCancel = this.onCancel.bind(this);
+        this.onCloseMessage = this.onCloseMessage.bind(this);
     }
 
-    onCancel(e) {
-        this.props.onCancel(e.target.value); // this is the weird binding I need to get clear in my head
+    onCloseMessage(e) {
+        this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     }
 
     componentDidMount () {
@@ -201,15 +201,29 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             "detailsFull": detailsFull
         }
 
-        Axios.post('messages/send', msgPayload)
-        .then(res => {
-            console.log('Message sent. Response:');
-            console.log(res);
-        })
-        .catch(err => {
-            console.log('Error sending message: ' + err);
-        });
+        if (sendToUsername && subject) {
 
+            Axios.post('messages/send', msgPayload)
+            .then(res => {
+                console.log('Message sent. Response:');
+                console.log(res);
+            })
+            .catch(err => {
+                console.log('Error sending message: ' + err);
+            });
+
+            // sets "composeNew" to false, thereby closing the New Message component
+            this.props.onCloseMessage(false);
+
+        } else {
+            // TODO: actually handle this
+            console.log('Required field missing.');
+        }
+    }
+
+    componentWillUnmount() {
+        console.log('Message sent.');
+        // TODO: show a notification that the message was sent. (which means lifting more state yay :/)
     }
 
     render() {
@@ -290,7 +304,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             </div>
                         </div>
                     
-                        <div className="btn btn-primary" onClick={this.sendMessage}>Send</div> <div className="btn btn-secondary" onClick={this.onCancel}>Cancel</div>
+                        <div className="btn btn-primary" onClick={this.sendMessage}>Send</div> <div className="btn btn-secondary" onClick={this.onCloseMessage}>Cancel</div>
                     </div>
                 </form>
             </div>

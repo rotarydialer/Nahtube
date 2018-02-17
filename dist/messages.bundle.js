@@ -1017,6 +1017,7 @@ var Messages = /** @class */ (function (_super) {
             composeNew: false
         };
         _this.composeNewMessage.bind(_this);
+        _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
         return _this;
     }
     Messages.prototype.composeNewMessage = function () {
@@ -1052,19 +1053,20 @@ var Messages = /** @class */ (function (_super) {
             });
         }
     };
+    Messages.prototype.handleCloseMessage = function () {
+        this.setState({ composeNew: false });
+    };
     Messages.prototype.render = function () {
         var _this = this;
         var _a = this.state, username = _a.username, composeNew = _a.composeNew;
         if (!username)
             return React.createElement("div", null, "Not logged in.");
         if (composeNew) {
-            return (React.createElement(NewMessage_1.default, null));
+            return (React.createElement(NewMessage_1.default, { onCloseMessage: this.handleCloseMessage }));
         }
         return (
         // TODO:
-        // fetch messages, loop through
         // for each, check its type and render the appropriate component.
-        //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
         React.createElement("div", null,
             React.createElement("a", { className: "btn btn-secondary btn-sm", href: "#", role: "button", onClick: function (e) { _this.composeNewMessage(); } }, "New Message"),
             React.createElement("div", { className: "row" }, this.state.messages)));
@@ -2091,8 +2093,12 @@ var NewMessage = /** @class */ (function (_super) {
         _this.onChangeSubject = _this.onChangeSubject.bind(_this);
         _this.onChangeBody = _this.onChangeBody.bind(_this);
         _this.sendMessage = _this.sendMessage.bind(_this);
+        _this.onCloseMessage = _this.onCloseMessage.bind(_this);
         return _this;
     }
+    NewMessage.prototype.onCloseMessage = function (e) {
+        this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
+    };
     NewMessage.prototype.componentDidMount = function () {
         var _this = this;
         axios_1.default.get('/users')
@@ -2199,14 +2205,26 @@ var NewMessage = /** @class */ (function (_super) {
             "videoId": videoId,
             "detailsFull": detailsFull
         };
-        axios_1.default.post('messages/send', msgPayload)
-            .then(function (res) {
-            console.log('Message sent. Response:');
-            console.log(res);
-        })
-            .catch(function (err) {
-            console.log('Error sending message: ' + err);
-        });
+        if (sendToUsername && subject) {
+            axios_1.default.post('messages/send', msgPayload)
+                .then(function (res) {
+                console.log('Message sent. Response:');
+                console.log(res);
+            })
+                .catch(function (err) {
+                console.log('Error sending message: ' + err);
+            });
+            // sets "composeNew" to false, thereby closing the New Message component
+            this.props.onCloseMessage(false);
+        }
+        else {
+            // TODO: actually handle this
+            console.log('Required field missing.');
+        }
+    };
+    NewMessage.prototype.componentWillUnmount = function () {
+        console.log('Message sent.');
+        // TODO: show a notification that the message was sent. (which means lifting more state yay :/)
     };
     NewMessage.prototype.render = function () {
         var _a = this.state, isSearching = _a.isSearching, sendToUsername = _a.sendToUsername;
@@ -2243,7 +2261,7 @@ var NewMessage = /** @class */ (function (_super) {
                             React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
                     React.createElement("div", { className: "btn btn-primary", onClick: this.sendMessage }, "Send"),
                     " ",
-                    React.createElement("button", { className: "btn btn-secondary" }, "Cancel")))));
+                    React.createElement("div", { className: "btn btn-secondary", onClick: this.onCloseMessage }, "Cancel")))));
     };
     return NewMessage;
 }(React.Component));
