@@ -99,6 +99,10 @@
         text-align: center;
     }
 
+    .messages-nav-link {
+        text-align: right;
+    }
+
     .caption {
         margin-top: 1px;
     }
@@ -156,6 +160,8 @@
 
     function getMessagesForUser(userLoggedIn, daysAgo) {
         $("#messages-container").empty();
+
+        $("#messages-container").append('<div class="messages-nav-link"><strong><a href="/messages">All Messages</a></strong></div>');
 
        // console.log('Fetching messages for ' + userLoggedIn);
 
@@ -237,7 +243,12 @@
                 }
 
                 var msgSubj = entry.message_subject ? entry.message_subject : '';
-                var msgBody = entry.message_body ? entry.message_body.messageBody : '';
+                var msgBody = '';
+                if (entry.message_body) {
+                    if (entry.message_body.messageBody) {
+                        msgBody = entry.message_body.messageBody;
+                    }
+                }
 
                 message = '<div class="row message">' +
                         '  <div class="col">' +

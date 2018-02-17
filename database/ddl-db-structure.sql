@@ -185,11 +185,13 @@ CREATE TABLE nahtube.user_messages
   from_id integer NOT NULL,
   to_id integer NOT NULL,
   message_time timestamp NOT NULL DEFAULT NOW(),
+  message_type character varying(32),
   message_subject character varying(128),
   message_body jsonb,
   channel_id character varying(64),
   video_id character varying(64),
   details_full jsonb,
+  is_deleted boolean DEFAULT FALSE,
   CONSTRAINT user_messages_pkey PRIMARY KEY (id),
   CONSTRAINT user_messages_fromuser_fkey FOREIGN KEY (from_id)
       REFERENCES nahtube.users (id) MATCH SIMPLE

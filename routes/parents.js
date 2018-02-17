@@ -15,6 +15,13 @@ router.get('/', function (req, res, err) {
     res.render('parents/dashboard', { title: 'NahTube' });
 });
 
+// parent login
+router.get('/login', function(req, res, next) {
+    var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
+  
+  res.render('parents/login', { title: 'NahTube', referer: referer });
+});
+
 router.get('/activity', function (req, res, err) {
     res.render('parents/activity');
 });

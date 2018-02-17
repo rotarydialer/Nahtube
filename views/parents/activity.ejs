@@ -116,12 +116,24 @@
                     }
                 },
                 { //6
-                    // search string
+                    // search string / message details
                     //className: "dt-center",
                     data: 'details',
                     render: function (data, type, row) {
-                        if (row.action == "search") {
+                        if (row.action == "search" || row.action == "search - get") {
                             return formatDetails(data);
+                        }
+
+                        if (row.action == "send message") {
+                            var {
+                                toUsername,
+                                subject
+                            } = row.details_full;
+
+                            var msgSummary = `<div>To: ` + toUsername + `</div>` +
+                                `<div>Subject: ` + subject + `</div>`;
+
+                            return msgSummary;
                         }
 
                         return '';
@@ -132,6 +144,19 @@
                     className: "dt-center",
                     data: 'details_full',
                     render: function (data, type, row) {
+
+                        if (row.action == "send message") {
+                            var vidData = data.detailsFull;
+
+                            //console.log(row.id + ': action = "' + row.action + '".');
+                            //console.log(vidData);
+
+                            if ($.isEmptyObject(vidData)) {
+                                return 'No video attached.';
+                            }
+
+                            if (vidData) return formatVideo(vidData, row.details.videoId);
+                        }
 
                         if (data) return formatVideo(data, row.details.videoId);
                         if (row) {
@@ -285,7 +310,7 @@
                 <th>Time</th>
                 <th>Channel</th>
                 <th>Details</th>
-                <th>Search</th>
+                <th>Search/Details</th>
                 <th>Video</th>
                 <th>Channel Name</th>
             </tr>

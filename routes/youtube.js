@@ -16,10 +16,10 @@ youtube_node.setKey(config.youtube.key);
 
 function isLoggedIn(req) {
   if (req.session.user) {
-    console.log('Logged in as "%s".', req.session.user.username);
+    //console.log('Logged in as "%s".', req.session.user.username);
     return true;
   } else {
-    console.log('Not logged in.');
+    //console.log('Not logged in.');
     return false;
   }
 }
@@ -60,12 +60,51 @@ router.post('/search', function(req, res, next) {
   var searchparams = {
     auth: config.youtube.key,
     part: 'snippet',
+    type: 'video',
     safeSearch: 'strict',
-    maxResults: 25,
+    maxResults: 28,
     q: searchstr
   };
 
   activity.track('search', req.session.user.id, '', JSON.stringify({"searchstring": searchstr}) );
+
+  youtube_base.search.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No results found for id "' + searchstr + '".');
+      res.status(404);
+      return res.send('ERROR: No results found for id "' + searchstr + '".');
+    } else {
+      console.log('Found %d results for "%s".', results.length, searchstr);
+
+      return res.send(response);
+    }
+  }); 
+
+});
+
+router.get('/search/:searchstring', function(req, res, next) {
+  var searchstr = req.params.searchstring;
+  
+    if(!isLoggedIn(req)) {
+      res.status(401);
+      return res.send('ERROR: Not authorized. User must login.');
+    }
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    type: 'video',
+    safeSearch: 'strict',
+    maxResults: 28,
+    q: searchstr
+  };
+
+  activity.track('search - get', req.session.user.id, '', JSON.stringify({"searchstring": searchstr}) );
 
   youtube_base.search.list(searchparams, function(err, response) {
     if (err) {
@@ -243,8 +282,9 @@ router.get('/watch', function(req, res, next) {
   var videoId = req.query.v;
   var channelId = req.query.c;
   var startTime = req.query.t || ''; //e.g., &t=125; TODO: translate from "&t=2m05s"
+  var logAct = req.query.logact || ''; // TODO: remove/rework this, as it's a weakness
 
-  activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
+  if (logAct != 'no') activity.track('watch video', req.session.user.id, channelId, JSON.stringify({"videoId": videoId}));
 
   res.render('watch', { 
     title: req.session.user.common_name, 
@@ -267,9 +307,12 @@ router.post('/watch', function(req, res, next) {
   var channelTitle = '';
   var videoTitle = '';
   if (req.body) {
-    if (req.body.videoDetailsFull && req.body.videoDetailsFull != '{}') {
-      channelTitle = JSON.parse(req.body.videoDetailsFull).snippet.channelTitle;
-      videoTitle = JSON.parse(req.body.videoDetailsFull).snippet.title || '';
+    if (videoDetailsFull && videoDetailsFull != '{}') {
+      if (typeof(videoDetailsFull)==='string') {
+        videoDetailsFull = JSON.parse(videoDetailsFull);
+      }
+      channelTitle = videoDetailsFull.snippet.channelTitle;
+      videoTitle = videoDetailsFull.snippet.title || '';
     }
   }
 
@@ -384,6 +427,39 @@ router.get('/related/:videoId', function(req, res, next) {
     } else {
       console.log(' -- Found %d related videos.', results.length);
 
+      return res.send(response);
+    }
+  }); 
+
+});
+
+router.get('/videodetails/:videoId', function(req, res, next) {
+  var videoId = req.params.videoId;
+  
+  if(!isLoggedIn(req)) {
+    res.status(401);
+    return res.send('ERROR: Not authorized. User must login.');
+  }
+
+  //console.log('Getting details for video id "%s"...', videoId);
+
+  var searchparams = {
+    auth: config.youtube.key,
+    part: 'snippet',
+    id: videoId
+  };
+
+  youtube_base.videos.list(searchparams, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var results = response.items;
+    if (results.length == 0) {
+      console.log('ERROR: No video found with the ID "' + videoId + '".');
+      res.status(404);
+      return res.send('ERROR: No video found with that ID.');
+    } else {
       return res.send(response);
     }
   }); 

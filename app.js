@@ -13,6 +13,7 @@ var activity = require('./activity');
 var channels = require('./routes/channels');
 var youtube = require('./routes/youtube');
 var parents = require('./routes/parents');
+var messages = require('./routes/messages');
 
 var app = express();
 
@@ -56,6 +57,9 @@ app.use(function(req, res, next) {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// location of React elements (webpacked)
+app.use('/dist', express.static(__dirname + '/dist'));
+
 // static routes for images, css, etc.
 app.use('/images', express.static(__dirname + '/assets/images'));
 app.use('/css', express.static(__dirname + '/assets/css'));
@@ -66,6 +70,7 @@ app.use('/users', users);
 app.use('/channels', channels);
 app.use('/youtube', youtube);
 app.use('/parents', parents);
+app.use('/messages', messages);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

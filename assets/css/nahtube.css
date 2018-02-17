@@ -126,3 +126,8 @@ div.related-video-container {
 	z-index: 1;
 	float: right;
 }
+
+div.avatar {
+    margin: 10px;
+    float: left;
+}

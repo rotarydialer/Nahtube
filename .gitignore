@@ -1,5 +1,9 @@
 assets/images/avatars/
 
+# Compiled code
+# shortcut... it's late. TODO: redo this properly later
+dist/*.map
+
 # Environment
 .env
 client_secret.json

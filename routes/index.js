@@ -57,6 +57,13 @@ router.get('/login', function(req, res, next) {
   res.render('login', { title: 'NahTube', referer: referer });
 });
 
+// user login - React
+router.get('/loginreact', function(req, res, next) {
+  var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
+  
+  res.render('login-react', { title: 'NahTube', referer: referer });
+});
+
 router.post('/login', function(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;

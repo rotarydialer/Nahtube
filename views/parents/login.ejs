@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Parent Login: <%= title %></title>
+
+  <script src="/js/jquery-3.2.1.min.js"></script>
+
+  <link rel="stylesheet" href="/css/bootstrap400/bootstrap.min.css">
+  
+  <script src="/js/bootstrap400/tether.min.js"></script>
+  <script src="/js/bootstrap400/bootstrap.min.js"></script>
+
+  <link href="/css/google-font-Roboto.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+  
+  <style>
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+          height: 100%;
+        }
+      </style>
+</head>
+
+<body>
+    <h1><%= title %> Parent Login</h1>
+
+    <div id="user-cards-container" class="row" align="center"></div>
+
+    <script>
+        // AJAX call to populate the user field above
+        $.get( "/users/su", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+
+                var card = `<form method="POST" action="/login">
+                                <input type="hidden" name="referer" value=<%= referer %>>
+                                <input type="hidden" name="username" value=` + entry.username + `>
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="card" style="width: 15rem;">
+                                    <div class="card-block">
+                                        <img class="card-img-top" src="/images/avatars/` + entry.username + `-avatar-lg.png" alt="Card image cap">
+                                        <h2 class="card-title">` + entry.common_name + `</h2>
+                                        <button id="login" class="btn btn-primary">Log In</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </form>`;
+
+                $("#user-cards-container").append(card);
+            });
+
+        });
+    </script>
+  
+</body>
+
+</html>
