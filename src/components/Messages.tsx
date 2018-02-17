@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Message_YouTube from "./Message_YouTube";
 import NewMessage from "./NewMessage";
 
-export interface MessagesProps { 
+export interface MessagesProps {
 }
 
 export interface MessagesState {
@@ -51,8 +51,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
         }
 
         this.composeNewMessage.bind(this);
+        this.handleCancelMessage = this.handleCancelMessage.bind(this);
     }
-
 
     composeNewMessage() {
         this.setState({
@@ -102,6 +102,10 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
     }
 
+    handleCancelMessage () {
+        this.setState({ composeNew: false });
+    }
+
     render() {
         const {
             username,
@@ -112,18 +116,15 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         if (composeNew) {
             return (
-                <NewMessage />
+                <NewMessage onCancel={this.handleCancelMessage} />
             )
         }
-
 
         return ( 
 
             // TODO:
-            // fetch messages, loop through
             // for each, check its type and render the appropriate component.
 
-            //<Message_YouTube subject='This is a hard-coded subject' fromUsername='chris' />
             <div>
                 <a className="btn btn-secondary btn-sm" href="#" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
                 <div className="row">
