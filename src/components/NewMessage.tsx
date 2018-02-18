@@ -52,6 +52,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
+        this.onSearchPaste = this.onSearchPaste.bind(this);
         this.selectVideoToSend = this.selectVideoToSend.bind(this);
         this.onSelectUser = this.onSelectUser.bind(this);
         this.onChangeSubject = this.onChangeSubject.bind(this);
@@ -93,14 +94,21 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.setState({[e.target.name]: e.target.value});
 
         // wait 2 seconds before submitting the search
-        setTimeout(() => this.checkSearchTerms(this.state.searchString), 2000);
+        setTimeout(() => this.checkSearchTerms(this.state.searchString), 1000);
+    }
+
+    onSearchPaste(e) {
+        this.setState({searchString: e.target.value});
+
+        //setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
+        setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
     }
 
     checkSearchTerms(incoming) {
          if (currentSearchTerm === incoming) {
              //if (!currentSearchExecuted) {
              if (!this.state.isSearching) {
-                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
                 currentSearchExecuted = true;
                 this.doSearch(currentSearchTerm);
              }
@@ -268,7 +276,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             <label className="col-1 col-form-label"><strong>Search</strong></label>
 
                             <div className="col-4">
-                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} />
+                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} onPaste={this.onSearchPaste} />
                             </div>
 
                             {

@@ -2088,6 +2088,7 @@ var NewMessage = /** @class */ (function (_super) {
             detailsFull: {}
         };
         _this.onSearchChange = _this.onSearchChange.bind(_this);
+        _this.onSearchPaste = _this.onSearchPaste.bind(_this);
         _this.selectVideoToSend = _this.selectVideoToSend.bind(_this);
         _this.onSelectUser = _this.onSelectUser.bind(_this);
         _this.onChangeSubject = _this.onChangeSubject.bind(_this);
@@ -2116,14 +2117,20 @@ var NewMessage = /** @class */ (function (_super) {
         var _this = this;
         this.setState((_a = {}, _a[e.target.name] = e.target.value, _a));
         // wait 2 seconds before submitting the search
-        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 2000);
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 1000);
         var _a;
+    };
+    NewMessage.prototype.onSearchPaste = function (e) {
+        var _this = this;
+        this.setState({ searchString: e.target.value });
+        //setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 50);
     };
     NewMessage.prototype.checkSearchTerms = function (incoming) {
         if (currentSearchTerm === incoming) {
             //if (!currentSearchExecuted) {
             if (!this.state.isSearching) {
-                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
                 currentSearchExecuted = true;
                 this.doSearch(currentSearchTerm);
             }
@@ -2247,7 +2254,7 @@ var NewMessage = /** @class */ (function (_super) {
                         React.createElement("label", { className: "col-1 col-form-label" },
                             React.createElement("strong", null, "Search")),
                         React.createElement("div", { className: "col-4" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange })),
+                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange, onPaste: this.onSearchPaste })),
                         isSearching ? React.createElement("h2", null,
                             React.createElement("span", { className: "badge badge-info" },
                                 React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
