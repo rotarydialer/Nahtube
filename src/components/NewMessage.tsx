@@ -289,7 +289,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                         </div>
 
-                        <div className="row">
+                        <div className="row search-results">
                             {this.state.searchResults}
                         </div>
 

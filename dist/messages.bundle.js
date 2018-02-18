@@ -2141,7 +2141,10 @@ var NewMessage = /** @class */ (function (_super) {
             }
         }
         else {
-            this.setState({ searchResults: [] });
+            this.setState({
+                searchResults: [],
+                videoId: undefined
+            });
         }
     };
     NewMessage.prototype.doSearch = function (searchTerm) {
@@ -2263,7 +2266,7 @@ var NewMessage = /** @class */ (function (_super) {
                         isSearching ? React.createElement("h2", null,
                             React.createElement("span", { className: "badge badge-info" },
                                 React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
-                    React.createElement("div", { className: "row" }, this.state.searchResults),
+                    React.createElement("div", { className: "row search-results" }, this.state.searchResults),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
                         React.createElement("div", { className: "col-11" },
