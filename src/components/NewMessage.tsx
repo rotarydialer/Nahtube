@@ -105,16 +105,20 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     }
 
     checkSearchTerms(incoming) {
-         if (currentSearchTerm === incoming) {
-             //if (!currentSearchExecuted) {
-             if (!this.state.isSearching) {
+        if (incoming) {
+            if (currentSearchTerm === incoming) {
+                //if (!currentSearchExecuted) {
+                if (!this.state.isSearching) {
                 //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
                 currentSearchExecuted = true;
                 this.doSearch(currentSearchTerm);
-             }
-         } else {
-             currentSearchTerm = incoming;
-         }
+                }
+            } else {
+                currentSearchTerm = incoming;
+            }
+        } else {
+            this.setState({searchResults: []});
+        }
     }
 
     doSearch(searchTerm) {

@@ -2127,16 +2127,21 @@ var NewMessage = /** @class */ (function (_super) {
         setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 50);
     };
     NewMessage.prototype.checkSearchTerms = function (incoming) {
-        if (currentSearchTerm === incoming) {
-            //if (!currentSearchExecuted) {
-            if (!this.state.isSearching) {
-                //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
-                currentSearchExecuted = true;
-                this.doSearch(currentSearchTerm);
+        if (incoming) {
+            if (currentSearchTerm === incoming) {
+                //if (!currentSearchExecuted) {
+                if (!this.state.isSearching) {
+                    //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                    currentSearchExecuted = true;
+                    this.doSearch(currentSearchTerm);
+                }
+            }
+            else {
+                currentSearchTerm = incoming;
             }
         }
         else {
-            currentSearchTerm = incoming;
+            this.setState({ searchResults: [] });
         }
     };
     NewMessage.prototype.doSearch = function (searchTerm) {
