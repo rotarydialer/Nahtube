@@ -1014,7 +1014,8 @@ var Messages = /** @class */ (function (_super) {
             username: undefined,
             commonName: undefined,
             messages: [],
-            composeNew: false
+            composeNew: false,
+            messageQueue: 'inbox'
         };
         _this.composeNewMessage.bind(_this);
         _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
@@ -1035,7 +1036,7 @@ var Messages = /** @class */ (function (_super) {
                     commonName: resp.data.common_name
                 });
                 //now get the messages and map over them
-                axios_1.default.get('/messages/inbox.json')
+                axios_1.default.get('/messages/' + _this.state.messageQueue + '.json')
                     .then(function (inboxMessages) {
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
@@ -2141,10 +2142,7 @@ var NewMessage = /** @class */ (function (_super) {
             }
         }
         else {
-            this.setState({
-                searchResults: [],
-                videoId: undefined
-            });
+            this.setState({ searchResults: [] });
         }
     };
     NewMessage.prototype.doSearch = function (searchTerm) {

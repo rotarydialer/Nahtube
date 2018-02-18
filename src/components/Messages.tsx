@@ -11,6 +11,7 @@ export interface MessagesState {
     commonName: string;
     messages: string[];
     composeNew: boolean;
+    messageQueue: string;
 }
 
 function checkVideoThumbnail(video) {
@@ -47,7 +48,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             username: undefined,
             commonName: undefined,
             messages: [],
-            composeNew: false
+            composeNew: false,
+            messageQueue: 'inbox'
         }
 
         this.composeNewMessage.bind(this);
@@ -71,7 +73,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     });
 
                     //now get the messages and map over them
-                    Axios.get('/messages/inbox.json')
+                    Axios.get('/messages/' + this.state.messageQueue + '.json')
                     .then(
                         (inboxMessages) => {
                             // console.log('Inbox messages:');
