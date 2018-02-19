@@ -127,9 +127,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             // for each, check its type and render the appropriate component.
 
             <div>
-                <div className="row">
-                <a className="btn btn-secondary btn-sm" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
-                </div>
+                <a className="btn btn-secondary btn-sm btn-new-msg" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
+
                 <div className="row">
                     <ul className="nav nav-tabs">
                         <li className="nav-item">

@@ -15,7 +15,7 @@ export interface MessageState {
     subject: string;
     messageBody: string;
     videoId: string;
-    videoStart: number;
+    start: number;
     detailsFull: {}
 }
 
@@ -49,7 +49,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             subject: undefined,
             messageBody: undefined,
             videoId: undefined,
-            videoStart: undefined,
+            start: undefined,
             detailsFull: {}
         }
 
@@ -182,9 +182,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     }
 
     onChangeVideoStart(e) {
-        console.log('Change start time');
-        console.log(this.state.videoStart);
-        this.setState({videoStart: e.target.value});
+        this.setState({start: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value});
     }
 
     onSelectUser(selectedUser) {
@@ -202,15 +200,16 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     }
 
     sendMessage(e) {
-        console.log('Preparing to send the message:');
-        console.log(this.state);
+        // console.log('Preparing to send the message:');
+        // console.log(this.state);
 
-        const {
+        var {
             sendToUsername,
             subject,
             messageBody,
             videoId,
-            detailsFull
+            detailsFull,
+            start
         } = this.state;
 
         let msgPayload = {
@@ -222,7 +221,14 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             "detailsFull": detailsFull
         }
 
+        if (start) {
+            msgPayload.detailsFull['start'] = start;
+        }
+
         if (sendToUsername && subject) {
+
+            console.log('Sending with this payload:');
+            console.log(msgPayload);
 
             Axios.post('messages/send', msgPayload)
             .then(res => {

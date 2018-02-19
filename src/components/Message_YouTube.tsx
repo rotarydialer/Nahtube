@@ -72,8 +72,6 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             watchUrl += '&t=' + start;
         }
 
-        watchUrl += '&logact=no';
-
         var jsonFieldName = videoId + '-json';
 
         return ( 
