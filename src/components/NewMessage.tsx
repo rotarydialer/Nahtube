@@ -15,6 +15,7 @@ export interface MessageState {
     subject: string;
     messageBody: string;
     videoId: string;
+    videoStart: number;
     detailsFull: {}
 }
 
@@ -48,12 +49,14 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             subject: undefined,
             messageBody: undefined,
             videoId: undefined,
+            videoStart: undefined,
             detailsFull: {}
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
         this.onSearchPaste = this.onSearchPaste.bind(this);
         this.selectVideoToSend = this.selectVideoToSend.bind(this);
+        this.onChangeVideoStart = this.onChangeVideoStart.bind(this);
         this.onSelectUser = this.onSelectUser.bind(this);
         this.onChangeSubject = this.onChangeSubject.bind(this);
         this.onChangeBody = this.onChangeBody.bind(this);
@@ -178,6 +181,12 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         }
     }
 
+    onChangeVideoStart(e) {
+        console.log('Change start time');
+        console.log(this.state.videoStart);
+        this.setState({videoStart: e.target.value});
+    }
+
     onSelectUser(selectedUser) {
         this.setState({
             sendToUsername: selectedUser.target.value
@@ -272,6 +281,16 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                     <iframe id="ytplayer" width="350" height="200"
                                     src={"https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0"}
                                     frameBorder="0"></iframe>
+
+                                <div className="row">
+                                    <div className="col text-right">
+                                        <small>Start:</small>
+                                    </div>
+                                    <div className="col-4">
+                                        <input type="number" className="form-control form-control-sm" id="start" onChange={this.onChangeVideoStart} />
+                                    </div>
+                                </div>
+
                                 </div>
                             }
                         </div>
