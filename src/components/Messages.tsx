@@ -11,6 +11,7 @@ export interface MessagesState {
     commonName: string;
     messages: string[];
     composeNew: boolean;
+    messageQueue: string;
 }
 
 function checkVideoThumbnail(video) {
@@ -47,7 +48,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             username: undefined,
             commonName: undefined,
             messages: [],
-            composeNew: false
+            composeNew: false,
+            messageQueue: 'inbox'
         }
 
         this.composeNewMessage.bind(this);
@@ -71,7 +73,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     });
 
                     //now get the messages and map over them
-                    Axios.get('/messages/inbox.json')
+                    Axios.get('/messages/' + this.state.messageQueue + '.json')
                     .then(
                         (inboxMessages) => {
                             // console.log('Inbox messages:');
@@ -121,12 +123,22 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
         }
 
         return ( 
-
             // TODO:
             // for each, check its type and render the appropriate component.
 
             <div>
-                <a className="btn btn-secondary btn-sm" href="#" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
+                <a className="btn btn-secondary btn-sm btn-new-msg" role="button" onClick={(e) => {this.composeNewMessage()}}>New Message</a>
+
+                <div className="row">
+                    <ul className="nav nav-tabs">
+                        <li className="nav-item">
+                            <a className="nav-link active">Inbox</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link">Sent</a>
+                        </li>
+                    </ul>
+                </div>
                 <div className="row">
                     {this.state.messages}
                 </div>

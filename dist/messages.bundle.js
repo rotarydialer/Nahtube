@@ -1014,7 +1014,8 @@ var Messages = /** @class */ (function (_super) {
             username: undefined,
             commonName: undefined,
             messages: [],
-            composeNew: false
+            composeNew: false,
+            messageQueue: 'inbox'
         };
         _this.composeNewMessage.bind(_this);
         _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
@@ -1035,7 +1036,7 @@ var Messages = /** @class */ (function (_super) {
                     commonName: resp.data.common_name
                 });
                 //now get the messages and map over them
-                axios_1.default.get('/messages/inbox.json')
+                axios_1.default.get('/messages/' + _this.state.messageQueue + '.json')
                     .then(function (inboxMessages) {
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
@@ -1068,7 +1069,13 @@ var Messages = /** @class */ (function (_super) {
         // TODO:
         // for each, check its type and render the appropriate component.
         React.createElement("div", null,
-            React.createElement("a", { className: "btn btn-secondary btn-sm", href: "#", role: "button", onClick: function (e) { _this.composeNewMessage(); } }, "New Message"),
+            React.createElement("a", { className: "btn btn-secondary btn-sm btn-new-msg", role: "button", onClick: function (e) { _this.composeNewMessage(); } }, "New Message"),
+            React.createElement("div", { className: "row" },
+                React.createElement("ul", { className: "nav nav-tabs" },
+                    React.createElement("li", { className: "nav-item" },
+                        React.createElement("a", { className: "nav-link active" }, "Inbox")),
+                    React.createElement("li", { className: "nav-item" },
+                        React.createElement("a", { className: "nav-link" }, "Sent")))),
             React.createElement("div", { className: "row" }, this.state.messages)));
     };
     return Messages;
@@ -2014,7 +2021,6 @@ var Message_YouTube = /** @class */ (function (_super) {
         if (start) {
             watchUrl += '&t=' + start;
         }
-        watchUrl += '&logact=no';
         var jsonFieldName = videoId + '-json';
         return (React.createElement("div", { className: "col-md-4" },
             React.createElement("form", { id: videoId, method: "POST", action: watchUrl },
@@ -2085,10 +2091,13 @@ var NewMessage = /** @class */ (function (_super) {
             subject: undefined,
             messageBody: undefined,
             videoId: undefined,
+            start: undefined,
             detailsFull: {}
         };
         _this.onSearchChange = _this.onSearchChange.bind(_this);
+        _this.onSearchPaste = _this.onSearchPaste.bind(_this);
         _this.selectVideoToSend = _this.selectVideoToSend.bind(_this);
+        _this.onChangeVideoStart = _this.onChangeVideoStart.bind(_this);
         _this.onSelectUser = _this.onSelectUser.bind(_this);
         _this.onChangeSubject = _this.onChangeSubject.bind(_this);
         _this.onChangeBody = _this.onChangeBody.bind(_this);
@@ -2116,20 +2125,31 @@ var NewMessage = /** @class */ (function (_super) {
         var _this = this;
         this.setState((_a = {}, _a[e.target.name] = e.target.value, _a));
         // wait 2 seconds before submitting the search
-        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 2000);
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 1000);
         var _a;
     };
+    NewMessage.prototype.onSearchPaste = function (e) {
+        var _this = this;
+        this.setState({ searchString: e.target.value });
+        //setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 50);
+    };
     NewMessage.prototype.checkSearchTerms = function (incoming) {
-        if (currentSearchTerm === incoming) {
-            //if (!currentSearchExecuted) {
-            if (!this.state.isSearching) {
-                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
-                currentSearchExecuted = true;
-                this.doSearch(currentSearchTerm);
+        if (incoming) {
+            if (currentSearchTerm === incoming) {
+                //if (!currentSearchExecuted) {
+                if (!this.state.isSearching) {
+                    //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                    currentSearchExecuted = true;
+                    this.doSearch(currentSearchTerm);
+                }
+            }
+            else {
+                currentSearchTerm = incoming;
             }
         }
         else {
-            currentSearchTerm = incoming;
+            this.setState({ searchResults: [] });
         }
     };
     NewMessage.prototype.doSearch = function (searchTerm) {
@@ -2181,6 +2201,9 @@ var NewMessage = /** @class */ (function (_super) {
             console.log('ERROR: No video ID found for the selected video.');
         }
     };
+    NewMessage.prototype.onChangeVideoStart = function (e) {
+        this.setState({ start: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value });
+    };
     NewMessage.prototype.onSelectUser = function (selectedUser) {
         this.setState({
             sendToUsername: selectedUser.target.value
@@ -2195,9 +2218,9 @@ var NewMessage = /** @class */ (function (_super) {
         var _a;
     };
     NewMessage.prototype.sendMessage = function (e) {
-        console.log('Preparing to send the message:');
-        console.log(this.state);
-        var _a = this.state, sendToUsername = _a.sendToUsername, subject = _a.subject, messageBody = _a.messageBody, videoId = _a.videoId, detailsFull = _a.detailsFull;
+        // console.log('Preparing to send the message:');
+        // console.log(this.state);
+        var _a = this.state, sendToUsername = _a.sendToUsername, subject = _a.subject, messageBody = _a.messageBody, videoId = _a.videoId, detailsFull = _a.detailsFull, start = _a.start;
         var msgPayload = {
             "toUsername": sendToUsername,
             "subject": subject,
@@ -2205,7 +2228,12 @@ var NewMessage = /** @class */ (function (_super) {
             "videoId": videoId,
             "detailsFull": detailsFull
         };
+        if (start) {
+            msgPayload.detailsFull['start'] = start;
+        }
         if (sendToUsername && subject) {
+            console.log('Sending with this payload:');
+            console.log(msgPayload);
             axios_1.default.post('messages/send', msgPayload)
                 .then(function (res) {
                 console.log('Message sent. Response:');
@@ -2242,16 +2270,21 @@ var NewMessage = /** @class */ (function (_super) {
                             React.createElement("img", { src: '/images/avatars/' + sendToUsername + '-avatar-md.png' })) : React.createElement("div", { className: "col" }, "\u00A0"),
                         this.state.videoId &&
                             React.createElement("div", { id: "player", className: "col text-right yt-player-upper-right" },
-                                React.createElement("iframe", { id: "ytplayer", width: "350", height: "200", src: "https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0", frameBorder: "0" }))),
+                                React.createElement("iframe", { id: "ytplayer", width: "350", height: "200", src: "https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0", frameBorder: "0" }),
+                                React.createElement("div", { className: "row" },
+                                    React.createElement("div", { className: "col text-right" },
+                                        React.createElement("small", null, "Start:")),
+                                    React.createElement("div", { className: "col-4" },
+                                        React.createElement("input", { type: "number", className: "form-control form-control-sm", id: "start", onChange: this.onChangeVideoStart }))))),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" },
                             React.createElement("strong", null, "Search")),
                         React.createElement("div", { className: "col-4" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange })),
+                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange, onPaste: this.onSearchPaste })),
                         isSearching ? React.createElement("h2", null,
                             React.createElement("span", { className: "badge badge-info" },
                                 React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
-                    React.createElement("div", { className: "row" }, this.state.searchResults),
+                    React.createElement("div", { className: "row search-results" }, this.state.searchResults),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
                         React.createElement("div", { className: "col-11" },

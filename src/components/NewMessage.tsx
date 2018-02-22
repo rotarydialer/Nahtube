@@ -15,6 +15,7 @@ export interface MessageState {
     subject: string;
     messageBody: string;
     videoId: string;
+    start: number;
     detailsFull: {}
 }
 
@@ -48,11 +49,14 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             subject: undefined,
             messageBody: undefined,
             videoId: undefined,
+            start: undefined,
             detailsFull: {}
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
+        this.onSearchPaste = this.onSearchPaste.bind(this);
         this.selectVideoToSend = this.selectVideoToSend.bind(this);
+        this.onChangeVideoStart = this.onChangeVideoStart.bind(this);
         this.onSelectUser = this.onSelectUser.bind(this);
         this.onChangeSubject = this.onChangeSubject.bind(this);
         this.onChangeBody = this.onChangeBody.bind(this);
@@ -93,20 +97,31 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.setState({[e.target.name]: e.target.value});
 
         // wait 2 seconds before submitting the search
-        setTimeout(() => this.checkSearchTerms(this.state.searchString), 2000);
+        setTimeout(() => this.checkSearchTerms(this.state.searchString), 1000);
+    }
+
+    onSearchPaste(e) {
+        this.setState({searchString: e.target.value});
+
+        //setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
+        setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
     }
 
     checkSearchTerms(incoming) {
-         if (currentSearchTerm === incoming) {
-             //if (!currentSearchExecuted) {
-             if (!this.state.isSearching) {
-                console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+        if (incoming) {
+            if (currentSearchTerm === incoming) {
+                //if (!currentSearchExecuted) {
+                if (!this.state.isSearching) {
+                //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
                 currentSearchExecuted = true;
                 this.doSearch(currentSearchTerm);
-             }
-         } else {
-             currentSearchTerm = incoming;
-         }
+                }
+            } else {
+                currentSearchTerm = incoming;
+            }
+        } else {
+            this.setState({searchResults: []});
+        }
     }
 
     doSearch(searchTerm) {
@@ -166,6 +181,10 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         }
     }
 
+    onChangeVideoStart(e) {
+        this.setState({start: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value});
+    }
+
     onSelectUser(selectedUser) {
         this.setState({
             sendToUsername: selectedUser.target.value
@@ -181,15 +200,16 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
     }
 
     sendMessage(e) {
-        console.log('Preparing to send the message:');
-        console.log(this.state);
+        // console.log('Preparing to send the message:');
+        // console.log(this.state);
 
-        const {
+        var {
             sendToUsername,
             subject,
             messageBody,
             videoId,
-            detailsFull
+            detailsFull,
+            start
         } = this.state;
 
         let msgPayload = {
@@ -201,7 +221,14 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             "detailsFull": detailsFull
         }
 
+        if (start) {
+            msgPayload.detailsFull['start'] = start;
+        }
+
         if (sendToUsername && subject) {
+
+            console.log('Sending with this payload:');
+            console.log(msgPayload);
 
             Axios.post('messages/send', msgPayload)
             .then(res => {
@@ -260,6 +287,16 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                                     <iframe id="ytplayer" width="350" height="200"
                                     src={"https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0"}
                                     frameBorder="0"></iframe>
+
+                                <div className="row">
+                                    <div className="col text-right">
+                                        <small>Start:</small>
+                                    </div>
+                                    <div className="col-4">
+                                        <input type="number" className="form-control form-control-sm" id="start" onChange={this.onChangeVideoStart} />
+                                    </div>
+                                </div>
+
                                 </div>
                             }
                         </div>
@@ -268,7 +305,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             <label className="col-1 col-form-label"><strong>Search</strong></label>
 
                             <div className="col-4">
-                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} />
+                                <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} onPaste={this.onSearchPaste} />
                             </div>
 
                             {
@@ -277,7 +314,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                         </div>
 
-                        <div className="row">
+                        <div className="row search-results">
                             {this.state.searchResults}
                         </div>
 
