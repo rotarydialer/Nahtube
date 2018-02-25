@@ -9,10 +9,15 @@
 
   <!-- bootstrap 4.0.0 -->      
   <link rel="stylesheet" href="/css/bootstrap400/bootstrap.min.css">
+  <script src="/js/bootstrap400/tether.min.js"></script>
+  <script src="/js/bootstrap400/holder.min.js"></script>
   <script src="/js/bootstrap400/bootstrap.min.js"></script>
 
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+  <script src="/js/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/daterangepicker.css">
 
     <style>
         body {
@@ -64,7 +69,6 @@
 </head>
 
 <body>
-
     <div class="row">
         <div class="avatar">
             <% if (user.username) { %>
@@ -75,6 +79,10 @@
 
     <div id="content-container" class="row">
         <div id="user-select-container">
+            <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+                <span></span> <b class="caret"></b>
+            </div>
             <select id="user-select" name="username"></select>
             <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
         </div>
@@ -98,6 +106,45 @@
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
                 $("#user-select").append(option);
             });
+        });
+
+        // initialize the date range picker        
+        // $('input[name="daterange"]').daterangepicker(
+        //     {
+        //         locale: {
+        //         format: 'YYYY-MM-DD'
+        //         },
+        //         startDate: '2013-01-01',
+        //         endDate: '2013-12-31'
+        //     }, 
+        //     function(start, end, label) {
+        //         alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        // });
+
+        $(function() {
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
         });
     </script>
   
