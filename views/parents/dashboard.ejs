@@ -5,9 +5,39 @@
   <title><%= title %>: Parent Dashboard</title>
 
   <script src="/js/jquery-3.2.1.min.js"></script>
+  <script src="/js/moment.min.js"></script>
+
+  <!-- bootstrap 4.0.0 -->      
+  <link rel="stylesheet" href="/css/bootstrap400/bootstrap.min.css">
+  <script src="/js/bootstrap400/bootstrap.min.js"></script>
 
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+
+    <style>
+        body {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        div.avatar {
+            margin: 10px;
+            float: left;
+        }
+
+        #logo-icon-container {
+            width: 100px;
+            height: 24px;
+        }
+
+        #topbar {
+            border: 0px;
+            border-bottom: 1px;
+            border-color: #efefef;
+            border-style: solid;
+            padding-bottom: 4px;
+        }
+    </style>
 
   <script>
     function clearAll() {
@@ -30,50 +60,34 @@
             });
         });
     }
-
-    function getActivityForUser(username) {
-        clearAll();
-
-        // AJAX call to populate the Allowed Channels div
-        $.get( "/parents/activity/" + username + '.json', function( data ) {
-            $( ".result" ).html( data );
-            $.each(data, function(index, entry) {
-                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
-                console.log(entry);
-                $("#activity-list").append(row);
-            });
-        });
-    }
   </script>
 </head>
 
 <body>
-    <!-- TODO: restore login check -->
 
+    <div class="row">
+        <div class="avatar">
+            <% if (user.username) { %>
+                <a href="/"><img src="/images/avatars/<%= user.username %>-avatar-sm.png"></a>
+            <% } %>
+        </div>
+    </div>
+
+    <div id="content-container" class="row">
         <div id="user-select-container">
             <select id="user-select" name="username"></select>
-            <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
-            <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
+            <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+        </div>
+    </div>
+
+    <div id="content-container" class="row">
+        
+        <div id="channels-allowed-container" class="col channels-list">
+            <div class="list-title">Allowed Channels:</div>
+            <div id="channels-allowed-list"></div>
         </div>
 
-        <script>
-            //getChannelsForUser($('#user-select').val()); // SO MUCH UGH!
-        </script>
-
-        <div id="content-container" class="row">
-            
-            <div id="activity-container" class="col-9">
-                <div id="activity-list"></div>
-            </div>
-
-            <div id="channels-allowed-container" class="col-3 channels-list">
-                <div class="list-title">Allowed Channels:</div>
-                <div id="channels-allowed-list"></div>
-            </div>
-
-            <div id="search-results" class="col">
-            </div>
-        </div>
+    </div>
 
     <script>
         // AJAX call to populate the user-select field above
