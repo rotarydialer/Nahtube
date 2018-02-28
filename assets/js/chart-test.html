@@ -3,12 +3,13 @@
         <title>Chart Test</title>
         <!-- <script src="/js/chart.js"></script> -->
         <script src="/js/Chart.bundle.js"></script>
-        
     </head>
 
     <body>
         Chart test:
-        <canvas id="firstChart" width="200" height="200"></canvas>
+        <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+            <canvas id="firstChart"></canvas>
+        </div>
 
         <script>
                 //var firstChart = new Chart(ctx, {...});
@@ -16,10 +17,10 @@
                 var firstChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                        labels: ["Daughter", "Son"],
                         datasets: [{
-                            label: '# of Votes',
-                            data: [12, 19, 3, 5, 2, 3],
+                            label: '# of Views',
+                            data: [38, 8],
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
