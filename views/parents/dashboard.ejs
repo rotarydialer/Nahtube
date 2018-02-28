@@ -9,6 +9,8 @@
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
+  <script src="/js/Chart.bundle.js"></script>
+
   <script>
     function clearAll() {
         $("#channels-allowed-list").empty();
@@ -45,10 +47,60 @@
         });
     }
   </script>
+
+    <style>
+        .chart-container {
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- TODO: restore login check -->
+
+    <div class="chart-container" style="position: relative; height:20vh; width:40vw">
+        <canvas id="viewsByUser"></canvas>
+    </div>
+
+    <script>
+        var ctx = document.getElementById("viewsByUser");
+        var viewsByUser = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Daughter", "Son"],
+                datasets: [{
+                    label: '# of Views',
+                    data: [138, 28],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
 
         <div id="user-select-container">
             <select id="user-select" name="username"></select>
@@ -56,9 +108,9 @@
             <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
         </div>
 
-        <script>
-            //getChannelsForUser($('#user-select').val()); // SO MUCH UGH!
-        </script>
+        <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+            <canvas id="userSummary"></canvas>
+        </div>
 
         <div id="content-container" class="row">
             
