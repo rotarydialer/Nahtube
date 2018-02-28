@@ -3,16 +3,40 @@ var router = express.Router();
 
 function isParentLoggedIn(req) {
     if (req.session.user) {
-      //console.log('Logged in as "%s".', req.session.user.username);
-      return true;
-    } else {
-      //console.log('Not logged in.');
-      return false;
+        console.log('Checking role for %s:', req.session.user.username)
+        if (req.session.user.roles) {
+            if (req.session.user.roles.indexOf('"parent"')) {
+                console.log(' --> Logged in as "%s" with role(s): %s', req.session.user.username, req.session.user.roles.join(', '));
+                return true;
+            }
+        }     
+    }
+
+    console.log(' --> Not logged in as parent');
+    return false;
+  }
+
+  function checkLoginAndRedirect(req, res) {
+    if (!isLoggedIn(req)) {
+      var referer = req.originalUrl;
+  
+      refQstr = referer ? '?r=' + referer : '';
+  
+      console.log('Redirecting to "%s"', ('/login' + refQstr));
+  
+      return res.redirect('/login' + refQstr);
     }
   }
 
 router.get('/', function (req, res, err) {
-    res.render('parents/dashboard', { title: 'NahTube' });
+    req.session.returnTo = req.path; 
+  
+    if (!isParentLoggedIn(req)) {
+      res.render('parents/dashboard', { title: 'NahTube' });
+    } else {
+      res.render('parents/dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
+    }
+
 });
 
 // parent login
