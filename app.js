@@ -14,6 +14,7 @@ var channels = require('./routes/channels');
 var youtube = require('./routes/youtube');
 var parents = require('./routes/parents');
 var messages = require('./routes/messages');
+var reports = require('./routes/reports');
 
 var app = express();
 
@@ -71,6 +72,7 @@ app.use('/channels', channels);
 app.use('/youtube', youtube);
 app.use('/parents', parents);
 app.use('/messages', messages);
+app.use('/reports', reports);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
