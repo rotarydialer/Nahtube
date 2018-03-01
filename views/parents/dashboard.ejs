@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
     <script src="/js/Chart.bundle.js"></script>
+    <script src="/js/moment.min.js"></script>
 
     <script>
         function clearAll() {
@@ -50,22 +51,27 @@
 
     <style>
         .chart-container {
-            margin-bottom: 60px;
+            margin-left: 15px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
+    <div id="user-select-container">
+        <select id="user-select" name="username"></select>
+        <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+    </div>
 
     <div class="row">
-        <div class="chart-container col" style="position: relative; height:10vh; width:40vw">
+        <div class="chart-container col" style="position: relative; height:10vh; width:50vw">
             <canvas id="viewsByUser"></canvas>
         </div>
 
         <!-- <div class="chart-container col" style="position: relative; height:10vh; width:40vw"> -->
-        <div class="chart-container col">
+        <!-- <div class="chart-container col">
             <canvas id="lineChart"></canvas>
-        </div>
+        </div> -->
     </div>
 
     <script>
@@ -112,7 +118,7 @@
         function barChartViewsByDate() {
 
             var jsonData = $.ajax({
-                url: '/reports/user/summary/videos/watched/date/2018-02-25',
+                url: '/reports/user/summary/videos/watched/date',
                 dataType: 'json',
             }).done(function (results) {
 
@@ -120,19 +126,22 @@
 
                 // Split timestamp and data into separate arrays
                 var labels = [], data = [];
+                var labeldate;
                 results["results"].forEach(function (result) {
+                    labeldate = moment(result.date).format("l") || '';
+                    console.log('Report Date: ' + labeldate);
                     labels.push(result.common_name);
                     data.push(parseFloat(result.count));
                 });
 
-                console.log(labels);
-                console.log(data);
+                //console.log(labels);
+                //console.log(data);
 
                 // Create the chart.js data structure using 'labels' and 'data'
                 var reportData = {
                     labels: labels,
                     datasets: [{
-                        label: '# of Views',
+                        label: 'Videos watched ' + labeldate,
                         data: data,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -163,7 +172,7 @@
                     data: reportData, 
                 });
             });
-            }
+        }
 
         function drawLineChart() {
 
@@ -215,13 +224,7 @@
     </script>
 
 
-    <div id="user-select-container">
-        <select id="user-select" name="username"></select>
-        <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
-        <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
-    </div>
-
-    <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+    <div class="chart-container" style="position: relative; height:50vh; width:80vw">
         <canvas id="userSummary"></canvas>
     </div>
 
