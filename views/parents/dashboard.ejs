@@ -2,143 +2,256 @@
 <html>
 
 <head>
-  <title><%= title %>: Parent Dashboard</title>
+    <title><%= title %>: Parent Dashboard</title>
 
-  <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/jquery-3.2.1.min.js"></script>
 
-  <link href="/css/google-font-Roboto.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+    <link href="/css/google-font-Roboto.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
-  <script src="/js/Chart.bundle.js"></script>
+    <script src="/js/Chart.bundle.js"></script>
 
-  <script>
-    function clearAll() {
-        $("#channels-allowed-list").empty();
-        $("#activity-list").empty();
-    }
+    <script>
+        function clearAll() {
+            $("#channels-allowed-list").empty();
+            $("#activity-list").empty();
+        }
 
-    function getChannelsForUser(userLoggedIn) {
-        clearAll();
+        function getChannelsForUser(userLoggedIn) {
+            clearAll();
 
-        // AJAX call to populate the Allowed Channels div
-        $.get( "/channels/" + userLoggedIn, function( data ) {
-            $( ".result" ).html( data );
-            $.each(data, function(index, entry) {
-                option = '<div>' + 
-                    ((index+1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' + 
-                    '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
-                    entry.channel_name + '</a> </div>');
-                $("#channels-allowed-list").append(option);
+            // AJAX call to populate the Allowed Channels div
+            $.get("/channels/" + userLoggedIn, function (data) {
+                $(".result").html(data);
+                $.each(data, function (index, entry) {
+                    option = '<div>' +
+                        ((index + 1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' +
+                            '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
+                            entry.channel_name + '</a> </div>');
+                    $("#channels-allowed-list").append(option);
+                });
             });
-        });
-    }
+        }
 
-    function getActivityForUser(username) {
-        clearAll();
+        function getActivityForUser(username) {
+            clearAll();
 
-        // AJAX call to populate the Allowed Channels div
-        $.get( "/parents/activity/" + username + '.json', function( data ) {
-            $( ".result" ).html( data );
-            $.each(data, function(index, entry) {
-                row = '<div>' + (index+1) + '. ' + JSON.stringify(entry) + '</div>';
-                console.log(entry);
-                $("#activity-list").append(row);
+            // AJAX call to populate the Allowed Channels div
+            $.get("/parents/activity/" + username + '.json', function (data) {
+                $(".result").html(data);
+                $.each(data, function (index, entry) {
+                    row = '<div>' + (index + 1) + '. ' + JSON.stringify(entry) + '</div>';
+                    console.log(entry);
+                    $("#activity-list").append(row);
+                });
             });
-        });
-    }
-  </script>
+        }
+    </script>
 
     <style>
         .chart-container {
-            margin-bottom: 30px;
+            margin-bottom: 60px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="chart-container" style="position: relative; height:20vh; width:40vw">
-        <canvas id="viewsByUser"></canvas>
+    <div class="row">
+        <div class="chart-container col" style="position: relative; height:10vh; width:40vw">
+            <canvas id="viewsByUser"></canvas>
+        </div>
+
+        <!-- <div class="chart-container col" style="position: relative; height:10vh; width:40vw"> -->
+        <div class="chart-container col">
+            <canvas id="lineChart"></canvas>
+        </div>
     </div>
 
     <script>
-        var ctx = document.getElementById("viewsByUser");
-        var viewsByUser = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["Daughter", "Son"],
-                datasets: [{
-                    label: '# of Views',
-                    data: [138, 28],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
+        function demoBarChart() {
+            var ctx = document.getElementById("viewsByUser");
+            var viewsByUser = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Daughter", "Son"],
+                    datasets: [{
+                        label: '# of Views',
+                        data: [138, 28],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
                     }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
                 }
+            });
+        }
+
+        function barChartViewsByDate() {
+
+            var jsonData = $.ajax({
+                url: '/reports/user/summary/videos/watched/date/2018-02-25',
+                dataType: 'json',
+            }).done(function (results) {
+
+                //console.log(results);
+
+                // Split timestamp and data into separate arrays
+                var labels = [], data = [];
+                results["results"].forEach(function (result) {
+                    labels.push(result.common_name);
+                    data.push(parseFloat(result.count));
+                });
+
+                console.log(labels);
+                console.log(data);
+
+                // Create the chart.js data structure using 'labels' and 'data'
+                var reportData = {
+                    labels: labels,
+                    datasets: [{
+                        label: '# of Views',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+
+                // Get the context of the canvas element we want to select
+                var ctx = document.getElementById("viewsByUser").getContext("2d");
+
+                // Instantiate new chart
+                var viewsByUser = new Chart(ctx , {
+                    type: "bar",
+                    data: reportData, 
+                });
+            });
             }
-        });
+
+        function drawLineChart() {
+
+            var jsonData = $.ajax({
+                url: '/reports/user/summary/videos/watched/date/2018-02-25',
+                dataType: 'json',
+            }).done(function (results) {
+
+                //console.log(results);
+
+                // Split timestamp and data into separate arrays
+                var labels = [], data = [];
+                results["results"].forEach(function (result) {
+                    labels.push(result.common_name);
+                    data.push(parseFloat(result.count));
+                });
+
+                console.log(labels);
+                console.log(data);
+
+                // Create the chart.js data structure using 'labels' and 'data'
+                var tempData = {
+                    labels: labels,
+                    datasets: [{
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: data
+                    }]
+                };
+
+                // Get the context of the canvas element we want to select
+                var ctx = document.getElementById("lineChart").getContext("2d");
+
+                // Instantiate new chart
+                var lineChart = new Chart(ctx , {
+                    type: "line",
+                    data: data, 
+                });
+            });
+        }
+
+        barChartViewsByDate();
+        //demoBarChart();
+        //drawLineChart();
     </script>
 
 
-        <div id="user-select-container">
-            <select id="user-select" name="username"></select>
-            <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
-            <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
+    <div id="user-select-container">
+        <select id="user-select" name="username"></select>
+        <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+        <button id="login" onclick="getActivityForUser($('#user-select').val())">Activity</button>
+    </div>
+
+    <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+        <canvas id="userSummary"></canvas>
+    </div>
+
+    <div id="content-container" class="row">
+
+        <div id="activity-container" class="col-9">
+            <div id="activity-list"></div>
         </div>
 
-        <div class="chart-container" style="position: relative; height:40vh; width:80vw">
-            <canvas id="userSummary"></canvas>
+        <div id="channels-allowed-container" class="col-3 channels-list">
+            <div class="list-title">Allowed Channels:</div>
+            <div id="channels-allowed-list"></div>
         </div>
 
-        <div id="content-container" class="row">
-            
-            <div id="activity-container" class="col-9">
-                <div id="activity-list"></div>
-            </div>
-
-            <div id="channels-allowed-container" class="col-3 channels-list">
-                <div class="list-title">Allowed Channels:</div>
-                <div id="channels-allowed-list"></div>
-            </div>
-
-            <div id="search-results" class="col">
-            </div>
+        <div id="search-results" class="col">
         </div>
+    </div>
 
     <script>
         // AJAX call to populate the user-select field above
-        $.get( "/users/role/child", function( data ) {
-            $( ".result" ).html( data );
-    
-            $.each(JSON.parse(data), function(index, entry) {
+        $.get("/users/role/child", function (data) {
+            $(".result").html(data);
+
+            $.each(JSON.parse(data), function (index, entry) {
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
                 $("#user-select").append(option);
             });
         });
     </script>
-  
+
 </body>
 
 </html>
