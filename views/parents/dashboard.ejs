@@ -85,74 +85,40 @@
         </div>
     </div>
 
+    <div id="content-container" class="row">
+        <div>
+            <input type="text" id="reportDate" />
+            <!-- <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+                <span></span> <b class="caret"></b>
+            </div> -->
+        </div>
+    </div>
+
     <div class="row">
         <div class="chart-container col" style="position: relative; height:10vh; width:50vw">
             <canvas id="viewsByUser"></canvas>
         </div>
     </div>
 
-    <div id="content-container" class="row">
-        <div id="user-select-container">
-            <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
-                <span></span> <b class="caret"></b>
-            </div>
-            <select id="user-select" name="username"></select>
-            <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
-        </div>
-    </div>
-
-        <!-- <div class="chart-container col" style="position: relative; height:10vh; width:40vw"> -->
-        <!-- <div class="chart-container col">
-            <canvas id="lineChart"></canvas>
-        </div> -->
-    </div>
-
     <script>
-        function demoBarChart() {
-            var ctx = document.getElementById("viewsByUser");
-            var viewsByUser = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Daughter", "Son"],
-                    datasets: [{
-                        label: '# of Views',
-                        data: [138, 28],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
+        // initialize the report date picker
+        $(function () {
+            $('#reportDate').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true
             });
-        }
 
+            $('#reportDate').val(moment({}).startOf('day').format('MM/DD/YYYY'));
+        });
+        
         function barChartViewsByDate() {
+            var selectedDate = $('#reportDate').val() || '';
+
+            //console.log('Selected date: ', selectedDate);
 
             var jsonData = $.ajax({
-                url: '/reports/user/summary/videos/watched/date',
+                url: '/reports/user/summary/videos/watched/date/' + selectedDate,
                 dataType: 'json',
             }).done(function (results) {
 
@@ -163,7 +129,6 @@
                 var labeldate;
                 results["results"].forEach(function (result) {
                     labeldate = moment(result.date).format("l") || '';
-                    console.log('Report Date: ' + labeldate);
                     labels.push(result.common_name);
                     data.push(parseFloat(result.count));
                 });
@@ -263,6 +228,13 @@
     </div>
 
     <div id="content-container" class="row">
+        <div id="user-select-container">
+            <select id="user-select" name="username"></select>
+            <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+        </div>
+    </div>
+
+    <div id="content-container" class="row">
 
         <div id="activity-container" class="col-9">
             <div id="activity-list"></div>
@@ -290,20 +262,9 @@
             });
         });
 
-        // initialize the date range picker        
-        // $('input[name="daterange"]').daterangepicker(
-        //     {
-        //         locale: {
-        //         format: 'YYYY-MM-DD'
-        //         },
-        //         startDate: '2013-01-01',
-        //         endDate: '2013-12-31'
-        //     }, 
-        //     function(start, end, label) {
-        //         alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        // });
-
-        $(function() {
+        // Custom range:
+        /*
+        $(function () {
 
             var start = moment().subtract(29, 'days');
             var end = moment();
@@ -316,18 +277,19 @@
                 startDate: start,
                 endDate: end,
                 ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
             }, cb);
 
             cb(start, end);
 
         });
+        */
     </script>
 
 </body>
