@@ -112,7 +112,7 @@
             $('#reportDate').val(moment({}).startOf('day').format('MM/DD/YYYY'));
         });
         
-        function barChartViewsByDate() {
+        function initBarChartViewsByDate() {
             var selectedDate = $('#reportDate').val() || '';
 
             //console.log('Selected date: ', selectedDate);
@@ -173,6 +173,10 @@
             });
         }
 
+        // TODO: chart update method per http://www.chartjs.org/docs/latest/developers/updates.html
+        function updateBarChartViewsByDate() {
+        }
+
         function drawLineChart() {
 
             var jsonData = $.ajax({
@@ -217,9 +221,7 @@
             });
         }
 
-        barChartViewsByDate();
-        //demoBarChart();
-        //drawLineChart();
+        initBarChartViewsByDate();
     </script>
 
 
