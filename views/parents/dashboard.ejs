@@ -2,71 +2,105 @@
 <html>
 
 <head>
-    <title><%= title %>: Parent Dashboard</title>
+  <title><%= title %>: Parent Dashboard</title>
 
-    <script src="/js/jquery-3.2.1.min.js"></script>
+  <script src="/js/jquery-3.2.1.min.js"></script>
+  <script src="/js/moment.min.js"></script>
 
-    <link href="/css/google-font-Roboto.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
+  <!-- bootstrap 4.0.0 -->      
+  <link rel="stylesheet" href="/css/bootstrap400/bootstrap.min.css">
+  <script src="/js/bootstrap400/tether.min.js"></script>
+  <script src="/js/bootstrap400/holder.min.js"></script>
+  <script src="/js/bootstrap400/bootstrap.min.js"></script>
 
-    <script src="/js/Chart.bundle.js"></script>
-    <script src="/js/moment.min.js"></script>
+  <link href="/css/google-font-Roboto.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
-    <script>
-        function clearAll() {
-            $("#channels-allowed-list").empty();
-            $("#activity-list").empty();
-        }
+  <script src="/js/Chart.bundle.js"></script>
+  <script src="/js/moment.min.js"></script>
 
-        function getChannelsForUser(userLoggedIn) {
-            clearAll();
-
-            // AJAX call to populate the Allowed Channels div
-            $.get("/channels/" + userLoggedIn, function (data) {
-                $(".result").html(data);
-                $.each(data, function (index, entry) {
-                    option = '<div>' +
-                        ((index + 1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' +
-                            '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
-                            entry.channel_name + '</a> </div>');
-                    $("#channels-allowed-list").append(option);
-                });
-            });
-        }
-
-        function getActivityForUser(username) {
-            clearAll();
-
-            // AJAX call to populate the Allowed Channels div
-            $.get("/parents/activity/" + username + '.json', function (data) {
-                $(".result").html(data);
-                $.each(data, function (index, entry) {
-                    row = '<div>' + (index + 1) + '. ' + JSON.stringify(entry) + '</div>';
-                    console.log(entry);
-                    $("#activity-list").append(row);
-                });
-            });
-        }
-    </script>
+  <script src="/js/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/daterangepicker.css">
 
     <style>
+        body {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        div.avatar {
+            margin: 10px;
+            float: left;
+        }
+
+        #logo-icon-container {
+            width: 100px;
+            height: 24px;
+        }
+
+        #topbar {
+            border: 0px;
+            border-bottom: 1px;
+            border-color: #efefef;
+            border-style: solid;
+            padding-bottom: 4px;
+        }
+
         .chart-container {
             margin-left: 15px;
             margin-bottom: 10px;
         }
     </style>
+
+  <script>
+    function clearAll() {
+        $("#channels-allowed-list").empty();
+        $("#activity-list").empty();
+    }
+
+    function getChannelsForUser(userLoggedIn) {
+        clearAll();
+
+        // AJAX call to populate the Allowed Channels div
+        $.get( "/channels/" + userLoggedIn, function( data ) {
+            $( ".result" ).html( data );
+            $.each(data, function(index, entry) {
+                option = '<div>' + 
+                    ((index+1) + ': <a href="/youtube/videos/' + entry.channel_id + '">' + 
+                    '<img src="' + entry.channel_data.snippet.thumbnails.default.url + '" align="middle" width="66" height="66"> ' +
+                    entry.channel_name + '</a> </div>');
+                $("#channels-allowed-list").append(option);
+            });
+        });
+    }
+  </script>
 </head>
 
 <body>
-    <div id="user-select-container">
-        <select id="user-select" name="username"></select>
-        <button id="login" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+    <div class="row">
+        <div class="avatar">
+            <% if (user.username) { %>
+                <a href="/"><img src="/images/avatars/<%= user.username %>-avatar-sm.png"></a>
+            <% } %>
+        </div>
     </div>
 
     <div class="row">
         <div class="chart-container col" style="position: relative; height:10vh; width:50vw">
             <canvas id="viewsByUser"></canvas>
         </div>
+    </div>
+
+    <div id="content-container" class="row">
+        <div id="user-select-container">
+            <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+                <span></span> <b class="caret"></b>
+            </div>
+            <select id="user-select" name="username"></select>
+            <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
+        </div>
+    </div>
 
         <!-- <div class="chart-container col" style="position: relative; height:10vh; width:40vw"> -->
         <!-- <div class="chart-container col">
@@ -243,6 +277,8 @@
         </div>
     </div>
 
+    </div>
+
     <script>
         // AJAX call to populate the user-select field above
         $.get("/users/role/child", function (data) {
@@ -252,6 +288,45 @@
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
                 $("#user-select").append(option);
             });
+        });
+
+        // initialize the date range picker        
+        // $('input[name="daterange"]').daterangepicker(
+        //     {
+        //         locale: {
+        //         format: 'YYYY-MM-DD'
+        //         },
+        //         startDate: '2013-01-01',
+        //         endDate: '2013-12-31'
+        //     }, 
+        //     function(start, end, label) {
+        //         alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        // });
+
+        $(function() {
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
         });
     </script>
 
