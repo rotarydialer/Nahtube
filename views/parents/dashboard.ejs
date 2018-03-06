@@ -16,6 +16,9 @@
   <link href="/css/google-font-Roboto.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/nahtube.css">
 
+  <script src="/js/Chart.bundle.js"></script>
+  <script src="/js/moment.min.js"></script>
+
   <script src="/js/daterangepicker.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/daterangepicker.css">
 
@@ -41,6 +44,11 @@
             border-color: #efefef;
             border-style: solid;
             padding-bottom: 4px;
+        }
+
+        .chart-container {
+            margin-left: 15px;
+            margin-bottom: 10px;
         }
     </style>
 
@@ -78,50 +86,199 @@
     </div>
 
     <div id="content-container" class="row">
-        <div id="user-select-container">
-            <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+        <div>
+            <input type="text" id="reportDate" onchange="initBarChartViewsByDate()" class="form-control col-6" />
+            <!-- <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
                 <span></span> <b class="caret"></b>
-            </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="chart-container col" style="position: relative; height:10vh; width:50vw">
+            <canvas id="viewsByUser"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // initialize the report date picker
+        $(function () {
+            $('#reportDate').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true
+            });
+
+            $('#reportDate').val(moment({}).startOf('day').format('MM/DD/YYYY'));
+        });
+
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("viewsByUser").getContext("2d");
+
+        // Instantiate new chart
+        var viewsByUser = new Chart(ctx , {
+            type: "bar" 
+        });
+        
+        function initBarChartViewsByDate() {
+            var selectedDate = $('#reportDate').val() || '';
+            var selectedDateMoment = moment(selectedDate);
+            queryDate = selectedDate ? moment(selectedDate).format("MM-DD-YYYY") : '';
+
+            //console.log('Selected date: ', selectedDate);
+            var queryUrl = '/reports/user/summary/videos/watched/date/' + queryDate;
+            console.log(queryUrl);
+
+            var jsonData = $.ajax({
+                url: '/reports/user/summary/videos/watched/date/' + queryDate,
+                dataType: 'json',
+            }).done(function (results) {
+
+                //console.log(results);
+
+                // Split timestamp and data into separate arrays
+                var labels = [], data = [];
+                var labeldate;
+                results["results"].forEach(function (result, index) {
+                    labeldate = selectedDateMoment.format("l") || '';
+                    labels.push(result.common_name);
+                    data.push(parseFloat(result.count));
+                });
+
+                console.log(labels);
+                console.log(data);
+
+                // Create the chart.js data structure using 'labels' and 'data'
+                var reportData = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Videos watched ' + labeldate,
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+
+                // Get the context of the canvas element we want to select
+                //var ctx = document.getElementById("viewsByUser").getContext("2d");
+
+                // Instantiate new chart
+                // var viewsByUser = new Chart(ctx , {
+                //     type: "bar",
+                //     data: reportData, 
+                // });
+
+                viewsByUser.labels = labels;
+                viewsByUser.data = reportData;
+                viewsByUser.update();
+            });
+        }
+
+        function drawLineChart() {
+
+            var jsonData = $.ajax({
+                url: '/reports/user/summary/videos/watched/date/2018-02-25',
+                dataType: 'json',
+            }).done(function (results) {
+
+                //console.log(results);
+
+                // Split timestamp and data into separate arrays
+                var labels = [], data = [];
+                results["results"].forEach(function (result) {
+                    labels.push(result.common_name);
+                    data.push(parseFloat(result.count));
+                });
+
+                console.log(labels);
+                console.log(data);
+
+                // Create the chart.js data structure using 'labels' and 'data'
+                var tempData = {
+                    labels: labels,
+                    datasets: [{
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: data
+                    }]
+                };
+
+                // Get the context of the canvas element we want to select
+                var ctx = document.getElementById("lineChart").getContext("2d");
+
+                // Instantiate new chart
+                var lineChart = new Chart(ctx , {
+                    type: "line",
+                    data: data, 
+                });
+            });
+        }
+
+        initBarChartViewsByDate();
+    </script>
+
+
+    <div class="chart-container" style="position: relative; height:50vh; width:80vw">
+        <canvas id="userSummary"></canvas>
+    </div>
+
+    <div id="content-container" class="row">
+        <div id="user-select-container">
             <select id="user-select" name="username"></select>
             <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
         </div>
     </div>
 
     <div id="content-container" class="row">
-        
-        <div id="channels-allowed-container" class="col channels-list">
+
+        <div id="activity-container" class="col-9">
+            <div id="activity-list"></div>
+        </div>
+
+        <div id="channels-allowed-container" class="col-3 channels-list">
             <div class="list-title">Allowed Channels:</div>
             <div id="channels-allowed-list"></div>
         </div>
+
+        <div id="search-results" class="col">
+        </div>
+    </div>
 
     </div>
 
     <script>
         // AJAX call to populate the user-select field above
-        $.get( "/users/role/child", function( data ) {
-            $( ".result" ).html( data );
-    
-            $.each(JSON.parse(data), function(index, entry) {
+        $.get("/users/role/child", function (data) {
+            $(".result").html(data);
+
+            $.each(JSON.parse(data), function (index, entry) {
                 option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
                 $("#user-select").append(option);
             });
         });
 
-        // initialize the date range picker        
-        // $('input[name="daterange"]').daterangepicker(
-        //     {
-        //         locale: {
-        //         format: 'YYYY-MM-DD'
-        //         },
-        //         startDate: '2013-01-01',
-        //         endDate: '2013-12-31'
-        //     }, 
-        //     function(start, end, label) {
-        //         alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        // });
-
-        $(function() {
+        // Custom range:
+        /*
+        $(function () {
 
             var start = moment().subtract(29, 'days');
             var end = moment();
@@ -134,20 +291,21 @@
                 startDate: start,
                 endDate: end,
                 ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
             }, cb);
 
             cb(start, end);
 
         });
+        */
     </script>
-  
+
 </body>
 
 </html>
