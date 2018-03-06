@@ -87,7 +87,7 @@
 
     <div id="content-container" class="row">
         <div>
-            <input type="text" id="reportDate" />
+            <input type="text" id="reportDate" onchange="initBarChartViewsByDate()" class="form-control col-6" />
             <!-- <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
                 <span></span> <b class="caret"></b>
@@ -111,14 +111,26 @@
 
             $('#reportDate').val(moment({}).startOf('day').format('MM/DD/YYYY'));
         });
+
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("viewsByUser").getContext("2d");
+
+        // Instantiate new chart
+        var viewsByUser = new Chart(ctx , {
+            type: "bar" 
+        });
         
         function initBarChartViewsByDate() {
             var selectedDate = $('#reportDate').val() || '';
+            var selectedDateMoment = moment(selectedDate);
+            queryDate = selectedDate ? moment(selectedDate).format("MM-DD-YYYY") : '';
 
             //console.log('Selected date: ', selectedDate);
+            var queryUrl = '/reports/user/summary/videos/watched/date/' + queryDate;
+            console.log(queryUrl);
 
             var jsonData = $.ajax({
-                url: '/reports/user/summary/videos/watched/date/' + selectedDate,
+                url: '/reports/user/summary/videos/watched/date/' + queryDate,
                 dataType: 'json',
             }).done(function (results) {
 
@@ -127,14 +139,14 @@
                 // Split timestamp and data into separate arrays
                 var labels = [], data = [];
                 var labeldate;
-                results["results"].forEach(function (result) {
-                    labeldate = moment(result.date).format("l") || '';
+                results["results"].forEach(function (result, index) {
+                    labeldate = selectedDateMoment.format("l") || '';
                     labels.push(result.common_name);
                     data.push(parseFloat(result.count));
                 });
 
-                //console.log(labels);
-                //console.log(data);
+                console.log(labels);
+                console.log(data);
 
                 // Create the chart.js data structure using 'labels' and 'data'
                 var reportData = {
@@ -163,18 +175,18 @@
                 };
 
                 // Get the context of the canvas element we want to select
-                var ctx = document.getElementById("viewsByUser").getContext("2d");
+                //var ctx = document.getElementById("viewsByUser").getContext("2d");
 
                 // Instantiate new chart
-                var viewsByUser = new Chart(ctx , {
-                    type: "bar",
-                    data: reportData, 
-                });
-            });
-        }
+                // var viewsByUser = new Chart(ctx , {
+                //     type: "bar",
+                //     data: reportData, 
+                // });
 
-        // TODO: chart update method per http://www.chartjs.org/docs/latest/developers/updates.html
-        function updateBarChartViewsByDate() {
+                viewsByUser.labels = labels;
+                viewsByUser.data = reportData;
+                viewsByUser.update();
+            });
         }
 
         function drawLineChart() {

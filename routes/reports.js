@@ -47,7 +47,7 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
     (async () => {
         qresult = await pgpool.query(`
           WITH all_users AS (
-            SELECT common_name, id FROM nahtube.users WHERE is_active
+            SELECT common_name, id, username FROM nahtube.users WHERE is_active
           ),
           
           activity_by_day AS (
@@ -63,7 +63,7 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
           SELECT u.common_name, COALESCE(a.count, 0) as count from all_users u
           LEFT OUTER JOIN activity_by_day a
           ON u.id = a.id
-          ORDER BY a.count DESC NULLS LAST, u.common_name;`,
+          ORDER BY u.id;`,
           [checkDate]);
 
         var { rows } = qresult;
