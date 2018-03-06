@@ -22,6 +22,9 @@
   <script src="/js/daterangepicker.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/daterangepicker.css">
 
+  <script defer src="/js/fontawesome-all.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/fa-svg-with-js.css">
+
     <style>
         body {
             margin-left: 20px;
@@ -49,6 +52,18 @@
         .chart-container {
             margin-left: 15px;
             margin-bottom: 10px;
+            position: relative; 
+            height:10vh; 
+            width:70vw
+        }
+
+        .dateselect {
+            width: 110px;
+        }
+
+        .date-btn-next-prev {
+            font-size: 2em;
+            color: #2655a0;
         }
     </style>
 
@@ -78,25 +93,35 @@
 
 <body>
     <div class="row">
-        <div class="avatar">
+        <!-- <div class="avatar">
             <% if (user.username) { %>
                 <a href="/"><img src="/images/avatars/<%= user.username %>-avatar-sm.png"></a>
             <% } %>
-        </div>
+        </div> -->
     </div>
 
     <div id="content-container" class="row">
-        <div>
-            <input type="text" id="reportDate" onchange="initBarChartViewsByDate()" class="form-control col-6" />
-            <!-- <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
-                <span></span> <b class="caret"></b>
-            </div> -->
-        </div>
+        <table border="0">
+            <tr>
+                <td>
+                    <div class="date-btn-next-prev">
+                        <i class="fas fa-angle-left" onclick="prevDate()"></i>
+                    </div>
+                </td>
+                <td align="center">
+                    <input type="text" id="reportDate" onchange="initBarChartViewsByDate()" class="form-control dateselect" />
+                </td>
+                <td>
+                    <div class="date-btn-next-prev">
+                        <i class="fas fa-angle-right" onclick="nextDate()"></i>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div class="row">
-        <div class="chart-container col" style="position: relative; height:10vh; width:50vw">
+        <div class="chart-container">
             <canvas id="viewsByUser"></canvas>
         </div>
     </div>
@@ -145,9 +170,6 @@
                     data.push(parseFloat(result.count));
                 });
 
-                console.log(labels);
-                console.log(data);
-
                 // Create the chart.js data structure using 'labels' and 'data'
                 var reportData = {
                     labels: labels,
@@ -187,6 +209,22 @@
                 viewsByUser.data = reportData;
                 viewsByUser.update();
             });
+        }
+
+        function nextDate() {
+            var currentSelectedDate = moment($('#reportDate').val());
+            var nextDate = currentSelectedDate.add(1, 'days');
+
+            $('#reportDate').val(nextDate.format('MM/DD/YYYY'));
+            initBarChartViewsByDate();
+        }
+
+        function prevDate() {
+            var currentSelectedDate = moment($('#reportDate').val());
+            var prevDate = currentSelectedDate.subtract(1, 'days');
+
+            $('#reportDate').val(prevDate.format('MM/DD/YYYY'));
+            initBarChartViewsByDate();
         }
 
         function drawLineChart() {
@@ -234,48 +272,7 @@
         }
 
         initBarChartViewsByDate();
-    </script>
-
-
-    <div class="chart-container" style="position: relative; height:50vh; width:80vw">
-        <canvas id="userSummary"></canvas>
-    </div>
-
-    <div id="content-container" class="row">
-        <div id="user-select-container">
-            <select id="user-select" name="username"></select>
-            <button id="channels" onclick="getChannelsForUser($('#user-select').val())">Channels</button>
-        </div>
-    </div>
-
-    <div id="content-container" class="row">
-
-        <div id="activity-container" class="col-9">
-            <div id="activity-list"></div>
-        </div>
-
-        <div id="channels-allowed-container" class="col-3 channels-list">
-            <div class="list-title">Allowed Channels:</div>
-            <div id="channels-allowed-list"></div>
-        </div>
-
-        <div id="search-results" class="col">
-        </div>
-    </div>
-
-    </div>
-
-    <script>
-        // AJAX call to populate the user-select field above
-        $.get("/users/role/child", function (data) {
-            $(".result").html(data);
-
-            $.each(JSON.parse(data), function (index, entry) {
-                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
-                $("#user-select").append(option);
-            });
-        });
-
+        
         // Custom range:
         /*
         $(function () {
