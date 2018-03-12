@@ -1019,11 +1019,22 @@ var Messages = /** @class */ (function (_super) {
         };
         _this.composeNewMessage.bind(_this);
         _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
+        _this.showQueue = _this.showQueue.bind(_this);
         return _this;
     }
     Messages.prototype.composeNewMessage = function () {
         this.setState({
             composeNew: true
+        });
+    };
+    Messages.prototype.showQueue = function (queueName) {
+        this.setState({
+            messageQueue: queueName
+        });
+    };
+    Messages.prototype.clearMessageList = function () {
+        this.setState({
+            messages: []
         });
     };
     Messages.prototype.componentDidMount = function () {
@@ -1038,6 +1049,7 @@ var Messages = /** @class */ (function (_super) {
                 //now get the messages and map over them
                 axios_1.default.get('/messages/' + _this.state.messageQueue + '.json')
                     .then(function (inboxMessages) {
+                    console.log(inboxMessages);
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
@@ -1051,6 +1063,26 @@ var Messages = /** @class */ (function (_super) {
             })
                 .catch(function (err) {
                 console.log('Session error: ' + err);
+            });
+        }
+    };
+    Messages.prototype.componentWillUpdate = function (nextProps, nextState) {
+        var _this = this;
+        console.log('componentDidUpdate');
+        console.log('Current queue: ' + this.state.messageQueue);
+        console.log('Next queue: ' + nextState.messageQueue);
+        if (this.state.messageQueue != nextState.messageQueue) {
+            this.clearMessageList();
+            axios_1.default.get('/messages/' + nextState.messageQueue + '.json')
+                .then(function (listMessages) {
+                console.log(listMessages);
+                var messages = listMessages.data.map(function (message) {
+                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
+                });
+                _this.setState({ messages: messages });
+            })
+                .catch(function (err) {
+                console.log('Inbox error: ' + err);
             });
         }
     };
@@ -1073,9 +1105,9 @@ var Messages = /** @class */ (function (_super) {
             React.createElement("div", { className: "row" },
                 React.createElement("ul", { className: "nav nav-tabs" },
                     React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: "nav-link active" }, "Inbox")),
+                        React.createElement("a", { className: this.state.messageQueue == 'inbox' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('inbox'); } }, "Inbox")),
                     React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: "nav-link" }, "Sent")))),
+                        React.createElement("a", { className: this.state.messageQueue == 'sent' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('sent'); } }, "Sent")))),
             React.createElement("div", { className: "row" }, this.state.messages)));
     };
     return Messages;

@@ -54,11 +54,24 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         this.composeNewMessage.bind(this);
         this.handleCloseMessage = this.handleCloseMessage.bind(this);
+        this.showQueue = this.showQueue.bind(this);
     }
 
     composeNewMessage() {
         this.setState({
             composeNew: true
+        });
+    }
+
+    showQueue(queueName) {
+        this.setState({
+            messageQueue: queueName
+        });
+    }
+
+    clearMessageList() {
+        this.setState({
+            messages: []
         });
     }
 
@@ -76,6 +89,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     Axios.get('/messages/' + this.state.messageQueue + '.json')
                     .then(
                         (inboxMessages) => {
+
+                            console.log(inboxMessages);
                             // console.log('Inbox messages:');
                             //console.log(inboxMessages.data);
                             let messages = inboxMessages.data.map( (message) => 
@@ -99,9 +114,42 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                 console.log('Session error: ' + err);
             });
 
-
         }
 
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        console.log('componentDidUpdate');
+
+        console.log('Current queue: ' + this.state.messageQueue);
+        console.log('Next queue: ' + nextState.messageQueue);
+
+        if (this.state.messageQueue != nextState.messageQueue) {
+            this.clearMessageList(); 
+            
+            Axios.get('/messages/' + nextState.messageQueue + '.json')
+            .then(
+                (listMessages) => {
+
+                    console.log(listMessages);
+                    let messages = listMessages.data.map( (message) => 
+                        
+                        <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
+                        videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
+                        channelId={checkChannelId(message)}
+                        videoDetailsFull={message.details_full || {}} />
+                    
+                    )
+
+                    this.setState({messages: messages});
+                }
+            )
+            .catch((err) => {
+                console.log('Inbox error: ' + err);
+            })
+
+        }
+        
     }
 
     handleCloseMessage () {
@@ -132,10 +180,10 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                 <div className="row">
                     <ul className="nav nav-tabs">
                         <li className="nav-item">
-                            <a className="nav-link active">Inbox</a>
+                            <a className={this.state.messageQueue=='inbox' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('inbox')}}>Inbox</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link">Sent</a>
+                            <a className={this.state.messageQueue=='sent' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('sent')}}>Sent</a>
                         </li>
                     </ul>
                 </div>
