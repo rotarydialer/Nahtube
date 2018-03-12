@@ -98,7 +98,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                                 <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
                                 videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                                 channelId={checkChannelId(message)}
-                                videoDetailsFull={message.details_full || {}} />
+                                videoDetailsFull={message.details_full || {}}
+                                showRecipient={false} />
                             
                             )
 
@@ -137,7 +138,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
                         videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                         channelId={checkChannelId(message)}
-                        videoDetailsFull={message.details_full || {}} />
+                        videoDetailsFull={message.details_full || {}}
+                        showRecipient={true} />
                     
                     )
 

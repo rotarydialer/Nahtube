@@ -12,6 +12,7 @@ export interface MessageProps {
     channelId: string;
     videoDetailsFull: string;
     start: number;
+    showRecipient: boolean;
 }
 
 export interface MessageState {
