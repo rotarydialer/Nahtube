@@ -7,6 +7,7 @@ export interface MessageProps {
     subject: string;
     body: string;
     fromUsername: string;
+    toUsername: string;
     videoId: string;
     thumbnail: string;
     channelId: string;
@@ -58,14 +59,19 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             subject,
             body,
             fromUsername,
+            toUsername,
             videoId,
             thumbnail,
             channelId,
             videoDetailsFull,
-            start
+            start,
+            showRecipient
         } = this.props;
 
         var fromAvatar = '/images/avatars/'+ fromUsername + '-avatar-sm.png';
+        var toAvatar = '/images/avatars/'+ toUsername + '-avatar-sm.png';
+        var showAvatar = showRecipient ? toAvatar : fromAvatar;
+        var toLabel = showRecipient ? 'Sent to ' + toUsername : '';
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
 
@@ -88,7 +94,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
-                                <div className="avatar-message"><img src={fromAvatar} /></div>
+                                <div className="avatar-message"><span className="tolabel small">{toLabel}</span><img src={showAvatar} /></div>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="btn-group">
                                     <div className="btn btn-sm btn-outline-secondary">Reply</div>

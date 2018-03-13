@@ -1053,7 +1053,7 @@ var Messages = /** @class */ (function (_super) {
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
+                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, showRecipient: false });
                     });
                     _this.setState({ messages: messages });
                 })
@@ -1073,11 +1073,12 @@ var Messages = /** @class */ (function (_super) {
         console.log('Next queue: ' + nextState.messageQueue);
         if (this.state.messageQueue != nextState.messageQueue) {
             this.clearMessageList();
+            var showTo = nextState.messageQueue == 'sent' ? true : false;
             axios_1.default.get('/messages/' + nextState.messageQueue + '.json')
                 .then(function (listMessages) {
                 console.log(listMessages);
                 var messages = listMessages.data.map(function (message) {
-                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {} });
+                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, showRecipient: showTo });
                 });
                 _this.setState({ messages: messages });
             })
@@ -2046,8 +2047,11 @@ var Message_YouTube = /** @class */ (function (_super) {
     };
     Message_YouTube.prototype.render = function () {
         var _this = this;
-        var _a = this.props, messageId = _a.messageId, subject = _a.subject, body = _a.body, fromUsername = _a.fromUsername, videoId = _a.videoId, thumbnail = _a.thumbnail, channelId = _a.channelId, videoDetailsFull = _a.videoDetailsFull, start = _a.start;
+        var _a = this.props, messageId = _a.messageId, subject = _a.subject, body = _a.body, fromUsername = _a.fromUsername, toUsername = _a.toUsername, videoId = _a.videoId, thumbnail = _a.thumbnail, channelId = _a.channelId, videoDetailsFull = _a.videoDetailsFull, start = _a.start, showRecipient = _a.showRecipient;
         var fromAvatar = '/images/avatars/' + fromUsername + '-avatar-sm.png';
+        var toAvatar = '/images/avatars/' + toUsername + '-avatar-sm.png';
+        var showAvatar = showRecipient ? toAvatar : fromAvatar;
+        var toLabel = showRecipient ? 'Sent to ' + toUsername : '';
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
         if (start) {
@@ -2064,7 +2068,8 @@ var Message_YouTube = /** @class */ (function (_super) {
                         React.createElement("strong", null, subject),
                         React.createElement("p", { className: "card-text" }, body),
                         React.createElement("div", { className: "avatar-message" },
-                            React.createElement("img", { src: fromAvatar })),
+                            React.createElement("span", { className: "tolabel small" }, toLabel),
+                            React.createElement("img", { src: showAvatar })),
                         React.createElement("div", { className: "d-flex justify-content-between align-items-center" },
                             React.createElement("div", { className: "btn-group" },
                                 React.createElement("div", { className: "btn btn-sm btn-outline-secondary" }, "Reply"),

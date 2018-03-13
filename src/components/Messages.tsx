@@ -95,7 +95,9 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                             //console.log(inboxMessages.data);
                             let messages = inboxMessages.data.map( (message) => 
                                 
-                                <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
+                                <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} 
+                                fromUsername={message.from}  toUsername={message.to} 
+                                body={message.message_body.messageBody}
                                 videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                                 channelId={checkChannelId(message)}
                                 videoDetailsFull={message.details_full || {}}
@@ -127,6 +129,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         if (this.state.messageQueue != nextState.messageQueue) {
             this.clearMessageList(); 
+
+            var showTo = nextState.messageQueue == 'sent' ? true : false;
             
             Axios.get('/messages/' + nextState.messageQueue + '.json')
             .then(
@@ -135,11 +139,13 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     console.log(listMessages);
                     let messages = listMessages.data.map( (message) => 
                         
-                        <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
+                        <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} 
+                        fromUsername={message.from} toUsername={message.to} 
+                        body={message.message_body.messageBody}
                         videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                         channelId={checkChannelId(message)}
                         videoDetailsFull={message.details_full || {}}
-                        showRecipient={true} />
+                        showRecipient={showTo} />
                     
                     )
 
