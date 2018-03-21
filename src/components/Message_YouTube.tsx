@@ -1,6 +1,7 @@
 import * as React from "react";
 import { watch } from "fs";
 import Axios from 'axios';
+import * as Moment from 'moment';
 
 export interface MessageProps { 
     messageId: number;
@@ -13,6 +14,7 @@ export interface MessageProps {
     channelId: string;
     videoDetailsFull: string;
     start: number;
+    sentTime: Moment.Moment;
     showRecipient: boolean;
 }
 
@@ -65,7 +67,8 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             channelId,
             videoDetailsFull,
             start,
-            showRecipient
+            sentTime,
+            showRecipient,
         } = this.props;
 
         var fromAvatar = '/images/avatars/'+ fromUsername + '-avatar-sm.png';
@@ -78,6 +81,9 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         if (start) {
             watchUrl += '&t=' + start;
         }
+
+        console.log('message render');
+        console.log(sentTime);
 
         var jsonFieldName = videoId + '-json';
 
@@ -94,6 +100,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
+                                <div className="small">{sentTime.format('MMMM Do YYYY, h:mma')} ({sentTime.fromNow()})</div>
                                 <div className="avatar-message"><span className="tolabel small">{toLabel}</span><img src={showAvatar} /></div>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="btn-group">

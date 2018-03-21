@@ -2,6 +2,7 @@ import * as React from "react";
 import Axios from 'axios';
 import Message_YouTube from "./Message_YouTube";
 import NewMessage from "./NewMessage";
+import * as Moment from 'moment';
 
 export interface MessagesProps {
 }
@@ -101,6 +102,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                                 videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                                 channelId={checkChannelId(message)}
                                 videoDetailsFull={message.details_full || {}}
+                                sentTime={Moment(message.message_time)}
                                 showRecipient={false} />
                             
                             )
@@ -145,6 +147,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                         channelId={checkChannelId(message)}
                         videoDetailsFull={message.details_full || {}}
+                        sentTime={Moment(message.message_time)}
                         showRecipient={showTo} />
                     
                     )
