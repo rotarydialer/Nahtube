@@ -4,6 +4,8 @@ import UserSelector from './UserSelector';
 
 export interface MessageProps {
     onCloseMessage: (composeNew: boolean) => void;
+    defaultSendTo: string;
+    defaultSubject: string;
 }
 
 export interface MessageState {
@@ -66,6 +68,20 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
     onCloseMessage(e) {
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
+    }
+
+    componentWillMount() {
+        if (this.props.defaultSendTo) {
+            this.setState({
+                sendToUsername: this.props.defaultSendTo
+            });
+        }
+
+        if (this.props.defaultSubject) {
+            this.setState({
+                subject: this.props.defaultSubject
+            });
+        }
     }
 
     componentDidMount () {
@@ -270,7 +286,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                             <div className="col-4">
 
-                                <select className="form-control" id="messageTo" onChange={this.onSelectUser}>
+                                <select className="form-control" id="messageTo" onChange={this.onSelectUser} value={this.props.defaultSendTo}>
                                     <option></option>
                                     {this.state.users}
                                 </select>
@@ -331,7 +347,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             <label className="col-1 col-form-label">Subject</label>
 
                             <div className="col-11">
-                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} />
+                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} value={this.props.defaultSubject}/>
                             </div>
                         </div>
 

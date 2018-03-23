@@ -13,6 +13,9 @@ export interface MessagesState {
     messages: string[];
     composeNew: boolean;
     messageQueue: string;
+
+    defaultSendTo: string;
+    defaultSubject: string;
 }
 
 function checkVideoThumbnail(video) {
@@ -42,7 +45,7 @@ function checkChannelId(video) {
 }
 
 export class Messages extends React.Component<MessagesProps, MessagesState> {
-    constructor (props: MessagesProps) {
+    constructor(props: MessagesProps) {
         super(props);
 
         this.state = {
@@ -50,17 +53,30 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             commonName: undefined,
             messages: [],
             composeNew: false,
-            messageQueue: 'inbox'
+            messageQueue: 'inbox',
+            defaultSendTo: '',
+            defaultSubject: ''
         }
 
         this.composeNewMessage.bind(this);
         this.handleCloseMessage = this.handleCloseMessage.bind(this);
         this.showQueue = this.showQueue.bind(this);
+        this.composeResponse = this.composeResponse.bind(this);
     }
 
     composeNewMessage() {
         this.setState({
             composeNew: true
+        });
+    }
+
+    composeResponse(to, subject) {
+        console.log('Composing a response.');
+
+        this.setState({
+            composeNew: true,
+            defaultSendTo: to,
+            defaultSubject: 'RE: ' + subject
         });
     }
 
@@ -103,7 +119,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                                 channelId={checkChannelId(message)}
                                 videoDetailsFull={message.details_full || {}}
                                 sentTime={Moment(message.message_time)}
-                                showRecipient={false} />
+                                showRecipient={false} 
+                                onReply={this.composeResponse}/>
                             
                             )
 
@@ -148,7 +165,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         channelId={checkChannelId(message)}
                         videoDetailsFull={message.details_full || {}}
                         sentTime={Moment(message.message_time)}
-                        showRecipient={showTo} />
+                        showRecipient={showTo}
+                        onReply={this.composeResponse} />
                     
                     )
 
@@ -177,7 +195,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         if (composeNew) {
             return (
-                <NewMessage onCloseMessage={this.handleCloseMessage} />
+                <NewMessage onCloseMessage={this.handleCloseMessage}
+                    defaultSendTo={this.state.defaultSendTo} defaultSubject={this.state.defaultSubject} />
             )
         }
 

@@ -21,16 +21,31 @@ export interface MessageProps {
 export interface MessageState {
 }
 
+export interface MessageProps {
+    onReply: (toUsername: string, subject: string) => void;
+}
+
 export default class Message_YouTube extends React.Component<MessageProps, MessageState> {
     constructor (props: MessageProps) {
         super(props);
 
         this.onDelete = this.onDelete.bind(this);
+        this.onReply = this.onReply.bind(this);
     }
 
     onDelete (messageId, e) {
         console.log('Let\'s delete messageId ' + messageId + '...');
 
+        // show a confirmation modal.
+        // delete if confirmed.
+    }
+
+    onReply (toUsername, subject, e) {
+        console.log('Let\'s reply to ' + toUsername + '...');
+
+        console.log(this.props);
+
+        this.props.onReply(toUsername, subject);
         // show a confirmation modal.
         // delete if confirmed.
     }
@@ -104,7 +119,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                                 <div className="avatar-message"><span className="tolabel small">{toLabel}</span><img src={showAvatar} /></div>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="btn-group">
-                                    <div className="btn btn-sm btn-outline-secondary">Reply</div>
+                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onReply(fromUsername, subject, e)}}>Reply</div>
                                     <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
                                 </div>
                                 <small className="text-muted">9 mins</small>

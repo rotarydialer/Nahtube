@@ -17219,16 +17219,27 @@ var Messages = /** @class */ (function (_super) {
             commonName: undefined,
             messages: [],
             composeNew: false,
-            messageQueue: 'inbox'
+            messageQueue: 'inbox',
+            defaultSendTo: '',
+            defaultSubject: ''
         };
         _this.composeNewMessage.bind(_this);
         _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
         _this.showQueue = _this.showQueue.bind(_this);
+        _this.composeResponse = _this.composeResponse.bind(_this);
         return _this;
     }
     Messages.prototype.composeNewMessage = function () {
         this.setState({
             composeNew: true
+        });
+    };
+    Messages.prototype.composeResponse = function (to, subject) {
+        console.log('Composing a response.');
+        this.setState({
+            composeNew: true,
+            defaultSendTo: to,
+            defaultSubject: 'RE: ' + subject
         });
     };
     Messages.prototype.showQueue = function (queueName) {
@@ -17257,7 +17268,7 @@ var Messages = /** @class */ (function (_super) {
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: false });
+                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: false, onReply: _this.composeResponse });
                     });
                     _this.setState({ messages: messages });
                 })
@@ -17282,7 +17293,7 @@ var Messages = /** @class */ (function (_super) {
                 .then(function (listMessages) {
                 console.log(listMessages);
                 var messages = listMessages.data.map(function (message) {
-                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: showTo });
+                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: showTo, onReply: _this.composeResponse });
                 });
                 _this.setState({ messages: messages });
             })
@@ -17300,7 +17311,7 @@ var Messages = /** @class */ (function (_super) {
         if (!username)
             return React.createElement("div", null, "Not logged in.");
         if (composeNew) {
-            return (React.createElement(NewMessage_1.default, { onCloseMessage: this.handleCloseMessage }));
+            return (React.createElement(NewMessage_1.default, { onCloseMessage: this.handleCloseMessage, defaultSendTo: this.state.defaultSendTo, defaultSubject: this.state.defaultSubject }));
         }
         return (
         // TODO:
@@ -18228,10 +18239,18 @@ var Message_YouTube = /** @class */ (function (_super) {
     function Message_YouTube(props) {
         var _this = _super.call(this, props) || this;
         _this.onDelete = _this.onDelete.bind(_this);
+        _this.onReply = _this.onReply.bind(_this);
         return _this;
     }
     Message_YouTube.prototype.onDelete = function (messageId, e) {
         console.log('Let\'s delete messageId ' + messageId + '...');
+        // show a confirmation modal.
+        // delete if confirmed.
+    };
+    Message_YouTube.prototype.onReply = function (toUsername, subject, e) {
+        console.log('Let\'s reply to ' + toUsername + '...');
+        console.log(this.props);
+        this.props.onReply(toUsername, subject);
         // show a confirmation modal.
         // delete if confirmed.
     };
@@ -18283,7 +18302,7 @@ var Message_YouTube = /** @class */ (function (_super) {
                             React.createElement("img", { src: showAvatar })),
                         React.createElement("div", { className: "d-flex justify-content-between align-items-center" },
                             React.createElement("div", { className: "btn-group" },
-                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary" }, "Reply"),
+                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
                                 React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete")),
                             React.createElement("small", { className: "text-muted" }, "9 mins")))))));
     };
@@ -18356,6 +18375,18 @@ var NewMessage = /** @class */ (function (_super) {
     NewMessage.prototype.onCloseMessage = function (e) {
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     };
+    // componentWillMount() {
+    //     if (this.props.defaultSendTo) {
+    //         this.setState({
+    //             sendToUsername: this.props.defaultSendTo
+    //         });
+    //     }
+    //     if (this.props.defaultSubject) {
+    //         this.setState({
+    //             subject: this.props.defaultSubject
+    //         });
+    //     }
+    // }
     NewMessage.prototype.componentDidMount = function () {
         var _this = this;
         axios_1.default.get('/users')
@@ -18511,7 +18542,7 @@ var NewMessage = /** @class */ (function (_super) {
                     React.createElement("div", { className: "form-group row recipient-row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "To"),
                         React.createElement("div", { className: "col-4" },
-                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser },
+                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser, value: this.props.defaultSendTo },
                                 React.createElement("option", null),
                                 this.state.users)),
                         sendToUsername ? React.createElement("div", { className: "col" },
@@ -18536,7 +18567,7 @@ var NewMessage = /** @class */ (function (_super) {
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
                         React.createElement("div", { className: "col-11" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject }))),
+                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject, value: this.props.defaultSubject }))),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("div", { className: "col-12" },
                             React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
