@@ -17270,7 +17270,7 @@ var Messages = /** @class */ (function (_super) {
                     // console.log('Inbox messages:');
                     //console.log(inboxMessages.data);
                     var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: false, onReply: _this.composeResponse });
+                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: false, messageQueue: _this.state.messageQueue, onReply: _this.composeResponse });
                     });
                     _this.setState({ messages: messages });
                 })
@@ -17295,7 +17295,7 @@ var Messages = /** @class */ (function (_super) {
                 .then(function (listMessages) {
                 console.log(listMessages);
                 var messages = listMessages.data.map(function (message) {
-                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: showTo, onReply: _this.composeResponse });
+                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: showTo, messageQueue: _this.state.messageQueue, onReply: _this.composeResponse });
                 });
                 _this.setState({ messages: messages });
             })
@@ -17325,7 +17325,9 @@ var Messages = /** @class */ (function (_super) {
                     React.createElement("li", { className: "nav-item" },
                         React.createElement("a", { className: this.state.messageQueue == 'inbox' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('inbox'); } }, "Inbox")),
                     React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: this.state.messageQueue == 'sent' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('sent'); } }, "Sent")))),
+                        React.createElement("a", { className: this.state.messageQueue == 'sent' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('sent'); } }, "Sent")),
+                    React.createElement("li", { className: "nav-item" },
+                        React.createElement("a", { className: this.state.messageQueue == 'deleted' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('deleted'); } }, "Deleted")))),
             React.createElement("div", { className: "row" }, this.state.messages)));
     };
     return Messages;
@@ -18287,9 +18289,16 @@ var Message_YouTube = /** @class */ (function (_super) {
         var toLabel = showRecipient ? 'Sent to ' + toUsername : '';
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
-        var actionButtons = React.createElement("div", { className: "btn-group" },
-            React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
-            React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete"));
+        var actionButtons;
+        if (this.props.messageQueue === 'inbox') {
+            actionButtons = React.createElement("div", { className: "btn-group" },
+                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
+                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete"));
+        }
+        if (this.props.messageQueue === 'deleted') {
+            actionButtons = React.createElement("div", { className: "btn-group" },
+                React.createElement("div", { className: "btn btn-sm btn-outline-secondary" }, "Restore"));
+        }
         var displayActions = showRecipient ? '' : actionButtons;
         if (start) {
             watchUrl += '&t=' + start;

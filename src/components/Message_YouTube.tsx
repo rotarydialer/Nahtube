@@ -16,6 +16,7 @@ export interface MessageProps {
     start: number;
     sentTime: Moment.Moment;
     showRecipient: boolean;
+    messageQueue: string;
 }
 
 export interface MessageState {
@@ -104,11 +105,21 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
 
-        const actionButtons =   <div className="btn-group">
-                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onReply(fromUsername, subject, e)}}>Reply</div>
-                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
-                                </div>
-
+        var actionButtons;
+        
+        if (this.props.messageQueue === 'inbox') {
+            actionButtons = <div className="btn-group">
+                                <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onReply(fromUsername, subject, e)}}>Reply</div>
+                                <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
+                            </div>
+        }
+        
+        if (this.props.messageQueue === 'deleted') {
+            actionButtons = <div className="btn-group">
+                                <div className="btn btn-sm btn-outline-secondary">Restore</div>
+                            </div>
+        }
+        
         const displayActions = showRecipient ? '' : actionButtons;
 
         if (start) {

@@ -122,6 +122,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                                 videoDetailsFull={message.details_full || {}}
                                 sentTime={Moment(message.message_time)}
                                 showRecipient={false} 
+                                messageQueue={this.state.messageQueue}
                                 onReply={this.composeResponse}/>
                             
                             )
@@ -168,6 +169,7 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         videoDetailsFull={message.details_full || {}}
                         sentTime={Moment(message.message_time)}
                         showRecipient={showTo}
+                        messageQueue={this.state.messageQueue}
                         onReply={this.composeResponse} />
                     
                     )
@@ -216,6 +218,9 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                         </li>
                         <li className="nav-item">
                             <a className={this.state.messageQueue=='sent' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('sent')}}>Sent</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className={this.state.messageQueue=='deleted' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('deleted')}}>Deleted</a>
                         </li>
                     </ul>
                 </div>
