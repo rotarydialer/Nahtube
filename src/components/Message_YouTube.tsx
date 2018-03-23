@@ -36,8 +36,19 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
     onDelete (messageId, e) {
         console.log('Let\'s delete messageId ' + messageId + '...');
 
+        const delUrl = '/messages/' + messageId;
+
         // show a confirmation modal.
         // delete if confirmed.
+
+        Axios.delete(delUrl)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log('ERROR:' + err);
+        });
+
     }
 
     onReply (toUsername, subject, e) {
@@ -62,7 +73,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
             //console.log(res);
             //console.log(res.data);
 
-            window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
+            window.location.href = postUrl + '&logAct=no'; // this routes, but as a GET, so handle accordingly
 
         })
         .catch(err => {

@@ -18246,8 +18246,16 @@ var Message_YouTube = /** @class */ (function (_super) {
     }
     Message_YouTube.prototype.onDelete = function (messageId, e) {
         console.log('Let\'s delete messageId ' + messageId + '...');
+        var delUrl = '/messages/' + messageId;
         // show a confirmation modal.
         // delete if confirmed.
+        axios_1.default.delete(delUrl)
+            .then(function (res) {
+            console.log(res);
+        })
+            .catch(function (err) {
+            console.log('ERROR:' + err);
+        });
     };
     Message_YouTube.prototype.onReply = function (toUsername, subject, e) {
         console.log('Let\'s reply to ' + toUsername + '...');
@@ -18264,7 +18272,7 @@ var Message_YouTube = /** @class */ (function (_super) {
             .then(function (res) {
             //console.log(res);
             //console.log(res.data);
-            window.location.href = postUrl; // this routes, but as a GET, so handle accordingly
+            window.location.href = postUrl + '&logAct=no'; // this routes, but as a GET, so handle accordingly
         })
             .catch(function (err) {
             console.log('ERROR:' + err);
