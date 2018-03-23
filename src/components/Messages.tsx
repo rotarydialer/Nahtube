@@ -66,7 +66,9 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
     composeNewMessage() {
         this.setState({
-            composeNew: true
+            composeNew: true,
+            defaultSendTo: '',
+            defaultSubject: ''
         });
     }
 

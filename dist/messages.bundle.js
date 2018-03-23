@@ -17231,7 +17231,9 @@ var Messages = /** @class */ (function (_super) {
     }
     Messages.prototype.composeNewMessage = function () {
         this.setState({
-            composeNew: true
+            composeNew: true,
+            defaultSendTo: '',
+            defaultSubject: ''
         });
     };
     Messages.prototype.composeResponse = function (to, subject) {
@@ -18375,6 +18377,7 @@ var NewMessage = /** @class */ (function (_super) {
     NewMessage.prototype.onCloseMessage = function (e) {
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     };
+    // Not necessary; access these props directly.
     // componentWillMount() {
     //     if (this.props.defaultSendTo) {
     //         this.setState({

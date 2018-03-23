@@ -70,19 +70,20 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     }
 
-    componentWillMount() {
-        if (this.props.defaultSendTo) {
-            this.setState({
-                sendToUsername: this.props.defaultSendTo
-            });
-        }
+    // Not necessary; access these props directly.
+    // componentWillMount() {
+    //     if (this.props.defaultSendTo) {
+    //         this.setState({
+    //             sendToUsername: this.props.defaultSendTo
+    //         });
+    //     }
 
-        if (this.props.defaultSubject) {
-            this.setState({
-                subject: this.props.defaultSubject
-            });
-        }
-    }
+    //     if (this.props.defaultSubject) {
+    //         this.setState({
+    //             subject: this.props.defaultSubject
+    //         });
+    //     }
+    // }
 
     componentDidMount () {
         Axios.get('/users')
