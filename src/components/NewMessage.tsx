@@ -70,20 +70,19 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     }
 
-    // Not necessary; access these props directly.
-    // componentWillMount() {
-    //     if (this.props.defaultSendTo) {
-    //         this.setState({
-    //             sendToUsername: this.props.defaultSendTo
-    //         });
-    //     }
+    componentWillMount() {
+        if (this.props.defaultSendTo) {
+            this.setState({
+                sendToUsername: this.props.defaultSendTo
+            });
+        }
 
-    //     if (this.props.defaultSubject) {
-    //         this.setState({
-    //             subject: this.props.defaultSubject
-    //         });
-    //     }
-    // }
+        if (this.props.defaultSubject) {
+            this.setState({
+                subject: this.props.defaultSubject
+            });
+        }
+    }
 
     componentDidMount () {
         Axios.get('/users')
@@ -287,7 +286,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                             <div className="col-4">
 
-                                <select className="form-control" id="messageTo" onChange={this.onSelectUser} value={this.props.defaultSendTo}>
+                                <select className="form-control" id="messageTo" onChange={this.onSelectUser} value={this.state.sendToUsername}>
                                     <option></option>
                                     {this.state.users}
                                 </select>
@@ -348,7 +347,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             <label className="col-1 col-form-label">Subject</label>
 
                             <div className="col-11">
-                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} value={this.props.defaultSubject}/>
+                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} value={this.state.subject}/>
                             </div>
                         </div>
 

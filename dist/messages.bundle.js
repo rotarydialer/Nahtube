@@ -18377,19 +18377,18 @@ var NewMessage = /** @class */ (function (_super) {
     NewMessage.prototype.onCloseMessage = function (e) {
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     };
-    // Not necessary; access these props directly.
-    // componentWillMount() {
-    //     if (this.props.defaultSendTo) {
-    //         this.setState({
-    //             sendToUsername: this.props.defaultSendTo
-    //         });
-    //     }
-    //     if (this.props.defaultSubject) {
-    //         this.setState({
-    //             subject: this.props.defaultSubject
-    //         });
-    //     }
-    // }
+    NewMessage.prototype.componentWillMount = function () {
+        if (this.props.defaultSendTo) {
+            this.setState({
+                sendToUsername: this.props.defaultSendTo
+            });
+        }
+        if (this.props.defaultSubject) {
+            this.setState({
+                subject: this.props.defaultSubject
+            });
+        }
+    };
     NewMessage.prototype.componentDidMount = function () {
         var _this = this;
         axios_1.default.get('/users')
@@ -18545,7 +18544,7 @@ var NewMessage = /** @class */ (function (_super) {
                     React.createElement("div", { className: "form-group row recipient-row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "To"),
                         React.createElement("div", { className: "col-4" },
-                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser, value: this.props.defaultSendTo },
+                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser, value: this.state.sendToUsername },
                                 React.createElement("option", null),
                                 this.state.users)),
                         sendToUsername ? React.createElement("div", { className: "col" },
@@ -18570,7 +18569,7 @@ var NewMessage = /** @class */ (function (_super) {
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
                         React.createElement("div", { className: "col-11" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject, value: this.props.defaultSubject }))),
+                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject, value: this.state.subject }))),
                     React.createElement("div", { className: "form-group row" },
                         React.createElement("div", { className: "col-12" },
                             React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
