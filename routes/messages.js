@@ -241,4 +241,39 @@ router.delete('/:messageId', function (req, res, next) {
     }
 });
 
+router.put('/restore/:messageId', function (req, res, next) {
+    if (!isLoggedIn(req)) {
+        return res.send('Not logged in.').status(401);
+    } else {
+        const {
+            messageId
+        } = req.params;
+
+        (async () => {
+
+            const { rows } = await pgpool.query(`
+            UPDATE nahtube.user_messages 
+               SET is_deleted = FALSE
+             WHERE to_id = $1
+               AND id = $2
+               AND is_deleted = TRUE;`,
+                [req.session.user.id, messageId]);
+
+            activity.track('restore message', req.session.user.id, '', JSON.stringify({ "messageId": messageId }), req.body);
+
+            if (rows.length > 0) {
+                return res.send('Message restored.').status(200);
+            } else {
+                return res.send('Error restoring message.').status(404);
+            }
+
+        })().catch(e => setImmediate(() => {
+            res.status(500);
+            console.log('Message restoration error:', e);
+            return res.send('There was an error: ' + e);
+        }))
+
+    }
+});
+
 module.exports = router;

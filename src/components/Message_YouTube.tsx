@@ -31,6 +31,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         super(props);
 
         this.onDelete = this.onDelete.bind(this);
+        this.onRestore = this.onRestore.bind(this);
         this.onReply = this.onReply.bind(this);
     }
 
@@ -43,6 +44,24 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         // delete if confirmed.
 
         Axios.delete(delUrl)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log('ERROR:' + err);
+        });
+
+    }
+
+    onRestore (messageId, e) {
+        console.log('Let\'s restore messageId ' + messageId + '...');
+
+        const restoreUrl = '/messages/restore/' + messageId;
+
+        // show a confirmation modal.
+        // restore if confirmed.
+
+        Axios.put(restoreUrl)
         .then(res => {
             console.log(res);
         })
@@ -116,7 +135,7 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         
         if (this.props.messageQueue === 'deleted') {
             actionButtons = <div className="btn-group">
-                                <div className="btn btn-sm btn-outline-secondary">Restore</div>
+                                <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onRestore(messageId, e)}}>Restore</div>
                             </div>
         }
         

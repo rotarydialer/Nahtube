@@ -18243,6 +18243,7 @@ var Message_YouTube = /** @class */ (function (_super) {
     function Message_YouTube(props) {
         var _this = _super.call(this, props) || this;
         _this.onDelete = _this.onDelete.bind(_this);
+        _this.onRestore = _this.onRestore.bind(_this);
         _this.onReply = _this.onReply.bind(_this);
         return _this;
     }
@@ -18252,6 +18253,19 @@ var Message_YouTube = /** @class */ (function (_super) {
         // show a confirmation modal.
         // delete if confirmed.
         axios_1.default.delete(delUrl)
+            .then(function (res) {
+            console.log(res);
+        })
+            .catch(function (err) {
+            console.log('ERROR:' + err);
+        });
+    };
+    Message_YouTube.prototype.onRestore = function (messageId, e) {
+        console.log('Let\'s restore messageId ' + messageId + '...');
+        var restoreUrl = '/messages/restore/' + messageId;
+        // show a confirmation modal.
+        // restore if confirmed.
+        axios_1.default.put(restoreUrl)
             .then(function (res) {
             console.log(res);
         })
@@ -18297,7 +18311,7 @@ var Message_YouTube = /** @class */ (function (_super) {
         }
         if (this.props.messageQueue === 'deleted') {
             actionButtons = React.createElement("div", { className: "btn-group" },
-                React.createElement("div", { className: "btn btn-sm btn-outline-secondary" }, "Restore"));
+                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onRestore(messageId, e); } }, "Restore"));
         }
         var displayActions = showRecipient ? '' : actionButtons;
         if (start) {
