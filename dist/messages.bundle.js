@@ -18279,6 +18279,10 @@ var Message_YouTube = /** @class */ (function (_super) {
         var toLabel = showRecipient ? 'Sent to ' + toUsername : '';
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
+        var actionButtons = React.createElement("div", { className: "btn-group" },
+            React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
+            React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete"));
+        var displayActions = showRecipient ? '' : actionButtons;
         if (start) {
             watchUrl += '&t=' + start;
         }
@@ -18294,19 +18298,13 @@ var Message_YouTube = /** @class */ (function (_super) {
                     React.createElement("div", { className: "card-body" },
                         React.createElement("strong", null, subject),
                         React.createElement("p", { className: "card-text" }, body),
-                        React.createElement("div", { className: "small" },
-                            sentTime.format('MMMM Do YYYY, h:mma'),
-                            " (",
-                            sentTime.fromNow(),
-                            ")"),
+                        React.createElement("div", { className: "small" }, sentTime.format('MMMM Do YYYY, h:mma')),
                         React.createElement("div", { className: "avatar-message" },
-                            React.createElement("span", { className: "tolabel small" }, toLabel),
+                            React.createElement("span", { className: "tolabel small text-muted" }, toLabel),
                             React.createElement("img", { src: showAvatar })),
                         React.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-                            React.createElement("div", { className: "btn-group" },
-                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
-                                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete")),
-                            React.createElement("small", { className: "text-muted" }, "9 mins")))))));
+                            displayActions,
+                            React.createElement("small", { className: "text-muted" }, sentTime.fromNow())))))));
     };
     return Message_YouTube;
 }(React.Component));

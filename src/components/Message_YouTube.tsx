@@ -93,6 +93,13 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
         var watchUrl = '/youtube/watch?v=' + videoId;
         watchUrl += channelId ? '&c=' + channelId : '';
 
+        const actionButtons =   <div className="btn-group">
+                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onReply(fromUsername, subject, e)}}>Reply</div>
+                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
+                                </div>
+
+        const displayActions = showRecipient ? '' : actionButtons;
+
         if (start) {
             watchUrl += '&t=' + start;
         }
@@ -115,14 +122,13 @@ export default class Message_YouTube extends React.Component<MessageProps, Messa
                             <div className="card-body">
                                 <strong>{subject}</strong>
                                 <p className="card-text">{body}</p>
-                                <div className="small">{sentTime.format('MMMM Do YYYY, h:mma')} ({sentTime.fromNow()})</div>
-                                <div className="avatar-message"><span className="tolabel small">{toLabel}</span><img src={showAvatar} /></div>
+                                <div className="small">{sentTime.format('MMMM Do YYYY, h:mma')}</div>
+                                <div className="avatar-message"><span className="tolabel small text-muted">{toLabel}</span><img src={showAvatar} /></div>
                             <div className="d-flex justify-content-between align-items-center">
-                                <div className="btn-group">
-                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onReply(fromUsername, subject, e)}}>Reply</div>
-                                    <div className="btn btn-sm btn-outline-secondary" onClick={(e) => {this.onDelete(messageId, e)}}>Delete</div>
-                                </div>
-                                <small className="text-muted">9 mins</small>
+
+                                {displayActions}
+
+                                <small className="text-muted">{sentTime.fromNow()}</small>
                             </div>
                             </div>
                         </div>
