@@ -224,6 +224,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
               ON msg.to_id = users_to.id
             WHERE users_to.username = $1
             AND msg.message_time >= DATE(NOW()) - INTERVAL '1 DAY' * $2
+            AND NOT is_deleted
             ORDER BY msg.message_time DESC;`, 
             [toUsername, daysAgo]);
     
@@ -246,6 +247,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
               INNER JOIN nahtube.users users_to
               ON msg.to_id = users_to.id
             WHERE users_to.username = $1
+            AND NOT is_deleted
             ORDER BY msg.message_time DESC;`, 
             [toUsername]);
     
