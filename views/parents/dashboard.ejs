@@ -53,7 +53,6 @@
             margin-left: 15px;
             margin-bottom: 10px;
             position: relative; 
-            height:10vh; 
             width:70vw
         }
 
@@ -301,6 +300,26 @@
 
         });
         */
+    </script>
+
+    <!-- Channel management -->
+
+    <div class="row">
+        <div id="user-select-container">
+            <select id="user-select"></select>
+        </div>
+    </div>
+
+    <script>
+        // AJAX call to populate the user-select field above
+        $.get( "/users/role/child", function( data ) {
+            $( ".result" ).html( data );
+    
+            $.each(JSON.parse(data), function(index, entry) {
+                option = $('<option value="' + entry.username + '">' + entry.common_name + '</option>');
+                $("#user-select").append(option);
+            });
+        });
     </script>
 
 </body>

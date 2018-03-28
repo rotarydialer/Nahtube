@@ -77,7 +77,7 @@
 
     <div class="row">
 
-        <div>
+        <div class="row-margin">
             <div id="player" class="col-8">
                 <iframe id="ytplayer" type="text/html" width="854" height="480"
                 src="https://www.youtube.com/embed/<%= videoId %>?autoplay=1&rel=0<%= startParam %>"
@@ -96,6 +96,8 @@
             <% if (locals.channelTitle) { %>
                 <div id="channel-title"><a class="channel-title" href="/youtube/videos/<%= channelId %>"><%= channelTitle %></a></div>
             <% } %>
+
+            <div class="btn btn-sm btn-outline-secondary">Send as Message</div>
             
         </div>
 

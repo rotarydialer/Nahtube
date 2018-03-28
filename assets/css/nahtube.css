@@ -104,7 +104,6 @@ div.related-video-container {
 
 #player {
 	z-index: 2;
-	margin-left: 20px;
 	margin-right: 10px;
 	margin-top: 3px;
 }
@@ -120,6 +119,10 @@ div.related-video-container {
 
 .channel-title {
 	font-size: 14px;
+}
+
+.row-margin {
+	margin-left: 20px;
 }
 
 #related-videos-list {
