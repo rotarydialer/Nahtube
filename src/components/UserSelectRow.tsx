@@ -12,7 +12,7 @@ export interface State {
 
 }
 
-export default class UserSelector extends React.Component<Props, State> {
+export default class UserSelectRow extends React.Component<Props, State> {
     constructor (props: Props) {
         super(props);
     }
