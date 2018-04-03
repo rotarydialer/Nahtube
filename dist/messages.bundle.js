@@ -18361,7 +18361,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
 var axios_1 = __webpack_require__(3);
-var UserSelectRow_1 = __webpack_require__(153);
+var UserSelectOption_1 = __webpack_require__(153);
 // TODO: remove these hamfisted crutches in favor of something more elegant
 // I mean, you've already got one of these in the state! :P
 var currentSearchTerm;
@@ -18423,7 +18423,7 @@ var NewMessage = /** @class */ (function (_super) {
         axios_1.default.get('/users')
             .then(function (userData) {
             var usersFound = userData.data.map(function (userFound) {
-                return React.createElement(UserSelectRow_1.default, { key: userFound.id, userid: userFound.id, username: userFound.username, common_name: userFound.common_name, roles: userFound.roles });
+                return React.createElement(UserSelectOption_1.default, { key: userFound.id, userid: userFound.id, username: userFound.username, common_name: userFound.common_name, roles: userFound.roles });
             });
             _this.setState({ users: usersFound });
         })
@@ -18629,17 +18629,17 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
-var UserSelectRow = /** @class */ (function (_super) {
-    __extends(UserSelectRow, _super);
-    function UserSelectRow(props) {
+var UserSelectOption = /** @class */ (function (_super) {
+    __extends(UserSelectOption, _super);
+    function UserSelectOption(props) {
         return _super.call(this, props) || this;
     }
-    UserSelectRow.prototype.render = function () {
+    UserSelectOption.prototype.render = function () {
         return (React.createElement("option", { value: this.props.username }, this.props.common_name));
     };
-    return UserSelectRow;
+    return UserSelectOption;
 }(React.Component));
-exports.default = UserSelectRow;
+exports.default = UserSelectOption;
 
 
 /***/ }),
