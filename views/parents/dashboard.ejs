@@ -148,7 +148,7 @@
         function initBarChartViewsByDate() {
             var selectedDate = $('#reportDate').val() || '';
             var selectedDateMoment = moment(selectedDate);
-            queryDate = selectedDate ? moment(selectedDate).format("MM-DD-YYYY") : '';
+            queryDate = selectedDate ? moment(selectedDate).utc().format("MM-DD-YYYY") : '';
 
             //console.log('Selected date: ', selectedDate);
             var queryUrl = '/reports/user/summary/videos/watched/date/' + queryDate;
