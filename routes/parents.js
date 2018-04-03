@@ -198,4 +198,10 @@ router.get('/activity/:username.json', function(req, res, next) {
   );
 });
 
+router.get('/users', function(req, res, err) {
+  if (isParentLoggedIn(req)) {
+    res.render('parents/user-admin');
+  }
+});
+
 module.exports = router;
