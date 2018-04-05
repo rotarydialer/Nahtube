@@ -40,7 +40,7 @@ router.get('/', function(req, res, next) {
   req.session.returnTo = req.path; 
 
   if (!isLoggedIn(req)) {
-    res.render('dashboard', { title: 'NahTube', loggedinuser: '' });
+    res.render('dashboard', { title: siteName, loggedinuser: '' });
   } else {
     activity.track('dashboard', req.session.user.id);
 

@@ -33,7 +33,7 @@ function checkLoginAndRedirect(req, res) {
 router.get('/', function(req, res, err) {
   checkLoginAndRedirect(req, res);
 
-  res.render('parents/dashboard', { title: 'NahTube' });
+  res.render('parents/dashboard', { title: siteName });
 
   //res.render('parents/dashboard', { title: req.session.user.common_name, loggedinuser: req.session.user.username, userObject: req.session.user });
 
@@ -43,7 +43,7 @@ router.get('/', function(req, res, err) {
 router.get('/login', function(req, res, next) {
   var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
 
-  res.render('parents/login', { title: 'NahTube', referer: referer });
+  res.render('parents/login', { title: siteName, referer: referer });
 });
 
 router.get('/activity', function(req, res, err) {
