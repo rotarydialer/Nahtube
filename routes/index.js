@@ -44,24 +44,24 @@ router.get('/checksession', function(req, res, next) {
     return res.send('Found a session, but you\'re not logged in.');
   } else {
     console.log('User #%d logged in: "%s"', req.session.user.id, req.session.user.username);
+    console.log(siteName);
     return res.send(req.session.user);
   }
 
-  res.render('dashboard', { title: 'NahTube' });
 });
 
 // user login
 router.get('/login', function(req, res, next) {
     var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
   
-  res.render('login', { title: 'NahTube', referer: referer });
+  res.render('login', { title: siteName, referer: referer });
 });
 
 // user login - React
 router.get('/loginreact', function(req, res, next) {
   var referer = req.query.r; // ?r=youtube/videos/UCRAoFQwuyOUd10Lio8eppTg
   
-  res.render('login-react', { title: 'NahTube', referer: referer });
+  res.render('login-react', { title: siteName, referer: referer });
 });
 
 router.post('/login', function(req, res, next) {
