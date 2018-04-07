@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as Moment from "moment";
 
-import UserSelector from "../UserSelector";
+//import UserSelector from "../UserSelector";
+import UserSelectorRich from "../UserSelectorRich";
 
 export interface Props {
 }
@@ -24,7 +25,9 @@ export class UserManagement extends React.Component<Props, State> {
             <div>
                 User Management
 
-                <UserSelector defaultUser=''/>
+                {/* <UserSelector defaultUser=''/> */}
+
+                <UserSelectorRich defaultUser=''/>
             </div>
         )
     }

@@ -975,7 +975,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
-var UserSelector_1 = __webpack_require__(12);
+//import UserSelector from "../UserSelector";
+var UserSelectorRich_1 = __webpack_require__(12);
 var UserManagement = /** @class */ (function (_super) {
     __extends(UserManagement, _super);
     function UserManagement(props) {
@@ -988,7 +989,7 @@ var UserManagement = /** @class */ (function (_super) {
     UserManagement.prototype.render = function () {
         return (React.createElement("div", null,
             "User Management",
-            React.createElement(UserSelector_1.default, { defaultUser: '' })));
+            React.createElement(UserSelectorRich_1.default, { defaultUser: '' })));
     };
     return UserManagement;
 }(React.Component));
@@ -1014,10 +1015,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
 var axios_1 = __webpack_require__(13);
-var UserSelectOption_1 = __webpack_require__(32);
-var UserSelector = /** @class */ (function (_super) {
-    __extends(UserSelector, _super);
-    function UserSelector(props) {
+var UserSelectorRich = /** @class */ (function (_super) {
+    __extends(UserSelectorRich, _super);
+    function UserSelectorRich(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
             users: [],
@@ -1026,41 +1026,62 @@ var UserSelector = /** @class */ (function (_super) {
         _this.onSelectUser = _this.onSelectUser.bind(_this);
         return _this;
     }
-    UserSelector.prototype.componentWillMount = function () {
+    UserSelectorRich.prototype.componentWillMount = function () {
         if (this.props.defaultUser) {
             this.setState({
                 selectedUser: this.props.defaultUser
             });
         }
     };
-    UserSelector.prototype.componentDidMount = function () {
+    UserSelectorRich.prototype.componentDidMount = function () {
         var _this = this;
         axios_1.default.get('/users')
             .then(function (userData) {
-            var usersFound = userData.data.map(function (userFound) {
-                return React.createElement(UserSelectOption_1.default, { key: userFound.id, userid: userFound.id, username: userFound.username, common_name: userFound.common_name, roles: userFound.roles });
-            });
+            // let usersFound = userData.data.map( (userFound) => 
+            // <UserSelectRichRow 
+            //     key={userFound.id} 
+            //     userid={userFound.id} 
+            //     username={userFound.username} 
+            //     common_name={userFound.common_name} 
+            //     roles={userFound.roles} 
+            // />
+            //     <div onClick={() => this.clickOnUser(userFound.username)} key={userFound.id} id={userFound.id} data-value={userFound.id} className="user-row-rich-select">
+            //         <span><img src={'/images/avatars/' + userFound.username + '-avatar-sm-png'} /></span>
+            //         <span>{userFound.common_name}</span>
+            //     </div>
+            // )
+            var usersFound = userData.data;
             _this.setState({ users: usersFound });
+            //this.setState({users: userData.data});
         })
             .catch(function (err) {
             console.log('Error getting users: ' + err);
         });
     };
-    UserSelector.prototype.onSelectUser = function (selectedUser) {
+    UserSelectorRich.prototype.clickOnUser = function (clickedUser) {
+        console.log(clickedUser);
+    };
+    UserSelectorRich.prototype.onSelectUser = function (selectedUser) {
+        console.log('Clicked on "%s"', selectedUser);
         this.setState({
             selectedUser: selectedUser.target.value
         });
     };
-    UserSelector.prototype.render = function () {
-        var selectedUser = this.state.selectedUser;
+    UserSelectorRich.prototype.render = function () {
+        var _a = this.state, users = _a.users, selectedUser = _a.selectedUser;
+        if (users.length <= 0) {
+            return (React.createElement("div", null, "No users"));
+        }
         return (React.createElement("div", { className: "col-4" },
-            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser, value: this.state.selectedUser },
-                React.createElement("option", null),
-                this.state.users)));
+            React.createElement("div", { className: "form-control", id: "selectedUser" },
+                this.state.users.map(function (user) {
+                    return (React.createElement("div", null, user.username));
+                }),
+                console.log(this.state.users))));
     };
-    return UserSelector;
+    return UserSelectorRich;
 }(React.Component));
-exports.default = UserSelector;
+exports.default = UserSelectorRich;
 
 
 /***/ }),
@@ -1951,37 +1972,6 @@ module.exports = function spread(callback) {
     return callback.apply(null, arr);
   };
 };
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
-var UserSelectOption = /** @class */ (function (_super) {
-    __extends(UserSelectOption, _super);
-    function UserSelectOption(props) {
-        return _super.call(this, props) || this;
-    }
-    UserSelectOption.prototype.render = function () {
-        return (React.createElement("option", { value: this.props.username }, this.props.common_name));
-    };
-    return UserSelectOption;
-}(React.Component));
-exports.default = UserSelectOption;
 
 
 /***/ })
