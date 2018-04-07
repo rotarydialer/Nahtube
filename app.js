@@ -50,6 +50,8 @@ app.use(session({
 
 global.pgpool = pgpool;
 
+global.siteName = config.application.name;
+
 // middleware to make 'user' available to all templates
 app.use(function(req, res, next) {
   res.locals.user = req.session.user;
