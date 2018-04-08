@@ -107,7 +107,7 @@ export default class UserSelectorRich extends React.Component<Props, State> {
                         return (
                             // <div>{user.username}</div>
                             <div onClick={() => this.clickOnUser(user.username)} key={user.id} id={user.id.toString()} data-value={user.id} className={classnames}>
-                                <span><img src={'/images/avatars/' + user.username + '-avatar-sm-png'} /></span>
+                                <span><img src={'/images/avatars/' + user.username + '-avatar-sm.png'} /></span> &nbsp;
                                 <span>{user.common_name}</span>
                             </div>
                         )

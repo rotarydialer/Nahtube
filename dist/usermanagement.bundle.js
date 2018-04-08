@@ -1083,7 +1083,8 @@ var UserSelectorRich = /** @class */ (function (_super) {
                 // <div>{user.username}</div>
                 React.createElement("div", { onClick: function () { return _this.clickOnUser(user.username); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
                     React.createElement("span", null,
-                        React.createElement("img", { src: '/images/avatars/' + user.username + '-avatar-sm-png' })),
+                        React.createElement("img", { src: '/images/avatars/' + user.username + '-avatar-sm.png' })),
+                    " \u00A0",
                     React.createElement("span", null, user.common_name)));
             }))));
     };
