@@ -72,6 +72,9 @@ export default class UserSelectorRich extends React.Component<Props, State> {
 
     clickOnUser(clickedUser) {
         console.log(clickedUser);
+        this.setState({
+            selectedUser: clickedUser
+        });
     }
 
     onSelectUser(selectedUser) {
@@ -92,20 +95,24 @@ export default class UserSelectorRich extends React.Component<Props, State> {
         }
 
         return (
-            <div className="col-4">
+            <div className="col-lg-3 col-md-4 col-sm-5">
 
                 <div className="form-control" id="selectedUser">
                     
                     {/* {this.state.users} */}
                     { this.state.users.map(user => {
 
+                        const classnames = (selectedUser == user.username) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
+
                         return (
-                            <div>{user.username}</div>
+                            // <div>{user.username}</div>
+                            <div onClick={() => this.clickOnUser(user.username)} key={user.id} id={user.id.toString()} data-value={user.id} className={classnames}>
+                                <span><img src={'/images/avatars/' + user.username + '-avatar-sm-png'} /></span>
+                                <span>{user.common_name}</span>
+                            </div>
                         )
 
                     })}
-
-                    {console.log(this.state.users)}
                     
                 </div>
 

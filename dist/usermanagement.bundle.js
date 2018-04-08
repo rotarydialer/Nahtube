@@ -1060,6 +1060,9 @@ var UserSelectorRich = /** @class */ (function (_super) {
     };
     UserSelectorRich.prototype.clickOnUser = function (clickedUser) {
         console.log(clickedUser);
+        this.setState({
+            selectedUser: clickedUser
+        });
     };
     UserSelectorRich.prototype.onSelectUser = function (selectedUser) {
         console.log('Clicked on "%s"', selectedUser);
@@ -1068,16 +1071,21 @@ var UserSelectorRich = /** @class */ (function (_super) {
         });
     };
     UserSelectorRich.prototype.render = function () {
+        var _this = this;
         var _a = this.state, users = _a.users, selectedUser = _a.selectedUser;
         if (users.length <= 0) {
             return (React.createElement("div", null, "No users"));
         }
-        return (React.createElement("div", { className: "col-4" },
-            React.createElement("div", { className: "form-control", id: "selectedUser" },
-                this.state.users.map(function (user) {
-                    return (React.createElement("div", null, user.username));
-                }),
-                console.log(this.state.users))));
+        return (React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
+            React.createElement("div", { className: "form-control", id: "selectedUser" }, this.state.users.map(function (user) {
+                var classnames = (selectedUser == user.username) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
+                return (
+                // <div>{user.username}</div>
+                React.createElement("div", { onClick: function () { return _this.clickOnUser(user.username); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
+                    React.createElement("span", null,
+                        React.createElement("img", { src: '/images/avatars/' + user.username + '-avatar-sm-png' })),
+                    React.createElement("span", null, user.common_name)));
+            }))));
     };
     return UserSelectorRich;
 }(React.Component));
