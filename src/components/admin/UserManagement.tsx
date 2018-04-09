@@ -1,14 +1,13 @@
 import * as React from "react";
 import * as Moment from "moment";
-
-//import UserSelector from "../UserSelector";
 import UserSelectorRich from "../UserSelectorRich";
+import IUser from "../IUser";
 
 export interface Props {
 }
 
 export interface State {
-    selectedUser: string;
+    selectedUser: IUser;
 }
 
 export class UserManagement extends React.Component<Props, State> {
@@ -18,6 +17,14 @@ export class UserManagement extends React.Component<Props, State> {
         this.state = {
             selectedUser: undefined
         }
+
+        this.handleUserSelection = this.handleUserSelection.bind(this);
+    }
+
+    handleUserSelection(chosenUser: IUser) {
+        this.setState({
+            selectedUser: chosenUser
+        })
     }
 
     render() {
@@ -27,7 +34,8 @@ export class UserManagement extends React.Component<Props, State> {
 
                 {/* <UserSelector defaultUser=''/> */}
 
-                <UserSelectorRich defaultUser=''/>
+                <UserSelectorRich 
+                onSelectUser={this.handleUserSelection} />
             </div>
         )
     }

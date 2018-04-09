@@ -975,7 +975,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
-//import UserSelector from "../UserSelector";
 var UserSelectorRich_1 = __webpack_require__(12);
 var UserManagement = /** @class */ (function (_super) {
     __extends(UserManagement, _super);
@@ -984,12 +983,18 @@ var UserManagement = /** @class */ (function (_super) {
         _this.state = {
             selectedUser: undefined
         };
+        _this.handleUserSelection = _this.handleUserSelection.bind(_this);
         return _this;
     }
+    UserManagement.prototype.handleUserSelection = function (chosenUser) {
+        this.setState({
+            selectedUser: chosenUser
+        });
+    };
     UserManagement.prototype.render = function () {
         return (React.createElement("div", null,
             "User Management",
-            React.createElement(UserSelectorRich_1.default, { defaultUser: '' })));
+            React.createElement(UserSelectorRich_1.default, { onSelectUser: this.handleUserSelection })));
     };
     return UserManagement;
 }(React.Component));
@@ -1027,32 +1032,19 @@ var UserSelectorRich = /** @class */ (function (_super) {
         return _this;
     }
     UserSelectorRich.prototype.componentWillMount = function () {
-        if (this.props.defaultUser) {
-            this.setState({
-                selectedUser: this.props.defaultUser
-            });
-        }
+        //if (this.props.defaultUser) {
+        //console.log('Default to "%s".', this.props.defaultUser);
+        // this.setState({
+        //     selectedUser: this.props.defaultUser
+        // });
+        //}
     };
     UserSelectorRich.prototype.componentDidMount = function () {
         var _this = this;
         axios_1.default.get('/users')
             .then(function (userData) {
-            // let usersFound = userData.data.map( (userFound) => 
-            // <UserSelectRichRow 
-            //     key={userFound.id} 
-            //     userid={userFound.id} 
-            //     username={userFound.username} 
-            //     common_name={userFound.common_name} 
-            //     roles={userFound.roles} 
-            // />
-            //     <div onClick={() => this.clickOnUser(userFound.username)} key={userFound.id} id={userFound.id} data-value={userFound.id} className="user-row-rich-select">
-            //         <span><img src={'/images/avatars/' + userFound.username + '-avatar-sm-png'} /></span>
-            //         <span>{userFound.common_name}</span>
-            //     </div>
-            // )
             var usersFound = userData.data;
             _this.setState({ users: usersFound });
-            //this.setState({users: userData.data});
         })
             .catch(function (err) {
             console.log('Error getting users: ' + err);
@@ -1065,10 +1057,10 @@ var UserSelectorRich = /** @class */ (function (_super) {
         });
     };
     UserSelectorRich.prototype.onSelectUser = function (selectedUser) {
-        console.log('Clicked on "%s"', selectedUser);
         this.setState({
-            selectedUser: selectedUser.target.value
+            selectedUser: selectedUser
         });
+        this.props.onSelectUser(selectedUser);
     };
     UserSelectorRich.prototype.render = function () {
         var _this = this;
@@ -1078,10 +1070,8 @@ var UserSelectorRich = /** @class */ (function (_super) {
         }
         return (React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
             React.createElement("div", { className: "form-control", id: "selectedUser" }, this.state.users.map(function (user) {
-                var classnames = (selectedUser == user.username) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
-                return (
-                // <div>{user.username}</div>
-                React.createElement("div", { onClick: function () { return _this.clickOnUser(user.username); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
+                var classnames = (selectedUser === user) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
+                return (React.createElement("div", { onClick: function () { return _this.onSelectUser(user); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
                     React.createElement("span", null,
                         React.createElement("img", { src: '/images/avatars/' + user.username + '-avatar-sm.png' })),
                     " \u00A0",

@@ -1,21 +1,16 @@
 import * as React from 'react';
 import Axios from 'axios';
 import UserSelectRichRow from './UserSelectRichRow';
-
-interface IUser {
-    id: number;
-    username: string;
-    common_name: string;
-    roles: string[];
-}
+import IUser from "./IUser";
 
 export interface Props {
-    defaultUser: string;
+    //defaultUser: IUser;
+    onSelectUser: (selectedUser: IUser) => void;
 }
 
 export interface State {
     users: IUser[];
-    selectedUser: string;
+    selectedUser: IUser;
 }
 
 export default class UserSelectorRich extends React.Component<Props, State> {
@@ -31,37 +26,21 @@ export default class UserSelectorRich extends React.Component<Props, State> {
     }
 
     componentWillMount() {
-        if (this.props.defaultUser) {
-            this.setState({
-                selectedUser: this.props.defaultUser
-            });
-        }
+        //if (this.props.defaultUser) {
+            //console.log('Default to "%s".', this.props.defaultUser);
+            // this.setState({
+            //     selectedUser: this.props.defaultUser
+            // });
+        //}
     }
 
     componentDidMount () {
         Axios.get('/users')
         .then(
             (userData) => {
-                // let usersFound = userData.data.map( (userFound) => 
-                    
-                    // <UserSelectRichRow 
-                    //     key={userFound.id} 
-                    //     userid={userFound.id} 
-                    //     username={userFound.username} 
-                    //     common_name={userFound.common_name} 
-                    //     roles={userFound.roles} 
-                    // />
-
-                //     <div onClick={() => this.clickOnUser(userFound.username)} key={userFound.id} id={userFound.id} data-value={userFound.id} className="user-row-rich-select">
-                //         <span><img src={'/images/avatars/' + userFound.username + '-avatar-sm-png'} /></span>
-                //         <span>{userFound.common_name}</span>
-                //     </div>
-                // )
-
                 let usersFound = userData.data;
 
                 this.setState({users: usersFound});
-                //this.setState({users: userData.data});
             }
         )
         .catch((err) => {
@@ -77,11 +56,11 @@ export default class UserSelectorRich extends React.Component<Props, State> {
         });
     }
 
-    onSelectUser(selectedUser) {
-        console.log('Clicked on "%s"', selectedUser);
+    onSelectUser(selectedUser: IUser) {
         this.setState({
-            selectedUser: selectedUser.target.value
+            selectedUser: selectedUser
         });
+        this.props.onSelectUser(selectedUser);
     }
 
     render() {
@@ -98,22 +77,19 @@ export default class UserSelectorRich extends React.Component<Props, State> {
             <div className="col-lg-3 col-md-4 col-sm-5">
 
                 <div className="form-control" id="selectedUser">
-                    
-                    {/* {this.state.users} */}
+                    {/* User selector */}
                     { this.state.users.map(user => {
 
-                        const classnames = (selectedUser == user.username) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
+                        const classnames = (selectedUser === user) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
 
                         return (
-                            // <div>{user.username}</div>
-                            <div onClick={() => this.clickOnUser(user.username)} key={user.id} id={user.id.toString()} data-value={user.id} className={classnames}>
+                            <div onClick={() => this.onSelectUser(user)} key={user.id} id={user.id.toString()} data-value={user.id} className={classnames}>
                                 <span><img src={'/images/avatars/' + user.username + '-avatar-sm.png'} /></span> &nbsp;
                                 <span>{user.common_name}</span>
                             </div>
                         )
 
-                    })}
-                    
+                    })}                    
                 </div>
 
             </div>
