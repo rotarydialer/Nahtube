@@ -71,7 +71,7 @@ export default class BasicSummary extends React.Component<Props, State> {
 
         if (this.state.reportRows.length <= 0) {
             return (
-                <div>Select a user</div>
+                <div></div>
             );
         }
 

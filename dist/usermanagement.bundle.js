@@ -18238,7 +18238,7 @@ var BasicSummary = /** @class */ (function (_super) {
         var reportRows = this.state.reportRows;
         console.log(this.state.reportRows);
         if (this.state.reportRows.length <= 0) {
-            return (React.createElement("div", null, "Select a user"));
+            return (React.createElement("div", null));
         }
         return (React.createElement("div", null,
             React.createElement("div", null,
