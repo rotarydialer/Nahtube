@@ -2,6 +2,7 @@ import * as React from "react";
 import * as Moment from "moment";
 import UserSelectorRich from "../UserSelectorRich";
 import IUser from "../IUser";
+import BasicSummary from "./BasicSummary";
 
 export interface Props {
 }
@@ -36,6 +37,8 @@ export class UserManagement extends React.Component<Props, State> {
 
                 <UserSelectorRich 
                 onSelectUser={this.handleUserSelection} />
+
+                <BasicSummary user={this.state.selectedUser} />
             </div>
         )
     }
