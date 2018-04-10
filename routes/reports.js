@@ -86,4 +86,51 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
     } ));
 });
 
+router.get("/user/summary/:username", function (req, res, next) {
+
+  const { username } = req.params;
+
+  (async () => {
+    qresult = await pgpool.query(
+      `
+      WITH dates_watched AS (
+          SELECT u.username AS username,
+                 date_trunc('day', a.action_time) AS action_date,
+                 count(a.action_time) AS watch_count
+            FROM nahtube.user_activity a
+           INNER JOIN nahtube.users u
+              ON a.user_id = u.id
+           WHERE a.action = 'watch video'
+           GROUP BY username, action_date
+           ORDER BY username, action_date
+      )
+      
+      SELECT action_date, watch_count 
+        FROM dates_watched
+       WHERE username=$1
+       LIMIT 1000
+      `,[username]
+    );
+
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("No data found for the given date.");
+    }
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.log(e);
+      return res.send("Error: " + e.message);
+    })
+  );
+});
+
 module.exports = router;

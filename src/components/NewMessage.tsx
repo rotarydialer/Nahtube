@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Axios from 'axios';
-import UserSelector from './UserSelector';
+import UserSelectOption from './UserSelectOption';
 
 export interface MessageProps {
     onCloseMessage: (composeNew: boolean) => void;
@@ -90,7 +90,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
             (userData) => {
                 let usersFound = userData.data.map( (userFound) => 
                     
-                    <UserSelector 
+                    <UserSelectOption 
                         key={userFound.id} 
                         userid={userFound.id} 
                         username={userFound.username} 

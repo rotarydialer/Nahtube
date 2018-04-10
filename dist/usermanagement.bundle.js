@@ -1911,7 +1911,7 @@ function loadLocale(name) {
         try {
             oldLocale = globalLocale._abbr;
             var aliasedRequire = require;
-            __webpack_require__(155)("./" + name);
+            __webpack_require__(154)("./" + name);
             getSetGlobalLocale(oldLocale);
         } catch (e) {}
     }
@@ -4603,7 +4603,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(154)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(153)(module)))
 
 /***/ }),
 /* 1 */
@@ -4613,7 +4613,7 @@ return hooks;
 
 
 var bind = __webpack_require__(5);
-var isBuffer = __webpack_require__(134);
+var isBuffer = __webpack_require__(135);
 
 /*global toString:true*/
 
@@ -4925,17 +4925,11 @@ module.exports = React;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(133);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(136);
+var normalizeHeaderName = __webpack_require__(137);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -5026,6 +5020,12 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(134);
 
 /***/ }),
 /* 5 */
@@ -5243,12 +5243,12 @@ process.umask = function() { return 0; };
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var settle = __webpack_require__(137);
-var buildURL = __webpack_require__(139);
-var parseHeaders = __webpack_require__(140);
-var isURLSameOrigin = __webpack_require__(141);
+var settle = __webpack_require__(138);
+var buildURL = __webpack_require__(140);
+var parseHeaders = __webpack_require__(141);
+var isURLSameOrigin = __webpack_require__(142);
 var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(142);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(143);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -5345,7 +5345,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(143);
+      var cookies = __webpack_require__(144);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -5430,7 +5430,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(138);
+var enhanceError = __webpack_require__(139);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -17156,8 +17156,8 @@ return zhTw;
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
 var ReactDOM = __webpack_require__(131);
-var Messages_1 = __webpack_require__(132);
-ReactDOM.render(React.createElement(Messages_1.Messages, null), document.getElementById("wrapper"));
+var UserManagement_1 = __webpack_require__(132);
+ReactDOM.render(React.createElement(UserManagement_1.UserManagement, null), document.getElementById("wrapper"));
 
 
 /***/ }),
@@ -17184,155 +17184,32 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
-var axios_1 = __webpack_require__(3);
-var Message_YouTube_1 = __webpack_require__(151);
-var NewMessage_1 = __webpack_require__(152);
-var Moment = __webpack_require__(0);
-function checkVideoThumbnail(video) {
-    if (video.details_full) {
-        if (video.details_full.snippet) {
-            if (video.details_full.snippet.thumbnails) {
-                if (video.details_full.snippet.thumbnails.medium.url) {
-                    return video.details_full.snippet.thumbnails.medium.url;
-                }
-            }
-        }
-    }
-    return '';
-}
-function checkChannelId(video) {
-    if (video.details_full) {
-        if (video.details_full.snippet) {
-            if (video.details_full.snippet.channelId) {
-                return video.details_full.snippet.channelId;
-            }
-        }
-    }
-    return '';
-}
-var Messages = /** @class */ (function (_super) {
-    __extends(Messages, _super);
-    function Messages(props) {
+var UserSelectorRich_1 = __webpack_require__(133);
+var BasicSummary_1 = __webpack_require__(152);
+var UserManagement = /** @class */ (function (_super) {
+    __extends(UserManagement, _super);
+    function UserManagement(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
-            username: undefined,
-            commonName: undefined,
-            messages: [],
-            composeNew: false,
-            messageQueue: 'inbox',
-            defaultSendTo: '',
-            defaultSubject: ''
+            selectedUser: undefined
         };
-        _this.composeNewMessage.bind(_this);
-        _this.handleCloseMessage = _this.handleCloseMessage.bind(_this);
-        _this.showQueue = _this.showQueue.bind(_this);
-        _this.composeResponse = _this.composeResponse.bind(_this);
+        _this.handleUserSelection = _this.handleUserSelection.bind(_this);
         return _this;
     }
-    Messages.prototype.composeNewMessage = function () {
+    UserManagement.prototype.handleUserSelection = function (chosenUser) {
         this.setState({
-            composeNew: true,
-            defaultSendTo: '',
-            defaultSubject: ''
+            selectedUser: chosenUser
         });
     };
-    Messages.prototype.composeResponse = function (to, subject) {
-        console.log('Composing a response.');
-        this.setState({
-            composeNew: true,
-            defaultSendTo: to,
-            defaultSubject: 'RE: ' + subject
-        });
+    UserManagement.prototype.render = function () {
+        return (React.createElement("div", null,
+            "User Management",
+            React.createElement(UserSelectorRich_1.default, { onSelectUser: this.handleUserSelection }),
+            React.createElement(BasicSummary_1.default, { user: this.state.selectedUser })));
     };
-    Messages.prototype.showQueue = function (queueName) {
-        this.setState({
-            messageQueue: queueName
-        });
-    };
-    Messages.prototype.clearMessageList = function () {
-        this.setState({
-            messages: []
-        });
-    };
-    Messages.prototype.componentDidMount = function () {
-        var _this = this;
-        if (!this.state.username) {
-            axios_1.default.get('/checksession')
-                .then(function (resp) {
-                _this.setState({
-                    username: resp.data.username,
-                    commonName: resp.data.common_name
-                });
-                //now get the messages and map over them
-                axios_1.default.get('/messages/' + _this.state.messageQueue + '.json')
-                    .then(function (inboxMessages) {
-                    console.log(inboxMessages);
-                    // console.log('Inbox messages:');
-                    //console.log(inboxMessages.data);
-                    var messages = inboxMessages.data.map(function (message) {
-                        return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: false, messageQueue: _this.state.messageQueue, onReply: _this.composeResponse });
-                    });
-                    _this.setState({ messages: messages });
-                })
-                    .catch(function (err) {
-                    console.log('Inbox error: ' + err);
-                });
-            })
-                .catch(function (err) {
-                console.log('Session error: ' + err);
-            });
-        }
-    };
-    Messages.prototype.componentWillUpdate = function (nextProps, nextState) {
-        var _this = this;
-        console.log('componentDidUpdate');
-        console.log('Current queue: ' + this.state.messageQueue);
-        console.log('Next queue: ' + nextState.messageQueue);
-        if (this.state.messageQueue != nextState.messageQueue) {
-            this.clearMessageList();
-            var showTo = nextState.messageQueue == 'sent' ? true : false;
-            axios_1.default.get('/messages/' + nextState.messageQueue + '.json')
-                .then(function (listMessages) {
-                console.log(listMessages);
-                var messages = listMessages.data.map(function (message) {
-                    return React.createElement(Message_YouTube_1.default, { key: message.id, messageId: message.id, subject: message.message_subject, fromUsername: message.from, toUsername: message.to, body: message.message_body.messageBody, videoId: message.details_full.id, thumbnail: checkVideoThumbnail(message), start: message.details_full.start, channelId: checkChannelId(message), videoDetailsFull: message.details_full || {}, sentTime: Moment(message.message_time), showRecipient: showTo, messageQueue: _this.state.messageQueue, onReply: _this.composeResponse });
-                });
-                _this.setState({ messages: messages });
-            })
-                .catch(function (err) {
-                console.log('Inbox error: ' + err);
-            });
-        }
-    };
-    Messages.prototype.handleCloseMessage = function () {
-        this.setState({ composeNew: false });
-    };
-    Messages.prototype.render = function () {
-        var _this = this;
-        var _a = this.state, username = _a.username, composeNew = _a.composeNew;
-        if (!username)
-            return React.createElement("div", null, "Not logged in.");
-        if (composeNew) {
-            return (React.createElement(NewMessage_1.default, { onCloseMessage: this.handleCloseMessage, defaultSendTo: this.state.defaultSendTo, defaultSubject: this.state.defaultSubject }));
-        }
-        return (
-        // TODO:
-        // for each, check its type and render the appropriate component.
-        React.createElement("div", null,
-            React.createElement("a", { className: "btn btn-secondary btn-sm btn-new-msg", role: "button", onClick: function (e) { _this.composeNewMessage(); } }, "New Message"),
-            React.createElement("div", { className: "row" },
-                React.createElement("ul", { className: "nav nav-tabs" },
-                    React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: this.state.messageQueue == 'inbox' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('inbox'); } }, "Inbox")),
-                    React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: this.state.messageQueue == 'sent' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('sent'); } }, "Sent")),
-                    React.createElement("li", { className: "nav-item" },
-                        React.createElement("a", { className: this.state.messageQueue == 'deleted' ? 'active nav-link' : 'nav-link', onClick: function (e) { _this.showQueue('deleted'); } }, "Deleted")))),
-            React.createElement("div", { className: "row" }, this.state.messages)));
-    };
-    return Messages;
+    return UserManagement;
 }(React.Component));
-exports.Messages = Messages;
+exports.UserManagement = UserManagement;
 
 
 /***/ }),
@@ -17341,11 +17218,93 @@ exports.Messages = Messages;
 
 "use strict";
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(2);
+var axios_1 = __webpack_require__(4);
+var UserSelectorRich = /** @class */ (function (_super) {
+    __extends(UserSelectorRich, _super);
+    function UserSelectorRich(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            users: [],
+            selectedUser: undefined
+        };
+        _this.onSelectUser = _this.onSelectUser.bind(_this);
+        return _this;
+    }
+    UserSelectorRich.prototype.componentWillMount = function () {
+        //if (this.props.defaultUser) {
+        //console.log('Default to "%s".', this.props.defaultUser);
+        // this.setState({
+        //     selectedUser: this.props.defaultUser
+        // });
+        //}
+    };
+    UserSelectorRich.prototype.componentDidMount = function () {
+        var _this = this;
+        axios_1.default.get('/users')
+            .then(function (userData) {
+            var usersFound = userData.data;
+            _this.setState({ users: usersFound });
+        })
+            .catch(function (err) {
+            console.log('Error getting users: ' + err);
+        });
+    };
+    UserSelectorRich.prototype.clickOnUser = function (clickedUser) {
+        console.log(clickedUser);
+        this.setState({
+            selectedUser: clickedUser
+        });
+    };
+    UserSelectorRich.prototype.onSelectUser = function (selectedUser) {
+        this.setState({
+            selectedUser: selectedUser
+        });
+        this.props.onSelectUser(selectedUser);
+    };
+    UserSelectorRich.prototype.render = function () {
+        var _this = this;
+        var _a = this.state, users = _a.users, selectedUser = _a.selectedUser;
+        if (users.length <= 0) {
+            return (React.createElement("div", null, "No users"));
+        }
+        return (React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
+            React.createElement("div", { className: "form-control", id: "selectedUser" }, this.state.users.map(function (user) {
+                var classnames = (selectedUser === user) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
+                return (React.createElement("div", { onClick: function () { return _this.onSelectUser(user); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
+                    React.createElement("span", null,
+                        React.createElement("img", { src: '/images/avatars/' + user.username + '-avatar-sm.png' })),
+                    " \u00A0",
+                    React.createElement("span", null, user.common_name)));
+            }))));
+    };
+    return UserSelectorRich;
+}(React.Component));
+exports.default = UserSelectorRich;
+
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var utils = __webpack_require__(1);
 var bind = __webpack_require__(5);
-var Axios = __webpack_require__(135);
-var defaults = __webpack_require__(4);
+var Axios = __webpack_require__(136);
+var defaults = __webpack_require__(3);
 
 /**
  * Create an instance of Axios
@@ -17379,14 +17338,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(10);
-axios.CancelToken = __webpack_require__(149);
+axios.CancelToken = __webpack_require__(150);
 axios.isCancel = __webpack_require__(9);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(150);
+axios.spread = __webpack_require__(151);
 
 module.exports = axios;
 
@@ -17395,7 +17354,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports) {
 
 /*!
@@ -17422,16 +17381,16 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(3);
 var utils = __webpack_require__(1);
-var InterceptorManager = __webpack_require__(144);
-var dispatchRequest = __webpack_require__(145);
+var InterceptorManager = __webpack_require__(145);
+var dispatchRequest = __webpack_require__(146);
 
 /**
  * Create a new instance of Axios
@@ -17508,7 +17467,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17527,7 +17486,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17560,7 +17519,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17588,7 +17547,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17663,7 +17622,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17723,7 +17682,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17798,7 +17757,7 @@ module.exports = (
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17841,7 +17800,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17901,7 +17860,7 @@ module.exports = (
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17960,18 +17919,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var transformData = __webpack_require__(146);
+var transformData = __webpack_require__(147);
 var isCancel = __webpack_require__(9);
-var defaults = __webpack_require__(4);
-var isAbsoluteURL = __webpack_require__(147);
-var combineURLs = __webpack_require__(148);
+var defaults = __webpack_require__(3);
+var isAbsoluteURL = __webpack_require__(148);
+var combineURLs = __webpack_require__(149);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -18053,7 +18012,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18080,7 +18039,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18101,7 +18060,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18122,7 +18081,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18186,7 +18145,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18220,129 +18179,6 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 151 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(2);
-var axios_1 = __webpack_require__(3);
-var Message_YouTube = /** @class */ (function (_super) {
-    __extends(Message_YouTube, _super);
-    function Message_YouTube(props) {
-        var _this = _super.call(this, props) || this;
-        _this.onDelete = _this.onDelete.bind(_this);
-        _this.onRestore = _this.onRestore.bind(_this);
-        _this.onReply = _this.onReply.bind(_this);
-        return _this;
-    }
-    Message_YouTube.prototype.onDelete = function (messageId, e) {
-        console.log('Let\'s delete messageId ' + messageId + '...');
-        var delUrl = '/messages/' + messageId;
-        // show a confirmation modal.
-        // delete if confirmed.
-        axios_1.default.delete(delUrl)
-            .then(function (res) {
-            console.log(res);
-        })
-            .catch(function (err) {
-            console.log('ERROR:' + err);
-        });
-    };
-    Message_YouTube.prototype.onRestore = function (messageId, e) {
-        console.log('Let\'s restore messageId ' + messageId + '...');
-        var restoreUrl = '/messages/restore/' + messageId;
-        // show a confirmation modal.
-        // restore if confirmed.
-        axios_1.default.put(restoreUrl)
-            .then(function (res) {
-            console.log(res);
-        })
-            .catch(function (err) {
-            console.log('ERROR:' + err);
-        });
-    };
-    Message_YouTube.prototype.onReply = function (toUsername, subject, e) {
-        console.log('Let\'s reply to ' + toUsername + '...');
-        console.log(this.props);
-        this.props.onReply(toUsername, subject);
-        // show a confirmation modal.
-        // delete if confirmed.
-    };
-    Message_YouTube.prototype.componentWillMount = function () {
-        this.setState({});
-    };
-    Message_YouTube.prototype.watchViaPost = function (postUrl, payload) {
-        axios_1.default.post(postUrl, payload)
-            .then(function (res) {
-            //console.log(res);
-            //console.log(res.data);
-            window.location.href = postUrl + '&logAct=no'; // this routes, but as a GET, so handle accordingly
-        })
-            .catch(function (err) {
-            console.log('ERROR:' + err);
-        });
-    };
-    Message_YouTube.prototype.render = function () {
-        var _this = this;
-        var _a = this.props, messageId = _a.messageId, subject = _a.subject, body = _a.body, fromUsername = _a.fromUsername, toUsername = _a.toUsername, videoId = _a.videoId, thumbnail = _a.thumbnail, channelId = _a.channelId, videoDetailsFull = _a.videoDetailsFull, start = _a.start, sentTime = _a.sentTime, showRecipient = _a.showRecipient;
-        var fromAvatar = '/images/avatars/' + fromUsername + '-avatar-sm.png';
-        var toAvatar = '/images/avatars/' + toUsername + '-avatar-sm.png';
-        var showAvatar = showRecipient ? toAvatar : fromAvatar;
-        var toLabel = showRecipient ? 'Sent to ' + toUsername : '';
-        var watchUrl = '/youtube/watch?v=' + videoId;
-        watchUrl += channelId ? '&c=' + channelId : '';
-        var actionButtons;
-        if (this.props.messageQueue === 'inbox') {
-            actionButtons = React.createElement("div", { className: "btn-group" },
-                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onReply(fromUsername, subject, e); } }, "Reply"),
-                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onDelete(messageId, e); } }, "Delete"));
-        }
-        if (this.props.messageQueue === 'deleted') {
-            actionButtons = React.createElement("div", { className: "btn-group" },
-                React.createElement("div", { className: "btn btn-sm btn-outline-secondary", onClick: function (e) { _this.onRestore(messageId, e); } }, "Restore"));
-        }
-        var displayActions = showRecipient ? '' : actionButtons;
-        if (start) {
-            watchUrl += '&t=' + start;
-        }
-        console.log('message render');
-        console.log(sentTime);
-        var jsonFieldName = videoId + '-json';
-        return (React.createElement("div", { className: "col-md-4" },
-            React.createElement("form", { id: videoId, method: "POST", action: watchUrl },
-                React.createElement("input", { id: jsonFieldName, name: "videoDetailsFull", type: "hidden" }),
-                React.createElement("div", { className: "card mb-4 box-shadow" },
-                    thumbnail &&
-                        React.createElement("img", { className: "card-img-top", src: thumbnail, "data-holder-rendered": "true", onClick: function (e) { return _this.watchViaPost(watchUrl, _this.props); } }),
-                    React.createElement("div", { className: "card-body" },
-                        React.createElement("strong", null, subject),
-                        React.createElement("p", { className: "card-text" }, body),
-                        React.createElement("div", { className: "small" }, sentTime.format('MMMM Do YYYY, h:mma')),
-                        React.createElement("div", { className: "avatar-message" },
-                            React.createElement("span", { className: "tolabel small text-muted" }, toLabel),
-                            React.createElement("img", { src: showAvatar })),
-                        React.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-                            displayActions,
-                            React.createElement("small", { className: "text-muted" }, sentTime.fromNow())))))));
-    };
-    return Message_YouTube;
-}(React.Component));
-exports.default = Message_YouTube;
-
-
-/***/ }),
 /* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18360,290 +18196,63 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
-var axios_1 = __webpack_require__(3);
-var UserSelectOption_1 = __webpack_require__(153);
-// TODO: remove these hamfisted crutches in favor of something more elegant
-// I mean, you've already got one of these in the state! :P
-var currentSearchTerm;
-var currentSearchExecuted = false;
-function formatVideoThumbnail(video) {
-    if (video.snippet) {
-        if (video.snippet.thumbnails) {
-            if (video.snippet.thumbnails.medium.url) {
-                return video.snippet.thumbnails.medium.url;
-            }
-        }
-    }
-    return '';
-}
-var NewMessage = /** @class */ (function (_super) {
-    __extends(NewMessage, _super);
-    function NewMessage(props) {
+var axios_1 = __webpack_require__(4);
+var Moment = __webpack_require__(0);
+var BasicSummary = /** @class */ (function (_super) {
+    __extends(BasicSummary, _super);
+    function BasicSummary(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
-            isSearching: false,
-            searchString: undefined,
-            searchResults: [],
-            users: [],
-            sendToUsername: undefined,
-            subject: undefined,
-            messageBody: undefined,
-            videoId: undefined,
-            start: undefined,
-            detailsFull: {}
+            reportRows: []
         };
-        _this.onSearchChange = _this.onSearchChange.bind(_this);
-        _this.onSearchPaste = _this.onSearchPaste.bind(_this);
-        _this.selectVideoToSend = _this.selectVideoToSend.bind(_this);
-        _this.onChangeVideoStart = _this.onChangeVideoStart.bind(_this);
-        _this.onSelectUser = _this.onSelectUser.bind(_this);
-        _this.onChangeSubject = _this.onChangeSubject.bind(_this);
-        _this.onChangeBody = _this.onChangeBody.bind(_this);
-        _this.sendMessage = _this.sendMessage.bind(_this);
-        _this.onCloseMessage = _this.onCloseMessage.bind(_this);
         return _this;
     }
-    NewMessage.prototype.onCloseMessage = function (e) {
-        this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
+    BasicSummary.prototype.componentDidMount = function () {
+        this.setState({ reportRows: [] });
     };
-    NewMessage.prototype.componentWillMount = function () {
-        if (this.props.defaultSendTo) {
-            this.setState({
-                sendToUsername: this.props.defaultSendTo
-            });
-        }
-        if (this.props.defaultSubject) {
-            this.setState({
-                subject: this.props.defaultSubject
-            });
-        }
-    };
-    NewMessage.prototype.componentDidMount = function () {
+    BasicSummary.prototype.componentWillUpdate = function (nextProps, nextState) {
         var _this = this;
-        axios_1.default.get('/users')
-            .then(function (userData) {
-            var usersFound = userData.data.map(function (userFound) {
-                return React.createElement(UserSelectOption_1.default, { key: userFound.id, userid: userFound.id, username: userFound.username, common_name: userFound.common_name, roles: userFound.roles });
-            });
-            _this.setState({ users: usersFound });
-        })
-            .catch(function (err) {
-            console.log('Error getting users: ' + err);
-        });
-    };
-    NewMessage.prototype.onSearchChange = function (e) {
-        var _this = this;
-        this.setState((_a = {}, _a[e.target.name] = e.target.value, _a));
-        // wait 2 seconds before submitting the search
-        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 1000);
-        var _a;
-    };
-    NewMessage.prototype.onSearchPaste = function (e) {
-        var _this = this;
-        this.setState({ searchString: e.target.value });
-        //setTimeout(() => this.checkSearchTerms(this.state.searchString), 50);
-        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 50);
-    };
-    NewMessage.prototype.checkSearchTerms = function (incoming) {
-        if (incoming) {
-            if (currentSearchTerm === incoming) {
-                //if (!currentSearchExecuted) {
-                if (!this.state.isSearching) {
-                    //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
-                    currentSearchExecuted = true;
-                    this.doSearch(currentSearchTerm);
-                }
-            }
-            else {
-                currentSearchTerm = incoming;
-            }
-        }
-        else {
-            this.setState({ searchResults: [] });
-        }
-    };
-    NewMessage.prototype.doSearch = function (searchTerm) {
-        var _this = this;
-        this.setState({
-            searchResults: [],
-            videoId: ''
-        });
-        console.log('Searching for "%s"...', searchTerm);
-        this.setState({ isSearching: true });
-        axios_1.default.get('/youtube/search/' + searchTerm)
-            .then(function (resultsFound) {
-            console.log(resultsFound.data);
-            var searchResults = resultsFound.data.items.map(function (result) {
-                // <div key={result.id.videoId} className="col searchResultThumb" onClick={this.selectVideoToSend.bind(this)}><img data-videoid={result.id.videoId} data-fulldetails={result} className="searchResultThumb" src={formatVideoThumbnail(result)} /></div>
-                // ideally, I should probably serialize and store the full details result above, but in the interest of time I'll just grab the videoId and do a separate request on send :/
-                return React.createElement("div", { key: result.id.videoId, className: "col searchResultThumb" },
-                    React.createElement("img", { onClick: _this.selectVideoToSend, "data-videoid": result.id.videoId, className: "searchResultThumb", src: formatVideoThumbnail(result) }));
-            });
-            _this.setState({ searchResults: searchResults });
-            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
-            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
-        })
-            .catch(function (err) {
-            console.log('Send Message error: ' + err);
-            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
-            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
-        });
-        //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
-    };
-    NewMessage.prototype.selectVideoToSend = function (e) {
-        var _this = this;
-        var selectedVideoId = e.target.dataset.videoid;
-        if (selectedVideoId) {
-            this.setState({ videoId: selectedVideoId });
-            axios_1.default.get('/youtube/videodetails/' + selectedVideoId)
-                .then(function (response) {
-                console.log(response.data.items[0]);
-                // TODO: check value
-                _this.setState({
-                    detailsFull: response.data.items[0]
+        if (this.state.reportRows.length <= 0 || this.props.user != nextProps.user) {
+            var reportUser = nextProps.user ? nextProps.user : this.props.user;
+            if (reportUser)
+                axios_1.default.get('/reports/user/summary/' + reportUser.username)
+                    .then(function (reportData) {
+                    var rows = reportData.data.results.map(function (row) {
+                        return React.createElement("div", { className: "row", key: row.action_date },
+                            React.createElement("div", { className: "col-3 col-sm-5" },
+                                "Date: ",
+                                Moment(row.action_date).format('ddd MMM Do')),
+                            React.createElement("div", { className: "col-4" },
+                                "Watched: ",
+                                row.watch_count));
+                    });
+                    _this.setState({ reportRows: rows });
+                })
+                    .catch(function (err) {
+                    _this.setState({ reportRows: [] });
+                    console.log('Error: ' + err);
                 });
-            })
-                .catch(function (err) {
-                console.log('Error getting users: ' + err);
-            });
-        }
-        else {
-            console.log('ERROR: No video ID found for the selected video.');
         }
     };
-    NewMessage.prototype.onChangeVideoStart = function (e) {
-        this.setState({ start: e.target.type === 'number' ? parseInt(e.target.value) : e.target.value });
-    };
-    NewMessage.prototype.onSelectUser = function (selectedUser) {
-        this.setState({
-            sendToUsername: selectedUser.target.value
-        });
-    };
-    NewMessage.prototype.onChangeSubject = function (e) {
-        this.setState((_a = {}, _a[e.target.id] = e.target.value, _a));
-        var _a;
-    };
-    NewMessage.prototype.onChangeBody = function (e) {
-        this.setState((_a = {}, _a[e.target.id] = e.target.value, _a));
-        var _a;
-    };
-    NewMessage.prototype.sendMessage = function (e) {
-        // console.log('Preparing to send the message:');
-        // console.log(this.state);
-        var _a = this.state, sendToUsername = _a.sendToUsername, subject = _a.subject, messageBody = _a.messageBody, videoId = _a.videoId, detailsFull = _a.detailsFull, start = _a.start;
-        var msgPayload = {
-            "toUsername": sendToUsername,
-            "subject": subject,
-            "messageBody": { "messageBody": messageBody },
-            "videoId": videoId,
-            "detailsFull": detailsFull
-        };
-        if (start) {
-            msgPayload.detailsFull['start'] = start;
+    BasicSummary.prototype.render = function () {
+        var reportRows = this.state.reportRows;
+        console.log(this.state.reportRows);
+        if (this.state.reportRows.length <= 0) {
+            return (React.createElement("div", null));
         }
-        if (sendToUsername && subject) {
-            console.log('Sending with this payload:');
-            console.log(msgPayload);
-            axios_1.default.post('messages/send', msgPayload)
-                .then(function (res) {
-                console.log('Message sent. Response:');
-                console.log(res);
-            })
-                .catch(function (err) {
-                console.log('Error sending message: ' + err);
-            });
-            // sets "composeNew" to false, thereby closing the New Message component
-            this.props.onCloseMessage(false);
-        }
-        else {
-            // TODO: actually handle this
-            console.log('Required field missing.');
-        }
+        return (React.createElement("div", null,
+            React.createElement("div", null,
+                " ",
+                this.state.reportRows,
+                " ")));
     };
-    NewMessage.prototype.componentWillUnmount = function () {
-        console.log('Message sent.');
-        // TODO: show a notification that the message was sent. (which means lifting more state yay :/)
-    };
-    NewMessage.prototype.render = function () {
-        var _a = this.state, isSearching = _a.isSearching, sendToUsername = _a.sendToUsername;
-        return (React.createElement("div", { className: "newmessage col" },
-            React.createElement("h2", null, "Send a Message"),
-            React.createElement("form", null,
-                React.createElement("div", { className: "form-group" },
-                    React.createElement("div", { className: "form-group row recipient-row" },
-                        React.createElement("label", { className: "col-1 col-form-label" }, "To"),
-                        React.createElement("div", { className: "col-4" },
-                            React.createElement("select", { className: "form-control", id: "messageTo", onChange: this.onSelectUser, value: this.state.sendToUsername },
-                                React.createElement("option", null),
-                                this.state.users)),
-                        sendToUsername ? React.createElement("div", { className: "col" },
-                            React.createElement("img", { src: '/images/avatars/' + sendToUsername + '-avatar-md.png' })) : React.createElement("div", { className: "col" }, "\u00A0"),
-                        this.state.videoId &&
-                            React.createElement("div", { id: "player", className: "col text-right yt-player-upper-right" },
-                                React.createElement("iframe", { id: "ytplayer", width: "350", height: "200", src: "https://www.youtube.com/embed/" + this.state.videoId + "?autoplay=0&rel=0", frameBorder: "0" }),
-                                React.createElement("div", { className: "row" },
-                                    React.createElement("div", { className: "col text-right" },
-                                        React.createElement("small", null, "Start:")),
-                                    React.createElement("div", { className: "col-4" },
-                                        React.createElement("input", { type: "number", className: "form-control form-control-sm", id: "start", onChange: this.onChangeVideoStart }))))),
-                    React.createElement("div", { className: "form-group row" },
-                        React.createElement("label", { className: "col-1 col-form-label" },
-                            React.createElement("strong", null, "Search")),
-                        React.createElement("div", { className: "col-4" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange, onPaste: this.onSearchPaste })),
-                        isSearching ? React.createElement("h2", null,
-                            React.createElement("span", { className: "badge badge-info" },
-                                React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
-                    React.createElement("div", { className: "row search-results" }, this.state.searchResults),
-                    React.createElement("div", { className: "form-group row" },
-                        React.createElement("label", { className: "col-1 col-form-label" }, "Subject"),
-                        React.createElement("div", { className: "col-11" },
-                            React.createElement("input", { className: "form-control", type: "text", id: "subject", onChange: this.onChangeSubject, value: this.state.subject }))),
-                    React.createElement("div", { className: "form-group row" },
-                        React.createElement("div", { className: "col-12" },
-                            React.createElement("textarea", { className: "form-control", id: "messageBody", rows: 5, onChange: this.onChangeBody }))),
-                    React.createElement("div", { className: "btn btn-primary", onClick: this.sendMessage }, "Send"),
-                    " ",
-                    React.createElement("div", { className: "btn btn-secondary", onClick: this.onCloseMessage }, "Cancel")))));
-    };
-    return NewMessage;
+    return BasicSummary;
 }(React.Component));
-exports.default = NewMessage;
+exports.default = BasicSummary;
 
 
 /***/ }),
 /* 153 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(2);
-var UserSelectOption = /** @class */ (function (_super) {
-    __extends(UserSelectOption, _super);
-    function UserSelectOption(props) {
-        return _super.call(this, props) || this;
-    }
-    UserSelectOption.prototype.render = function () {
-        return (React.createElement("option", { value: this.props.username }, this.props.common_name));
-    };
-    return UserSelectOption;
-}(React.Component));
-exports.default = UserSelectOption;
-
-
-/***/ }),
-/* 154 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -18671,7 +18280,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 155 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -18928,8 +18537,8 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 155;
+webpackContext.id = 154;
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=messages.bundle.js.map
+//# sourceMappingURL=usermanagement.bundle.js.map
