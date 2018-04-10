@@ -108,7 +108,6 @@ router.get("/user/summary/:username", function (req, res, next) {
       SELECT action_date, watch_count 
         FROM dates_watched
        WHERE username=$1
-       LIMIT 1000
       `,[username]
     );
 
