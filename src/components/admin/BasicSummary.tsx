@@ -17,6 +17,9 @@ export interface Props {
 
 export interface State {
     reportRows: ReportRow[];
+    labels: Moment.Moment[];
+    dataPoints: number[];
+    reportStart: Moment.Moment;
 }
 
 export default class BasicSummary extends React.Component<Props, State> {
@@ -24,7 +27,10 @@ export default class BasicSummary extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            reportRows: []
+            reportRows: [],
+            labels: [],
+            dataPoints: [],
+            reportStart: Moment().subtract(1, 'months')
         }
     }
 
@@ -38,26 +44,38 @@ export default class BasicSummary extends React.Component<Props, State> {
 
             const reportUser = nextProps.user ? nextProps.user : this.props.user;
 
+            let actionDates = [];
+            let counts = [];
+
+            let reportStart = this.state.reportStart;
+
             if (reportUser)
-            Axios.get('/reports/user/summary/' + reportUser.username)
-            .then(
-                (reportData) => {
+                Axios.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
+                .then(
+                    (reportData) => {
 
-                    let rows = reportData.data.results.map( (row) => 
+                        let rows = reportData.data.results.map( (row) => {
 
-                        <div className="row" key={row.action_date}>
-                            <div className="col-3 col-sm-5">Date: {Moment(row.action_date).format('ddd MMM Do')}</div>
-                            <div className="col-4">Watched: {row.watch_count}</div>
-                        </div>
-                    )
+                            actionDates.push(Moment(row.action_date).format("M/D"));
+                            counts.push(row.watch_count);
 
-                    this.setState({reportRows: rows});
-                }
-            )
-            .catch((err) => {
-                this.setState({reportRows: []});
-                console.log('Error: ' + err);
-            });
+                            return <div className="row" key={row.action_date}>
+                                <div className="col-3 col-sm-5">Date: {Moment(row.action_date).format('ddd MMM Do')}</div>
+                                <div className="col-4">Watched: {row.watch_count}</div>
+                            </div>
+                        })
+
+                        this.setState({
+                            reportRows: rows,
+                            labels: actionDates,
+                            dataPoints: counts
+                        });
+                    }
+                )
+                .catch((err) => {
+                    this.setState({reportRows: []});
+                    console.log('Error: ' + err);
+                });
 
         }
 
@@ -67,8 +85,6 @@ export default class BasicSummary extends React.Component<Props, State> {
         const {
             reportRows
         } = this.state;
-
-        console.log(this.state.reportRows);
 
         if (this.state.reportRows.length <= 0) {
             return (
@@ -103,7 +119,7 @@ export default class BasicSummary extends React.Component<Props, State> {
         };
 
         let chartData = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            labels: this.state.labels,
             datasets: [
                 {
                     label: "Videos watched",
@@ -113,7 +129,7 @@ export default class BasicSummary extends React.Component<Props, State> {
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: [65, 59, 80, 81, 56, 55, 40]
+                    data: this.state.dataPoints
                 }
             ]
         };
@@ -167,7 +183,7 @@ export default class BasicSummary extends React.Component<Props, State> {
 
         return (
             <div>
-                <LineChart data={chartData} options={chartOptions} width="600" height="250" />
+                <LineChart data={chartData} options={chartOptions} width="800" height="350" />
                 <div> {this.state.reportRows} </div>
             </div>
         );

@@ -156,7 +156,7 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
          ORDER BY username, action_date
     )
     
-    SELECT d.arb_date AS act_date, a.watch_count FROM date_range d
+    SELECT d.arb_date AS action_date, COALESCE(a.watch_count, 0) AS watch_count FROM date_range d
       LEFT JOIN activity_dates a 
              ON d.arb_date = a.action_date;
       `,[username, startdate]

@@ -18359,7 +18359,10 @@ var BasicSummary = /** @class */ (function (_super) {
     function BasicSummary(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
-            reportRows: []
+            reportRows: [],
+            labels: [],
+            dataPoints: [],
+            reportStart: Moment().subtract(1, 'months')
         };
         return _this;
     }
@@ -18370,10 +18373,15 @@ var BasicSummary = /** @class */ (function (_super) {
         var _this = this;
         if (this.state.reportRows.length <= 0 || this.props.user != nextProps.user) {
             var reportUser = nextProps.user ? nextProps.user : this.props.user;
+            var actionDates_1 = [];
+            var counts_1 = [];
+            var reportStart = this.state.reportStart;
             if (reportUser)
-                axios_1.default.get('/reports/user/summary/' + reportUser.username)
+                axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
                     .then(function (reportData) {
                     var rows = reportData.data.results.map(function (row) {
+                        actionDates_1.push(Moment(row.action_date).format("M/D"));
+                        counts_1.push(row.watch_count);
                         return React.createElement("div", { className: "row", key: row.action_date },
                             React.createElement("div", { className: "col-3 col-sm-5" },
                                 "Date: ",
@@ -18382,7 +18390,11 @@ var BasicSummary = /** @class */ (function (_super) {
                                 "Watched: ",
                                 row.watch_count));
                     });
-                    _this.setState({ reportRows: rows });
+                    _this.setState({
+                        reportRows: rows,
+                        labels: actionDates_1,
+                        dataPoints: counts_1
+                    });
                 })
                     .catch(function (err) {
                     _this.setState({ reportRows: [] });
@@ -18392,7 +18404,6 @@ var BasicSummary = /** @class */ (function (_super) {
     };
     BasicSummary.prototype.render = function () {
         var reportRows = this.state.reportRows;
-        console.log(this.state.reportRows);
         if (this.state.reportRows.length <= 0) {
             return (React.createElement("div", null));
         }
@@ -18422,7 +18433,7 @@ var BasicSummary = /** @class */ (function (_super) {
             ]
         };
         var chartData = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            labels: this.state.labels,
             datasets: [
                 {
                     label: "Videos watched",
@@ -18432,7 +18443,7 @@ var BasicSummary = /** @class */ (function (_super) {
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: [65, 59, 80, 81, 56, 55, 40]
+                    data: this.state.dataPoints
                 }
             ]
         };
@@ -18469,7 +18480,7 @@ var BasicSummary = /** @class */ (function (_super) {
             offsetGridLines: false
         };
         return (React.createElement("div", null,
-            React.createElement(LineChart, { data: chartData, options: chartOptions, width: "600", height: "250" }),
+            React.createElement(LineChart, { data: chartData, options: chartOptions, width: "800", height: "350" }),
             React.createElement("div", null,
                 " ",
                 this.state.reportRows,
