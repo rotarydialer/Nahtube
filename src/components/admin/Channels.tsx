@@ -7,13 +7,15 @@ export interface Props {
 }
 
 export interface State {
+    channelData: any[];
 }
 
-export default class BasicSummary extends React.Component<Props, State> {
+export default class Channels extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
+            channelData: []
         }
     }
 
@@ -30,26 +32,19 @@ export default class BasicSummary extends React.Component<Props, State> {
 
 
             if (reportUser)
-                Axios.get('/reports/user/watchcount/' + reportUser.username )
+                Axios.get('/channels/' + reportUser.username )
                 .then(
-                    (reportData) => {
-
-                        let rows = reportData.data.results.map( (row) => {
-
-                            counts.push(row.watch_count);
-
-                            return <div className="row" key={row.action_date}>
-                                <div className="col-4">Watched: {row.watch_count}</div>
-                            </div>
-                        })
+                    (channels) => {
 
                         this.setState({
-                            
+                            channelData: channels.data
                         });
                     }
                 )
                 .catch((err) => {
-                    this.setState({});
+                    this.setState({
+                        channelData: []
+                    });
                     console.log('Error: ' + err);
                 });
 
@@ -67,10 +62,28 @@ export default class BasicSummary extends React.Component<Props, State> {
             );
         }
 
+        let channels = this.state.channelData.map( (ch) => 
+
+            <div className="ch" key={ch.id}>
+                {/* <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6"> */}
+                <div className="col">
+                    <div className="dummy"><a href={'/youtube/videos/' + ch.channel_id}>
+                        <div className="thumbnail">
+                            <img src={ch.channel_data.snippet.thumbnails.default.url} width="44" height="44" />
+                            {ch.channel_name}
+                        </div></a>
+                    </div>
+                </div>
+            </div>
+        )
+
         return (
             <div>
                 <b>Channels:</b>
-                {/* <div> {this.state.reportRows} </div> */}
+                <div className="row">
+                    <div className="col"> {channels} </div>
+                    <div className="col">Add Channel (component)</div>
+                </div>
             </div>
         );
     }

@@ -23881,49 +23881,63 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
 var axios_1 = __webpack_require__(5);
-var BasicSummary = /** @class */ (function (_super) {
-    __extends(BasicSummary, _super);
-    function BasicSummary(props) {
+var Channels = /** @class */ (function (_super) {
+    __extends(Channels, _super);
+    function Channels(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = {};
+        _this.state = {
+            channelData: []
+        };
         return _this;
     }
-    BasicSummary.prototype.componentDidMount = function () {
+    Channels.prototype.componentDidMount = function () {
     };
-    BasicSummary.prototype.componentWillUpdate = function (nextProps, nextState) {
+    Channels.prototype.componentWillUpdate = function (nextProps, nextState) {
         var _this = this;
         if (this.props.user != nextProps.user) {
             var reportUser = nextProps.user ? nextProps.user : this.props.user;
-            var counts_1 = [];
+            var counts = [];
             if (reportUser)
-                axios_1.default.get('/reports/user/watchcount/' + reportUser.username)
-                    .then(function (reportData) {
-                    var rows = reportData.data.results.map(function (row) {
-                        counts_1.push(row.watch_count);
-                        return React.createElement("div", { className: "row", key: row.action_date },
-                            React.createElement("div", { className: "col-4" },
-                                "Watched: ",
-                                row.watch_count));
+                axios_1.default.get('/channels/' + reportUser.username)
+                    .then(function (channels) {
+                    _this.setState({
+                        channelData: channels.data
                     });
-                    _this.setState({});
                 })
                     .catch(function (err) {
-                    _this.setState({});
+                    _this.setState({
+                        channelData: []
+                    });
                     console.log('Error: ' + err);
                 });
         }
     };
-    BasicSummary.prototype.render = function () {
+    Channels.prototype.render = function () {
         var _a = this.state;
         if (!this.props.user) {
             return (React.createElement("div", null, "No user selected"));
         }
+        var channels = this.state.channelData.map(function (ch) {
+            return React.createElement("div", { className: "ch", key: ch.id },
+                React.createElement("div", { className: "col" },
+                    React.createElement("div", { className: "dummy" },
+                        React.createElement("a", { href: '/youtube/videos/' + ch.channel_id },
+                            React.createElement("div", { className: "thumbnail" },
+                                React.createElement("img", { src: ch.channel_data.snippet.thumbnails.default.url, width: "44", height: "44" }),
+                                ch.channel_name)))));
+        });
         return (React.createElement("div", null,
-            React.createElement("b", null, "Channels:")));
+            React.createElement("b", null, "Channels:"),
+            React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col" },
+                    " ",
+                    channels,
+                    " "),
+                React.createElement("div", { className: "col" }, "Add Channel (component)"))));
     };
-    return BasicSummary;
+    return Channels;
 }(React.Component));
-exports.default = BasicSummary;
+exports.default = Channels;
 
 
 /***/ })
