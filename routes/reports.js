@@ -108,7 +108,6 @@ router.get("/user/summary/:username", function (req, res, next) {
       SELECT action_date, watch_count 
         FROM dates_watched
        WHERE username=$1
-       LIMIT 1000
       `,[username]
     );
 
@@ -121,7 +120,58 @@ router.get("/user/summary/:username", function (req, res, next) {
       return res.send(data);
     } else {
       res.status(404);
-      return res.send("No data found for the given date.");
+      return res.send("No data found for the given user.");
+    }
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.log(e);
+      return res.send("Error: " + e.message);
+    })
+  );
+});
+
+router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
+
+  const { username, startdate } = req.params;
+
+  (async () => {
+    qresult = await pgpool.query(
+      `
+      WITH date_range AS (
+        SELECT generate_series($2, NOW(), '1 day'::interval)::date AS arb_date
+      ),
+            
+      activity_dates AS (
+        SELECT u.username AS username,
+               date_trunc('day', a.action_time) AS action_date,
+               count(a.action_time) AS watch_count
+          FROM nahtube.user_activity a
+         INNER JOIN nahtube.users u
+                 ON a.user_id = u.id
+         WHERE a.action = 'watch video'
+           AND u.username=$1
+         GROUP BY username, action_date
+         ORDER BY username, action_date
+    )
+    
+    SELECT d.arb_date AS action_date, COALESCE(a.watch_count, 0) AS watch_count FROM date_range d
+      LEFT JOIN activity_dates a 
+             ON d.arb_date = a.action_date;
+      `,[username, startdate]
+    );
+
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("No data found for the given user/date.");
     }
   })().catch(e =>
     setImmediate(() => {
