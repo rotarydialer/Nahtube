@@ -4917,11 +4917,17 @@ module.exports = {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = React;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var React = __webpack_require__(3);
+var React = __webpack_require__(2);
 var createReactClass = __webpack_require__(158);
-var ReactDOM = __webpack_require__(6);
+var ReactDOM = __webpack_require__(7);
 
 module.exports = {
     createClass: function(chartType, methodNames, dataKey) {
@@ -5069,12 +5075,6 @@ var addData = function(nextProps, chart, setIndex, pointIndex) {
     chart.addData(values, nextProps.data.labels[setIndex]);
 };
 
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = React;
 
 /***/ }),
 /* 4 */
@@ -5270,6 +5270,12 @@ process.umask = function() { return 0; };
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = __webpack_require__(135);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
@@ -5367,16 +5373,10 @@ module.exports = defaults;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = ReactDOM;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(135);
 
 /***/ }),
 /* 8 */
@@ -17315,8 +17315,8 @@ return zhTw;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
-var ReactDOM = __webpack_require__(6);
+var React = __webpack_require__(2);
+var ReactDOM = __webpack_require__(7);
 var UserManagement_1 = __webpack_require__(133);
 ReactDOM.render(React.createElement(UserManagement_1.UserManagement, null), document.getElementById("wrapper"));
 
@@ -17338,9 +17338,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
+var React = __webpack_require__(2);
 var UserSelectorRich_1 = __webpack_require__(134);
 var BasicSummary_1 = __webpack_require__(153);
+var Channels_1 = __webpack_require__(172);
 var UserManagement = /** @class */ (function (_super) {
     __extends(UserManagement, _super);
     function UserManagement(props) {
@@ -17359,7 +17360,11 @@ var UserManagement = /** @class */ (function (_super) {
     UserManagement.prototype.render = function () {
         return (React.createElement("div", null,
             "User Management",
-            React.createElement(UserSelectorRich_1.default, { onSelectUser: this.handleUserSelection }),
+            React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
+                    React.createElement(UserSelectorRich_1.default, { onSelectUser: this.handleUserSelection })),
+                React.createElement("div", { className: "col" },
+                    React.createElement(Channels_1.default, { user: this.state.selectedUser }))),
             React.createElement(BasicSummary_1.default, { user: this.state.selectedUser })));
     };
     return UserManagement;
@@ -17384,8 +17389,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
-var axios_1 = __webpack_require__(7);
+var React = __webpack_require__(2);
+var axios_1 = __webpack_require__(5);
 var UserSelectorRich = /** @class */ (function (_super) {
     __extends(UserSelectorRich, _super);
     function UserSelectorRich(props) {
@@ -17434,7 +17439,7 @@ var UserSelectorRich = /** @class */ (function (_super) {
         if (users.length <= 0) {
             return (React.createElement("div", null, "No users"));
         }
-        return (React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
+        return (React.createElement("div", null,
             React.createElement("div", { className: "form-control", id: "selectedUser" }, this.state.users.map(function (user) {
                 var classnames = (selectedUser === user) ? 'active list-group-item list-group-item-action' : 'list-group-item list-group-item-action';
                 return (React.createElement("div", { onClick: function () { return _this.onSelectUser(user); }, key: user.id, id: user.id.toString(), "data-value": user.id, className: classnames },
@@ -17459,7 +17464,7 @@ exports.default = UserSelectorRich;
 var utils = __webpack_require__(1);
 var bind = __webpack_require__(8);
 var Axios = __webpack_require__(137);
-var defaults = __webpack_require__(5);
+var defaults = __webpack_require__(6);
 
 /**
  * Create an instance of Axios
@@ -17542,7 +17547,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(5);
+var defaults = __webpack_require__(6);
 var utils = __webpack_require__(1);
 var InterceptorManager = __webpack_require__(146);
 var dispatchRequest = __webpack_require__(147);
@@ -18083,7 +18088,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(1);
 var transformData = __webpack_require__(148);
 var isCancel = __webpack_require__(11);
-var defaults = __webpack_require__(5);
+var defaults = __webpack_require__(6);
 var isAbsoluteURL = __webpack_require__(149);
 var combineURLs = __webpack_require__(150);
 
@@ -18350,8 +18355,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
-var axios_1 = __webpack_require__(7);
+var React = __webpack_require__(2);
+var axios_1 = __webpack_require__(5);
 var Moment = __webpack_require__(0);
 var LineChart = __webpack_require__(156).Line;
 var BasicSummary = /** @class */ (function (_super) {
@@ -18480,11 +18485,7 @@ var BasicSummary = /** @class */ (function (_super) {
             offsetGridLines: false
         };
         return (React.createElement("div", null,
-            React.createElement(LineChart, { data: chartData, options: chartOptions, width: "800", height: "350" }),
-            React.createElement("div", null,
-                " ",
-                this.state.reportRows,
-                " ")));
+            React.createElement(LineChart, { data: chartData, options: chartOptions, width: "800", height: "350" })));
     };
     return BasicSummary;
 }(React.Component));
@@ -18790,7 +18791,7 @@ module.exports = {
   Pie: __webpack_require__(169),
   PolarArea: __webpack_require__(170),
   Radar: __webpack_require__(171),
-  createClass: __webpack_require__(2).createClass
+  createClass: __webpack_require__(3).createClass
 };
 
 
@@ -18798,7 +18799,7 @@ module.exports = {
 /* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('Bar', ['getBarsAtEvent']);
 
@@ -18818,7 +18819,7 @@ module.exports = vars.createClass('Bar', ['getBarsAtEvent']);
 
 
 
-var React = __webpack_require__(3);
+var React = __webpack_require__(2);
 var factory = __webpack_require__(159);
 
 if (typeof React === 'undefined') {
@@ -23820,7 +23821,7 @@ module.exports = __webpack_amd_options__;
 /* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('Doughnut', ['getSegmentsAtEvent']);
 
@@ -23829,7 +23830,7 @@ module.exports = vars.createClass('Doughnut', ['getSegmentsAtEvent']);
 /* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('Line', ['getPointsAtEvent']);
 
@@ -23838,7 +23839,7 @@ module.exports = vars.createClass('Line', ['getPointsAtEvent']);
 /* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('Pie', ['getSegmentsAtEvent']);
 
@@ -23847,7 +23848,7 @@ module.exports = vars.createClass('Pie', ['getSegmentsAtEvent']);
 /* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('PolarArea', ['getSegmentsAtEvent']);
 
@@ -23856,9 +23857,73 @@ module.exports = vars.createClass('PolarArea', ['getSegmentsAtEvent']);
 /* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var vars = __webpack_require__(2);
+var vars = __webpack_require__(3);
 
 module.exports = vars.createClass('Radar', ['getPointsAtEvent']);
+
+
+/***/ }),
+/* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(2);
+var axios_1 = __webpack_require__(5);
+var BasicSummary = /** @class */ (function (_super) {
+    __extends(BasicSummary, _super);
+    function BasicSummary(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {};
+        return _this;
+    }
+    BasicSummary.prototype.componentDidMount = function () {
+    };
+    BasicSummary.prototype.componentWillUpdate = function (nextProps, nextState) {
+        var _this = this;
+        if (this.props.user != nextProps.user) {
+            var reportUser = nextProps.user ? nextProps.user : this.props.user;
+            var counts_1 = [];
+            if (reportUser)
+                axios_1.default.get('/reports/user/watchcount/' + reportUser.username)
+                    .then(function (reportData) {
+                    var rows = reportData.data.results.map(function (row) {
+                        counts_1.push(row.watch_count);
+                        return React.createElement("div", { className: "row", key: row.action_date },
+                            React.createElement("div", { className: "col-4" },
+                                "Watched: ",
+                                row.watch_count));
+                    });
+                    _this.setState({});
+                })
+                    .catch(function (err) {
+                    _this.setState({});
+                    console.log('Error: ' + err);
+                });
+        }
+    };
+    BasicSummary.prototype.render = function () {
+        var _a = this.state;
+        if (!this.props.user) {
+            return (React.createElement("div", null, "No user selected"));
+        }
+        return (React.createElement("div", null,
+            React.createElement("b", null, "Channels:")));
+    };
+    return BasicSummary;
+}(React.Component));
+exports.default = BasicSummary;
 
 
 /***/ })

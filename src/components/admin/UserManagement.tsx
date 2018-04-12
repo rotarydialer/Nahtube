@@ -3,6 +3,7 @@ import * as Moment from "moment";
 import UserSelectorRich from "../UserSelectorRich";
 import IUser from "../IUser";
 import BasicSummary from "./BasicSummary";
+import Channels from "./Channels";
 
 export interface Props {
 }
@@ -35,8 +36,14 @@ export class UserManagement extends React.Component<Props, State> {
 
                 {/* <UserSelector defaultUser=''/> */}
 
-                <UserSelectorRich 
-                onSelectUser={this.handleUserSelection} />
+                <div className="row">
+                    <div className="col-lg-3 col-md-4 col-sm-5">
+                        <UserSelectorRich onSelectUser={this.handleUserSelection} />
+                    </div>
+                    <div className="col">
+                        <Channels user={this.state.selectedUser} />
+                    </div>
+                </div>
 
                 <BasicSummary user={this.state.selectedUser} />
             </div>
