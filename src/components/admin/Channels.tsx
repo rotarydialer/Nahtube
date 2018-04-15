@@ -1,6 +1,7 @@
 import * as React from "react";
 import Axios from "axios";
 import IUser from "../IUser";
+import AddChannel from "./Channel_AddNew";
 
 export interface Props {
     user: IUser;
@@ -8,6 +9,7 @@ export interface Props {
 
 export interface State {
     channelData: any[];
+    addNew: boolean
 }
 
 export default class Channels extends React.Component<Props, State> {
@@ -15,8 +17,11 @@ export default class Channels extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            channelData: []
+            channelData: [],
+            addNew: false
         }
+
+        this.openAddChannel = this.openAddChannel.bind(this);
     }
 
     componentDidMount () {
@@ -52,6 +57,15 @@ export default class Channels extends React.Component<Props, State> {
 
     }
 
+    openAddChannel () {
+        this.setState({ addNew: true });
+    }
+
+    handleClose () {
+        console.log('Handle close');
+        // this.setState({ addNew: false });
+    }
+
     render() {
         const {
         } = this.state;
@@ -82,7 +96,13 @@ export default class Channels extends React.Component<Props, State> {
                 <b>Channels:</b>
                 <div className="row">
                     <div className="col"> {channels} </div>
-                    <div className="col">Add Channel (component)</div>
+                    <div className="col">
+
+                        <div className="add-channel">
+                            <AddChannel user={this.props.user} onClose={this.handleClose} />
+                        </div>
+                            
+                    </div>
                 </div>
             </div>
         );

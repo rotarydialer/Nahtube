@@ -23881,13 +23881,16 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
 var axios_1 = __webpack_require__(5);
+var Channel_AddNew_1 = __webpack_require__(173);
 var Channels = /** @class */ (function (_super) {
     __extends(Channels, _super);
     function Channels(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
-            channelData: []
+            channelData: [],
+            addNew: false
         };
+        _this.openAddChannel = _this.openAddChannel.bind(_this);
         return _this;
     }
     Channels.prototype.componentDidMount = function () {
@@ -23912,6 +23915,13 @@ var Channels = /** @class */ (function (_super) {
                 });
         }
     };
+    Channels.prototype.openAddChannel = function () {
+        this.setState({ addNew: true });
+    };
+    Channels.prototype.handleClose = function () {
+        console.log('Handle close');
+        // this.setState({ addNew: false });
+    };
     Channels.prototype.render = function () {
         var _a = this.state;
         if (!this.props.user) {
@@ -23933,11 +23943,188 @@ var Channels = /** @class */ (function (_super) {
                     " ",
                     channels,
                     " "),
-                React.createElement("div", { className: "col" }, "Add Channel (component)"))));
+                React.createElement("div", { className: "col" },
+                    React.createElement("div", { className: "add-channel" },
+                        React.createElement(Channel_AddNew_1.default, { user: this.props.user, onClose: this.handleClose }))))));
     };
     return Channels;
 }(React.Component));
 exports.default = Channels;
+
+
+/***/ }),
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(2);
+var axios_1 = __webpack_require__(5);
+// TODO: consider removing these hamfisted crutches
+var currentSearchTerm;
+var currentSearchExecuted = false;
+function formatChannelThumbnail(channel) {
+    if (channel.snippet) {
+        if (channel.snippet.thumbnails) {
+            if (channel.snippet.thumbnails.medium.url) {
+                return channel.snippet.thumbnails.medium.url;
+            }
+        }
+    }
+    return '';
+}
+var AddChannel = /** @class */ (function (_super) {
+    __extends(AddChannel, _super);
+    function AddChannel(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            isSearching: false,
+            searchString: undefined,
+            searchResults: [],
+            detailsFull: {}
+        };
+        _this.onSearchChange = _this.onSearchChange.bind(_this);
+        _this.onSearchPaste = _this.onSearchPaste.bind(_this);
+        _this.selectChannelToAdd = _this.selectChannelToAdd.bind(_this);
+        _this.saveChannel = _this.saveChannel.bind(_this);
+        _this.onClose = _this.onClose.bind(_this);
+        return _this;
+    }
+    AddChannel.prototype.onClose = function (e) {
+        this.props.onClose(e.target.value);
+    };
+    AddChannel.prototype.componentWillMount = function () {
+    };
+    AddChannel.prototype.componentDidMount = function () {
+    };
+    AddChannel.prototype.onSearchChange = function (e) {
+        var _this = this;
+        this.setState((_a = {}, _a[e.target.name] = e.target.value, _a));
+        // wait 1 second before submitting the search
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 1000);
+        var _a;
+    };
+    AddChannel.prototype.onSearchPaste = function (e) {
+        var _this = this;
+        this.setState({ searchString: e.target.value });
+        setTimeout(function () { return _this.checkSearchTerms(_this.state.searchString); }, 50);
+    };
+    AddChannel.prototype.checkSearchTerms = function (incoming) {
+        if (incoming) {
+            // TODO: test with this.state.searchString
+            if (currentSearchTerm === incoming) {
+                //if (!currentSearchExecuted) {
+                if (!this.state.isSearching) {
+                    //console.log('Looks like you stopped typing at "%s". Submit this!', incoming);
+                    currentSearchExecuted = true;
+                    this.doSearch(currentSearchTerm);
+                }
+            }
+            else {
+                currentSearchTerm = incoming;
+            }
+        }
+        else {
+            this.setState({ searchResults: [] });
+        }
+    };
+    AddChannel.prototype.doSearch = function (searchTerm) {
+        var _this = this;
+        this.setState({
+            searchResults: []
+        });
+        console.log('Searching for "%s"...', searchTerm);
+        this.setState({ isSearching: true });
+        axios_1.default.get('/youtube/channel/search/' + searchTerm)
+            .then(function (resultsFound) {
+            console.log(resultsFound.data);
+            var searchResults = resultsFound.data.items.map(function (result) {
+                return React.createElement("div", { key: result.id.channelId, className: "col searchResultThumb" },
+                    React.createElement("img", { onClick: _this.selectChannelToAdd, "data-channelid": result.id.channelId, className: "channelThumb", src: formatChannelThumbnail(result), alt: result.snippet.description }),
+                    React.createElement("div", null, result.snippet.channelTitle),
+                    React.createElement("div", { onClick: _this.saveChannel },
+                        React.createElement("i", { className: "fas fa-plus" })));
+            });
+            _this.setState({ searchResults: searchResults });
+            console.log(searchResults);
+            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
+            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
+        })
+            .catch(function (err) {
+            console.log('Send Message error: ' + err);
+            setTimeout(function () { return currentSearchExecuted = false; }, 1000);
+            setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
+        });
+        //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
+    };
+    AddChannel.prototype.selectChannelToAdd = function (e) {
+        var channelData = e.target.dataset;
+        if (channelData) {
+            this.setState({ detailsFull: channelData });
+        }
+        else {
+            console.log('ERROR: No video ID found for the selected video.');
+        }
+    };
+    AddChannel.prototype.saveChannel = function (e) {
+        console.log('Saving channel.');
+        var detailsFull = this.state.detailsFull;
+        var user = this.props.user;
+        var payload = {
+            "detailsFull": detailsFull
+        };
+        if (detailsFull) {
+            console.log(payload);
+            axios_1.default.post('youtube/save/channelId/' + user.username, payload)
+                .then(function (res) {
+                console.log('Channel saved. Response:');
+                console.log(res);
+            })
+                .catch(function (err) {
+                console.log('Error saving channel: ' + err);
+            });
+            // sets "composeNew" to false, thereby closing the New Message component
+            this.props.onClose(false);
+        }
+        else {
+            // TODO: actually handle this
+            console.log('Required field missing.');
+        }
+    };
+    AddChannel.prototype.componentWillUnmount = function () {
+        // TODO: show a notification that this completed successfully. (which means lifting more state yay :/)
+    };
+    AddChannel.prototype.render = function () {
+        var isSearching = this.state.isSearching;
+        return (React.createElement("div", { className: "col" },
+            React.createElement("h2", null, "Add a Channel"),
+            React.createElement("form", null,
+                React.createElement("div", { className: "form-group" },
+                    React.createElement("div", { className: "form-group row" },
+                        React.createElement("label", { className: "col-1 col-form-label" },
+                            React.createElement("strong", null, "Search")),
+                        React.createElement("div", { className: "col-4" },
+                            React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange, onPaste: this.onSearchPaste })),
+                        isSearching ? React.createElement("h2", null,
+                            React.createElement("span", { className: "badge badge-info" },
+                                React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
+                    React.createElement("div", { className: "row search-results" }, this.state.searchResults),
+                    React.createElement("div", { className: "btn btn-primary", onClick: this.saveChannel }, "Save")))));
+    };
+    return AddChannel;
+}(React.Component));
+exports.default = AddChannel;
 
 
 /***/ })
