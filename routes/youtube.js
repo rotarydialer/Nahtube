@@ -87,8 +87,8 @@ router.post('/search', function(req, res, next) {
 
 });
 
-router.post('/channel/search', function(req, res, next) {
-  var searchstr = req.body.searchstring;
+router.get('/channel/search/:searchstring', function(req, res, next) {
+  var searchstr = req.params.searchstring;
   
     if(!isLoggedIn(req)) {
       res.status(401);
@@ -111,11 +111,13 @@ router.post('/channel/search', function(req, res, next) {
     }
     var results = response.items;
     if (results.length == 0) {
-      console.log('ERROR: No results found for id "' + searchstr + '".');
+      console.log('ERROR: No results found for "' + searchstr + '".');
       res.status(404);
-      return res.send('ERROR: No results found for id "' + searchstr + '".');
+      return res.send('ERROR: No results found for "' + searchstr + '".');
     } else {
       console.log('Found %d results for "%s".', results.length, searchstr);
+
+      console.log(results);
 
       return res.send(response);
     }

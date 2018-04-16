@@ -74,7 +74,7 @@ export default class UserSelectorRich extends React.Component<Props, State> {
         }
 
         return (
-            <div className="col-lg-3 col-md-4 col-sm-5">
+            <div>
 
                 <div className="form-control" id="selectedUser">
                     {/* User selector */}
