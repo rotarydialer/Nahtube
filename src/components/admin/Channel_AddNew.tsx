@@ -197,9 +197,9 @@ export default class AddChannel extends React.Component<Props, State> {
                     <div className="form-group">
 
                         <div className="form-group row">
-                            <label className="col-1 col-form-label"><strong>Search</strong></label>
+                            <label className="col-3 col-form-label"><strong>Search</strong></label>
 
-                            <div className="col-4">
+                            <div className="col-9">
                                 <input className="form-control" type="text" id="search" name="searchString" onChange={this.onSearchChange} onPaste={this.onSearchPaste} />
                             </div>
 
@@ -213,7 +213,6 @@ export default class AddChannel extends React.Component<Props, State> {
                             {this.state.searchResults}
                         </div>
 
-                        <div className="btn btn-primary" onClick={this.saveChannel}>Save</div>
                     </div>
                 </form>
             </div>

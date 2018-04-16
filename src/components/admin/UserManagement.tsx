@@ -41,11 +41,17 @@ export class UserManagement extends React.Component<Props, State> {
                         <UserSelectorRich onSelectUser={this.handleUserSelection} />
                     </div>
                     <div className="col">
-                        <Channels user={this.state.selectedUser} />
+                        <div className="row">
+                            <BasicSummary user={this.state.selectedUser} />
+                        </div>
+
+                        <div className="row">
+                            <Channels user={this.state.selectedUser} />
+                        </div>
+
                     </div>
                 </div>
 
-                <BasicSummary user={this.state.selectedUser} />
             </div>
         )
     }

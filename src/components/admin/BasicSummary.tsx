@@ -50,7 +50,7 @@ export default class BasicSummary extends React.Component<Props, State> {
             let reportStart = this.state.reportStart;
 
             if (reportUser)
-                Axios.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
+                Axios.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.utc().format("YYYY-MM-DD"))
                 .then(
                     (reportData) => {
 

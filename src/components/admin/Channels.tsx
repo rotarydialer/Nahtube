@@ -95,7 +95,7 @@ export default class Channels extends React.Component<Props, State> {
             <div>
                 <b>Channels:</b>
                 <div className="row">
-                    <div className="col"> {channels} </div>
+                    <div className="col-4 current-channels"> {channels} </div>
                     <div className="col">
 
                         <div className="add-channel">

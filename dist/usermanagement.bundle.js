@@ -17364,8 +17364,10 @@ var UserManagement = /** @class */ (function (_super) {
                 React.createElement("div", { className: "col-lg-3 col-md-4 col-sm-5" },
                     React.createElement(UserSelectorRich_1.default, { onSelectUser: this.handleUserSelection })),
                 React.createElement("div", { className: "col" },
-                    React.createElement(Channels_1.default, { user: this.state.selectedUser }))),
-            React.createElement(BasicSummary_1.default, { user: this.state.selectedUser })));
+                    React.createElement("div", { className: "row" },
+                        React.createElement(BasicSummary_1.default, { user: this.state.selectedUser })),
+                    React.createElement("div", { className: "row" },
+                        React.createElement(Channels_1.default, { user: this.state.selectedUser }))))));
     };
     return UserManagement;
 }(React.Component));
@@ -18382,7 +18384,7 @@ var BasicSummary = /** @class */ (function (_super) {
             var counts_1 = [];
             var reportStart = this.state.reportStart;
             if (reportUser)
-                axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
+                axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.utc().format("YYYY-MM-DD"))
                     .then(function (reportData) {
                     var rows = reportData.data.results.map(function (row) {
                         actionDates_1.push(Moment(row.action_date).format("M/D"));
@@ -23939,7 +23941,7 @@ var Channels = /** @class */ (function (_super) {
         return (React.createElement("div", null,
             React.createElement("b", null, "Channels:"),
             React.createElement("div", { className: "row" },
-                React.createElement("div", { className: "col" },
+                React.createElement("div", { className: "col-4 current-channels" },
                     " ",
                     channels,
                     " "),
@@ -24112,15 +24114,14 @@ var AddChannel = /** @class */ (function (_super) {
             React.createElement("form", null,
                 React.createElement("div", { className: "form-group" },
                     React.createElement("div", { className: "form-group row" },
-                        React.createElement("label", { className: "col-1 col-form-label" },
+                        React.createElement("label", { className: "col-3 col-form-label" },
                             React.createElement("strong", null, "Search")),
-                        React.createElement("div", { className: "col-4" },
+                        React.createElement("div", { className: "col-9" },
                             React.createElement("input", { className: "form-control", type: "text", id: "search", name: "searchString", onChange: this.onSearchChange, onPaste: this.onSearchPaste })),
                         isSearching ? React.createElement("h2", null,
                             React.createElement("span", { className: "badge badge-info" },
                                 React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
-                    React.createElement("div", { className: "row search-results" }, this.state.searchResults),
-                    React.createElement("div", { className: "btn btn-primary", onClick: this.saveChannel }, "Save")))));
+                    React.createElement("div", { className: "row search-results" }, this.state.searchResults)))));
     };
     return AddChannel;
 }(React.Component));
