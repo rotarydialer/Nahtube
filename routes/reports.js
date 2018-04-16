@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var moment = require('moment');
 
+// TODO: handle more generically/elegantly
+var timezoneparam = '-05';
+
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
 
@@ -51,12 +54,12 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
           ),
           
           activity_by_day AS (
-            SELECT users.common_name, users.id, date_trunc('day', act.action_time)::date as date, count(act.id) as count
+            SELECT users.common_name, users.id, date_trunc('day', act.action_time at time zone $2)::date as date, count(act.id) as count
               FROM nahtube.users users
               LEFT JOIN nahtube.user_activity act
                 ON act.user_id = users.id
             WHERE action = 'watch video'
-              AND date_trunc('day', act.action_time)::date = $1
+              AND date_trunc('day', act.action_time at time zone $2)::date = $1
             GROUP BY users.common_name, users.id, date
           )
 
@@ -64,7 +67,7 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
           LEFT OUTER JOIN activity_by_day a
           ON u.id = a.id
           ORDER BY u.id;`,
-          [checkDate]);
+          [checkDate, timezoneparam]);
 
         var { rows } = qresult;
 
@@ -145,7 +148,7 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
             
       activity_dates AS (
         SELECT u.username AS username,
-               date_trunc('day', a.action_time) AS action_date,
+               date_trunc('day', a.action_time at time zone $3) AS action_date,
                count(a.action_time) AS watch_count
           FROM nahtube.user_activity a
          INNER JOIN nahtube.users u
@@ -159,7 +162,7 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
     SELECT d.arb_date AS action_date, COALESCE(a.watch_count, 0) AS watch_count FROM date_range d
       LEFT JOIN activity_dates a 
              ON d.arb_date = a.action_date;
-      `,[username, startdate]
+      `,[username, startdate, timezoneparam]
     );
 
     var { rows } = qresult;
