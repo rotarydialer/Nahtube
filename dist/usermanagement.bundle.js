@@ -18384,7 +18384,7 @@ var BasicSummary = /** @class */ (function (_super) {
             var counts_1 = [];
             var reportStart = this.state.reportStart;
             if (reportUser)
-                axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.utc().format("YYYY-MM-DD"))
+                axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
                     .then(function (reportData) {
                     var rows = reportData.data.results.map(function (row) {
                         actionDates_1.push(Moment(row.action_date).format("M/D"));
