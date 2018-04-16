@@ -4,6 +4,7 @@ var moment = require('moment');
 
 // TODO: handle more generically/elegantly
 var timezoneparam = '-05';
+var checktz = moment().zone();
 
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
@@ -15,10 +16,10 @@ router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next)
               FROM nahtube.users users
               LEFT JOIN nahtube.user_activity act
                 ON act.user_id = users.id
-             WHERE date_trunc('day', act.action_time)::date = $1
+             WHERE date_trunc('day', act.action_time at time zone $2)::date = $1
              GROUP BY users.common_name, act.action
              ORDER BY users.common_name, act.action;`,
-      [checkDate]
+      [checkDate, timezoneparam]
     );
 
     var { rows } = qresult;
@@ -98,7 +99,7 @@ router.get("/user/summary/:username", function (req, res, next) {
       `
       WITH dates_watched AS (
           SELECT u.username AS username,
-                 date_trunc('day', a.action_time) AS action_date,
+                 date_trunc('day', a.action_time at time zone $2) AS action_date,
                  count(a.action_time) AS watch_count
             FROM nahtube.user_activity a
            INNER JOIN nahtube.users u
@@ -111,7 +112,7 @@ router.get("/user/summary/:username", function (req, res, next) {
       SELECT action_date, watch_count 
         FROM dates_watched
        WHERE username=$1
-      `,[username]
+      `,[username, timezoneparam]
     );
 
     var { rows } = qresult;
@@ -138,6 +139,8 @@ router.get("/user/summary/:username", function (req, res, next) {
 router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
 
   const { username, startdate } = req.params;
+
+  console.log(checktz);
 
   (async () => {
     qresult = await pgpool.query(
