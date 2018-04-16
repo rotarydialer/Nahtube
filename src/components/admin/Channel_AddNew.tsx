@@ -56,6 +56,7 @@ export default class AddChannel extends React.Component<Props, State> {
     }
 
     componentDidMount () {
+        console.log('Add new mounted.');
     }
 
     onSearchChange(e) {
@@ -110,6 +111,8 @@ export default class AddChannel extends React.Component<Props, State> {
                             />
                             <div>{result.snippet.channelTitle}</div>
 
+                            <div>{result}</div>
+
                             <div onClick={this.saveChannel}>
                                 <i className="fas fa-plus"></i>
                             </div>
@@ -135,6 +138,9 @@ export default class AddChannel extends React.Component<Props, State> {
 
     selectChannelToAdd(e) {
         let channelData = e.target.dataset;
+
+        console.log(channelData);
+
         if (channelData) {
             this.setState({detailsFull: channelData});
 
@@ -163,14 +169,14 @@ export default class AddChannel extends React.Component<Props, State> {
 
             console.log(payload);
 
-            Axios.post('youtube/save/channelId/' + user.username, payload)
-            .then(res => {
-                console.log('Channel saved. Response:');
-                console.log(res);
-            })
-            .catch(err => {
-                console.log('Error saving channel: ' + err);
-            });
+            // Axios.post('/youtube/save/channelId/' + user.username, payload)
+            // .then(res => {
+            //     console.log('Channel saved. Response:');
+            //     console.log(res);
+            // })
+            // .catch(err => {
+            //     console.log('Error saving channel: ' + err);
+            // });
 
             // sets "composeNew" to false, thereby closing the New Message component
             this.props.onClose(false);

@@ -24009,6 +24009,7 @@ var AddChannel = /** @class */ (function (_super) {
     AddChannel.prototype.componentWillMount = function () {
     };
     AddChannel.prototype.componentDidMount = function () {
+        console.log('Add new mounted.');
     };
     AddChannel.prototype.onSearchChange = function (e) {
         var _this = this;
@@ -24055,6 +24056,7 @@ var AddChannel = /** @class */ (function (_super) {
                 return React.createElement("div", { key: result.id.channelId, className: "col searchResultThumb" },
                     React.createElement("img", { onClick: _this.selectChannelToAdd, "data-channelid": result.id.channelId, className: "channelThumb", src: formatChannelThumbnail(result), alt: result.snippet.description }),
                     React.createElement("div", null, result.snippet.channelTitle),
+                    React.createElement("div", null, result),
                     React.createElement("div", { onClick: _this.saveChannel },
                         React.createElement("i", { className: "fas fa-plus" })));
             });
@@ -24072,6 +24074,7 @@ var AddChannel = /** @class */ (function (_super) {
     };
     AddChannel.prototype.selectChannelToAdd = function (e) {
         var channelData = e.target.dataset;
+        console.log(channelData);
         if (channelData) {
             this.setState({ detailsFull: channelData });
         }
@@ -24088,14 +24091,14 @@ var AddChannel = /** @class */ (function (_super) {
         };
         if (detailsFull) {
             console.log(payload);
-            axios_1.default.post('youtube/save/channelId/' + user.username, payload)
-                .then(function (res) {
-                console.log('Channel saved. Response:');
-                console.log(res);
-            })
-                .catch(function (err) {
-                console.log('Error saving channel: ' + err);
-            });
+            // Axios.post('/youtube/save/channelId/' + user.username, payload)
+            // .then(res => {
+            //     console.log('Channel saved. Response:');
+            //     console.log(res);
+            // })
+            // .catch(err => {
+            //     console.log('Error saving channel: ' + err);
+            // });
             // sets "composeNew" to false, thereby closing the New Message component
             this.props.onClose(false);
         }
