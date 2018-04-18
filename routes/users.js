@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
       const { rows } = await pgpool.query(`
               SELECT id, username, common_name, roles 
               FROM nahtube.users
-              ORDER BY roles ASC, username ASC`);
+              ORDER BY is_active DESC, roles ASC, common_name ASC`);
 
       return res.send(rows);
               
