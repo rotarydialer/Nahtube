@@ -37,7 +37,7 @@ export default class Channels extends React.Component<Props, State> {
 
 
             if (reportUser)
-                Axios.get('/channels/' + reportUser.username )
+                Axios.get('/channels/' + reportUser.id )
                 .then(
                     (channels) => {
 
