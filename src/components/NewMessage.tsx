@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Axios from 'axios';
-import UserSelector from './UserSelector';
+import UserSelectOption from './UserSelectOption';
 
 export interface MessageProps {
     onCloseMessage: (composeNew: boolean) => void;
+    defaultSendTo: string;
+    defaultSubject: string;
 }
 
 export interface MessageState {
@@ -68,13 +70,27 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
         this.props.onCloseMessage(e.target.value); // this is the weird binding I need to get clear in my head
     }
 
+    componentWillMount() {
+        if (this.props.defaultSendTo) {
+            this.setState({
+                sendToUsername: this.props.defaultSendTo
+            });
+        }
+
+        if (this.props.defaultSubject) {
+            this.setState({
+                subject: this.props.defaultSubject
+            });
+        }
+    }
+
     componentDidMount () {
         Axios.get('/users')
         .then(
             (userData) => {
                 let usersFound = userData.data.map( (userFound) => 
                     
-                    <UserSelector 
+                    <UserSelectOption 
                         key={userFound.id} 
                         userid={userFound.id} 
                         username={userFound.username} 
@@ -270,7 +286,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
 
                             <div className="col-4">
 
-                                <select className="form-control" id="messageTo" onChange={this.onSelectUser}>
+                                <select className="form-control" id="messageTo" onChange={this.onSelectUser} value={this.state.sendToUsername}>
                                     <option></option>
                                     {this.state.users}
                                 </select>
@@ -331,7 +347,7 @@ export default class NewMessage extends React.Component<MessageProps, MessageSta
                             <label className="col-1 col-form-label">Subject</label>
 
                             <div className="col-11">
-                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} />
+                                <input className="form-control" type="text" id="subject" onChange={this.onChangeSubject} value={this.state.subject}/>
                             </div>
                         </div>
 

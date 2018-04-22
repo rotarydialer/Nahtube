@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var moment = require('moment');
 
+// TODO: handle more generically/elegantly
+var timezoneparam = '-05';
+var checktz = moment().zone();
+
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
 
@@ -12,10 +16,10 @@ router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next)
               FROM nahtube.users users
               LEFT JOIN nahtube.user_activity act
                 ON act.user_id = users.id
-             WHERE date_trunc('day', act.action_time)::date = $1
+             WHERE date_trunc('day', act.action_time at time zone $2)::date = $1
              GROUP BY users.common_name, act.action
              ORDER BY users.common_name, act.action;`,
-      [checkDate]
+      [checkDate, timezoneparam]
     );
 
     var { rows } = qresult;
@@ -51,12 +55,12 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
           ),
           
           activity_by_day AS (
-            SELECT users.common_name, users.id, date_trunc('day', act.action_time)::date as date, count(act.id) as count
+            SELECT users.common_name, users.id, date_trunc('day', act.action_time at time zone $2)::date as date, count(act.id) as count
               FROM nahtube.users users
               LEFT JOIN nahtube.user_activity act
                 ON act.user_id = users.id
             WHERE action = 'watch video'
-              AND date_trunc('day', act.action_time)::date = $1
+              AND date_trunc('day', act.action_time at time zone $2)::date = $1
             GROUP BY users.common_name, users.id, date
           )
 
@@ -64,7 +68,7 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
           LEFT OUTER JOIN activity_by_day a
           ON u.id = a.id
           ORDER BY u.id;`,
-          [checkDate]);
+          [checkDate, timezoneparam]);
 
         var { rows } = qresult;
 
@@ -84,6 +88,105 @@ router.get('/user/summary/videos/watched/date/:dateToCheck?', function (req, res
       console.log(e);
       return res.send('Error: ' + e.message);
     } ));
+});
+
+router.get("/user/summary/:username", function (req, res, next) {
+
+  const { username } = req.params;
+
+  (async () => {
+    qresult = await pgpool.query(
+      `
+      WITH dates_watched AS (
+          SELECT u.username AS username,
+                 date_trunc('day', a.action_time at time zone $2) AS action_date,
+                 count(a.action_time) AS watch_count
+            FROM nahtube.user_activity a
+           INNER JOIN nahtube.users u
+              ON a.user_id = u.id
+           WHERE a.action = 'watch video'
+           GROUP BY username, action_date
+           ORDER BY username, action_date
+      )
+      
+      SELECT action_date, watch_count 
+        FROM dates_watched
+       WHERE username=$1
+      `,[username, timezoneparam]
+    );
+
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("No data found for the given user.");
+    }
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.log(e);
+      return res.send("Error: " + e.message);
+    })
+  );
+});
+
+router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
+
+  const { username, startdate } = req.params;
+
+  console.log(checktz);
+
+  (async () => {
+    qresult = await pgpool.query(
+      `
+      WITH date_range AS (
+        SELECT generate_series($2, NOW(), '1 day'::interval)::date AS arb_date
+      ),
+            
+      activity_dates AS (
+        SELECT u.username AS username,
+               date_trunc('day', a.action_time at time zone $3) AS action_date,
+               count(a.action_time) AS watch_count
+          FROM nahtube.user_activity a
+         INNER JOIN nahtube.users u
+                 ON a.user_id = u.id
+         WHERE a.action = 'watch video'
+           AND u.username=$1
+         GROUP BY username, action_date
+         ORDER BY username, action_date
+    )
+    
+    SELECT d.arb_date AS action_date, COALESCE(a.watch_count, 0) AS watch_count FROM date_range d
+      LEFT JOIN activity_dates a 
+             ON d.arb_date = a.action_date;
+      `,[username, startdate, timezoneparam]
+    );
+
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("No data found for the given user/date.");
+    }
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.log(e);
+      return res.send("Error: " + e.message);
+    })
+  );
 });
 
 module.exports = router;

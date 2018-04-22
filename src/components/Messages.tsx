@@ -2,6 +2,7 @@ import * as React from "react";
 import Axios from 'axios';
 import Message_YouTube from "./Message_YouTube";
 import NewMessage from "./NewMessage";
+import * as Moment from 'moment';
 
 export interface MessagesProps {
 }
@@ -12,6 +13,9 @@ export interface MessagesState {
     messages: string[];
     composeNew: boolean;
     messageQueue: string;
+
+    defaultSendTo: string;
+    defaultSubject: string;
 }
 
 function checkVideoThumbnail(video) {
@@ -41,7 +45,7 @@ function checkChannelId(video) {
 }
 
 export class Messages extends React.Component<MessagesProps, MessagesState> {
-    constructor (props: MessagesProps) {
+    constructor(props: MessagesProps) {
         super(props);
 
         this.state = {
@@ -49,16 +53,44 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
             commonName: undefined,
             messages: [],
             composeNew: false,
-            messageQueue: 'inbox'
+            messageQueue: 'inbox',
+            defaultSendTo: '',
+            defaultSubject: ''
         }
 
         this.composeNewMessage.bind(this);
         this.handleCloseMessage = this.handleCloseMessage.bind(this);
+        this.showQueue = this.showQueue.bind(this);
+        this.composeResponse = this.composeResponse.bind(this);
     }
 
     composeNewMessage() {
         this.setState({
-            composeNew: true
+            composeNew: true,
+            defaultSendTo: '',
+            defaultSubject: ''
+        });
+    }
+
+    composeResponse(to, subject) {
+        console.log('Composing a response.');
+
+        this.setState({
+            composeNew: true,
+            defaultSendTo: to,
+            defaultSubject: 'RE: ' + subject
+        });
+    }
+
+    showQueue(queueName) {
+        this.setState({
+            messageQueue: queueName
+        });
+    }
+
+    clearMessageList() {
+        this.setState({
+            messages: []
         });
     }
 
@@ -76,14 +108,22 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                     Axios.get('/messages/' + this.state.messageQueue + '.json')
                     .then(
                         (inboxMessages) => {
+
+                            console.log(inboxMessages);
                             // console.log('Inbox messages:');
                             //console.log(inboxMessages.data);
                             let messages = inboxMessages.data.map( (message) => 
                                 
-                                <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} fromUsername={message.from} body={message.message_body.messageBody}
+                                <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} 
+                                fromUsername={message.from}  toUsername={message.to} 
+                                body={message.message_body.messageBody}
                                 videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
                                 channelId={checkChannelId(message)}
-                                videoDetailsFull={message.details_full || {}} />
+                                videoDetailsFull={message.details_full || {}}
+                                sentTime={Moment(message.message_time)}
+                                showRecipient={false} 
+                                messageQueue={this.state.messageQueue}
+                                onReply={this.composeResponse}/>
                             
                             )
 
@@ -99,9 +139,50 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                 console.log('Session error: ' + err);
             });
 
-
         }
 
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        console.log('componentDidUpdate');
+
+        console.log('Current queue: ' + this.state.messageQueue);
+        console.log('Next queue: ' + nextState.messageQueue);
+
+        if (this.state.messageQueue != nextState.messageQueue) {
+            this.clearMessageList(); 
+
+            var showTo = nextState.messageQueue == 'sent' ? true : false;
+            
+            Axios.get('/messages/' + nextState.messageQueue + '.json')
+            .then(
+                (listMessages) => {
+
+                    console.log(listMessages);
+                    let messages = listMessages.data.map( (message) => 
+                        
+                        <Message_YouTube key={message.id} messageId={message.id} subject={message.message_subject} 
+                        fromUsername={message.from} toUsername={message.to} 
+                        body={message.message_body.messageBody}
+                        videoId={message.details_full.id} thumbnail={checkVideoThumbnail(message)} start={message.details_full.start}
+                        channelId={checkChannelId(message)}
+                        videoDetailsFull={message.details_full || {}}
+                        sentTime={Moment(message.message_time)}
+                        showRecipient={showTo}
+                        messageQueue={this.state.messageQueue}
+                        onReply={this.composeResponse} />
+                    
+                    )
+
+                    this.setState({messages: messages});
+                }
+            )
+            .catch((err) => {
+                console.log('Inbox error: ' + err);
+            })
+
+        }
+        
     }
 
     handleCloseMessage () {
@@ -118,7 +199,8 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
 
         if (composeNew) {
             return (
-                <NewMessage onCloseMessage={this.handleCloseMessage} />
+                <NewMessage onCloseMessage={this.handleCloseMessage}
+                    defaultSendTo={this.state.defaultSendTo} defaultSubject={this.state.defaultSubject} />
             )
         }
 
@@ -132,10 +214,13 @@ export class Messages extends React.Component<MessagesProps, MessagesState> {
                 <div className="row">
                     <ul className="nav nav-tabs">
                         <li className="nav-item">
-                            <a className="nav-link active">Inbox</a>
+                            <a className={this.state.messageQueue=='inbox' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('inbox')}}>Inbox</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link">Sent</a>
+                            <a className={this.state.messageQueue=='sent' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('sent')}}>Sent</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className={this.state.messageQueue=='deleted' ? 'active nav-link' : 'nav-link' } onClick={(e) => {this.showQueue('deleted')}}>Deleted</a>
                         </li>
                     </ul>
                 </div>

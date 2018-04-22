@@ -75,6 +75,95 @@ router.get('/su', function(req, res, next) {
 
 });
 
+router.get('/all', function(req, res, next) {
+  const {roles} = req.session.user;
+
+  if (roles.indexOf('parent') < 0 && roles.indexOf('admin') < 0 ) {
+    res.status(400);
+    return res.send('Not Found.');
+  }
+ 
+  (async () => {
+
+    const { rows } = await pgpool.query(`
+      SELECT id, username, common_name, roles, is_active 
+      FROM nahtube.users
+      ORDER BY id;`);
+
+    if (rows.length) {
+      return res.send(JSON.stringify(rows));
+    } else {
+      res.status(404);
+      return res.send('Not Found.');
+    }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
+router.get('/all/active', function(req, res, next) {
+  const {roles} = req.session.user;
+
+  if (roles.indexOf('parent') < 0 && roles.indexOf('admin') < 0 ) {
+    res.status(400);
+    return res.send('Not Found.');
+  }
+ 
+  (async () => {
+
+    const { rows } = await pgpool.query(`
+      SELECT id, username, common_name, roles 
+      FROM nahtube.users
+      WHERE is_active
+      ORDER BY id;`);
+
+    if (rows.length) {
+      return res.send(JSON.stringify(rows));
+    } else {
+      res.status(404);
+      return res.send('Not Found.');
+    }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
+router.get('/all/inactive', function(req, res, next) {
+  const {roles} = req.session.user;
+
+  if (roles.indexOf('parent') < 0 && roles.indexOf('admin') < 0 ) {
+    res.status(400);
+    return res.send('Not Found.');
+  }
+ 
+  (async () => {
+
+    const { rows } = await pgpool.query(`
+      SELECT id, username, common_name, roles 
+      FROM nahtube.users
+      WHERE NOT is_active
+      ORDER BY id;`);
+
+    if (rows.length) {
+      return res.send(JSON.stringify(rows));
+    } else {
+      res.status(404);
+      return res.send('Not Found.');
+    }      
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send('Error: ' + e.message);
+  } ));
+
+});
+
 router.get('/names', function(req, res, next) {  
   (async () => {
       const { rows } = await pgpool.query(`
@@ -224,6 +313,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
               ON msg.to_id = users_to.id
             WHERE users_to.username = $1
             AND msg.message_time >= DATE(NOW()) - INTERVAL '1 DAY' * $2
+            AND NOT is_deleted
             ORDER BY msg.message_time DESC;`, 
             [toUsername, daysAgo]);
     
@@ -246,6 +336,7 @@ router.get('/created/:daysAgo', function(req, res, next) {
               INNER JOIN nahtube.users users_to
               ON msg.to_id = users_to.id
             WHERE users_to.username = $1
+            AND NOT is_deleted
             ORDER BY msg.message_time DESC;`, 
             [toUsername]);
     

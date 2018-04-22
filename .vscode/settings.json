@@ -8,7 +8,7 @@
         "node_modules": true,
         "dist": true
     },
-    "editor.fontFamily": "'Droid Sans Mono', 'monospace'",
+    "editor.fontFamily": "'Droid Sans Mono', 'Roboto Mono Light for Powerline', 'monospace'",
     "editor.fontWeight": "normal",
     "terminal.integrated.fontFamily": "'Source Code Pro'"
 }
