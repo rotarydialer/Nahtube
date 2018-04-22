@@ -3,8 +3,7 @@ var router = express.Router();
 var moment = require('moment');
 
 // TODO: handle more generically/elegantly
-var timezoneparam = '-05';
-var checktz = moment().zone();
+var timezoneparam = '+04';
 
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
@@ -140,13 +139,17 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
 
   const { username, startdate } = req.params;
 
-  console.log(checktz);
-
   (async () => {
     qresult = await pgpool.query(
-      `
-      WITH date_range AS (
-        SELECT generate_series($2, NOW(), '1 day'::interval)::date AS arb_date
+      `WITH  now_tz AS (
+        select (date_trunc('day', NOW() AT TIME ZONE $3)) AS todays_date
+      ),
+      
+      date_range AS (
+        SELECT 
+          generate_series($2,
+            (SELECT todays_date FROM now_tz), 
+            '1 day'::interval)::date AS arb_date
       ),
             
       activity_dates AS (
