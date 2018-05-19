@@ -125,6 +125,12 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="chart-container">
+            <canvas id="viewsLastWeek" width="740" height="200"></canvas>
+        </div>
+    </div>
+
     <script>
         // initialize the report date picker
         $(function () {
@@ -143,11 +149,52 @@
         var viewsByUser = new Chart(ctx , {
             type: "bar" 
         });
+
+        // Weekly line chart
+        function initLineChartWeeklyViews() {
+            // WIP per: http://microbuilder.io/blog/2016/01/10/plotting-json-data-with-chart-js.html
+            // Get the context of the canvas element we want to select
+            var ctxl = document.getElementById("viewsLastWeek").getContext("2d");
+
+            var weeklyViewsData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                {
+                    label: "Daughter",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "Son",
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+                ]
+            }
+
+            var viewsLastWeekChart = new Chart(ctxl, {
+                type: "line" 
+            });
+            viewsLastWeekChart.data = weeklyViewsData;
+            viewsLastWeekChart.update();
+
+        }
+        
         
         function initBarChartViewsByDate() {
             var selectedDate = $('#reportDate').val() || '';
             var selectedDateMoment = moment(selectedDate);
-            queryDate = selectedDate ? moment(selectedDate).format("MM-DD-YYYY") : '';
+            queryDate = selectedDate ? moment(selectedDate).utc().format("MM-DD-YYYY") : '';
 
             //console.log('Selected date: ', selectedDate);
             var queryUrl = '/reports/user/summary/videos/watched/date/' + queryDate;
@@ -271,6 +318,7 @@
         }
 
         initBarChartViewsByDate();
+        initLineChartWeeklyViews();
         
         // Custom range:
         /*
