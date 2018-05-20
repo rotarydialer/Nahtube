@@ -3,7 +3,7 @@ var router = express.Router();
 var moment = require('moment');
 
 // TODO: handle more generically/elegantly
-var timezoneparam = '+04';
+var timezoneparam = '-04';
 
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
