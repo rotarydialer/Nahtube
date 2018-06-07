@@ -50,6 +50,7 @@ router.get('/:username', function(req, res, next) {
         INNER JOIN nahtube.users u
           ON ch.user_id=u.id
         WHERE u.username = $1
+          AND ch.sort <= 10000
         ORDER BY u.username, ch.sort, ch.id`, [username]);
 
       if (rows.length) {
