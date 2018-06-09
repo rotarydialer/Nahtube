@@ -283,11 +283,13 @@
 <body>
     <!-- TODO: restore login check -->
 
-        <div id="user-select-container">
-            <select id="user-select"></select>
-            <!-- <select id="user-select" class="selectpicker"></select> -->
-            <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
-        </div>
+    <div className="parent-nav"><a href='/parents'>Dashboard</a> | <a href='/parents/users'>Users</a> | <a href='/parents/activity/videos'>Videos</a> | Activity</div>
+
+    <div id="user-select-container">
+        <select id="user-select"></select>
+        <!-- <select id="user-select" class="selectpicker"></select> -->
+        <button id="login" onclick="populateActivityTableAjax($('#user-select').val())">Activity</button>
+    </div>
 
     <script>
         // AJAX call to populate the user-select field above

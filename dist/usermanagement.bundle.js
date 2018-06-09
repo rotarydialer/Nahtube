@@ -17375,6 +17375,12 @@ var UserManagement = /** @class */ (function (_super) {
     };
     UserManagement.prototype.render = function () {
         return (React.createElement("div", null,
+            React.createElement("div", { className: "parent-nav" },
+                React.createElement("a", { href: '/parents' }, "Dashboard"),
+                " | Users | ",
+                React.createElement("a", { href: '/parents/activity/videos' }, "Videos"),
+                " | ",
+                React.createElement("a", { href: '/parents/activity' }, "Activity")),
             "User Management",
             React.createElement("div", { className: "time-info" },
                 React.createElement("b", null, "Server time:"),
