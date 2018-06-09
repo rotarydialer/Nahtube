@@ -4,12 +4,14 @@ import UserSelectorRich from "../UserSelectorRich";
 import IUser from "../IUser";
 import BasicSummary from "./BasicSummary";
 import Channels from "./Channels";
+import Axios from "axios";
 
 export interface Props {
 }
 
 export interface State {
     selectedUser: IUser;
+    serverNow: Moment.Moment;
 }
 
 export class UserManagement extends React.Component<Props, State> {
@@ -17,7 +19,8 @@ export class UserManagement extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            selectedUser: undefined
+            selectedUser: undefined,
+            serverNow: undefined
         }
 
         this.handleUserSelection = this.handleUserSelection.bind(this);
@@ -29,10 +32,28 @@ export class UserManagement extends React.Component<Props, State> {
         })
     }
 
+    componentDidMount() {
+        Axios.get('/reports/now')
+        .then(
+            (reportData) => {
+                let serverNow = reportData.data.results[0].now;
+
+                this.setState({
+                    serverNow: serverNow
+                })
+            }
+        )
+        .catch((err) => {
+            console.error('Error: ' + err);
+        });
+    }
+
     render() {
         return (
             <div>
                 User Management
+                <div className="time-info"><b>Server time:</b> {this.state.serverNow ? Moment.parseZone(this.state.serverNow).format("MMMM Do YYYY, h:mm:ssa") : ''}</div>
+                <div className="time-info"><b>Local time:</b> {Moment().format("MMMM Do YYYY, h:mm:ssa")}</div>
 
                 {/* <UserSelector defaultUser=''/> */}
 
