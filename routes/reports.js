@@ -187,7 +187,36 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
     setImmediate(() => {
       //throw e
       res.status(500);
-      console.log(e);
+      console.error(e);
+      return res.send("Error: " + e.message);
+    })
+  );
+});
+
+router.get("/now", function(req, res, next) {
+  (async () => {
+    qresult = await pgpool.query(
+      'SELECT NOW();'
+    );
+    
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      data['time'] = 'server time';
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("Error getting database time.");
+    }
+
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.error(e);
       return res.send("Error: " + e.message);
     })
   );
