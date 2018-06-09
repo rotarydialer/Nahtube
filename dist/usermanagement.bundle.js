@@ -24024,7 +24024,8 @@ var AddChannel = /** @class */ (function (_super) {
             isSearching: false,
             searchString: undefined,
             searchResults: [],
-            detailsFull: {}
+            detailsFull: {},
+            selectedChannelId: ''
         };
         _this.onSearchChange = _this.onSearchChange.bind(_this);
         _this.onSearchPaste = _this.onSearchPaste.bind(_this);
@@ -24085,26 +24086,27 @@ var AddChannel = /** @class */ (function (_super) {
             var searchResults = resultsFound.data.items.map(function (result) {
                 return React.createElement("div", { key: result.id.channelId, className: "col searchResultThumb" },
                     React.createElement("img", { onClick: _this.selectChannelToAdd, "data-channelid": result.id.channelId, className: "channelThumb", src: formatChannelThumbnail(result), alt: result.snippet.description }),
-                    React.createElement("div", null, result.snippet.channelTitle),
-                    React.createElement("div", { onClick: _this.saveChannel },
-                        React.createElement("i", { className: "fas fa-plus" })));
+                    React.createElement("div", null, result.snippet.channelTitle));
             });
             _this.setState({ searchResults: searchResults });
             setTimeout(function () { return currentSearchExecuted = false; }, 1000);
             setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
         })
             .catch(function (err) {
-            console.log('Send Message error: ' + err);
+            console.error('Channel search error: ' + err);
             setTimeout(function () { return currentSearchExecuted = false; }, 1000);
             setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
         });
         //setTimeout(() => currentSearchExecuted = false, 1000); // clear this flag to allow searches to happen again
     };
     AddChannel.prototype.selectChannelToAdd = function (e) {
+        console.log('selectChannelToAdd');
         var channelData = e.target.dataset;
         console.log(channelData);
+        console.log(this.props);
         if (channelData) {
             this.setState({ detailsFull: channelData });
+            this.setState({ selectedChannelId: channelData.channelid });
         }
         else {
             console.log('ERROR: No video ID found for the selected video.');
@@ -24119,6 +24121,7 @@ var AddChannel = /** @class */ (function (_super) {
         };
         if (detailsFull) {
             console.log(payload);
+            console.log('Saving for user "%s".', user.username);
             // Axios.post('/youtube/save/channelId/' + user.username, payload)
             // .then(res => {
             //     console.log('Channel saved. Response:');
@@ -24127,8 +24130,7 @@ var AddChannel = /** @class */ (function (_super) {
             // .catch(err => {
             //     console.log('Error saving channel: ' + err);
             // });
-            // sets "composeNew" to false, thereby closing the New Message component
-            this.props.onClose(false);
+            //this.props.onClose(false);
         }
         else {
             // TODO: actually handle this
@@ -24152,6 +24154,9 @@ var AddChannel = /** @class */ (function (_super) {
                         isSearching ? React.createElement("h2", null,
                             React.createElement("span", { className: "badge badge-info" },
                                 React.createElement("strong", null, "Searching..."))) : React.createElement("span", null, "\u00A0")),
+                    React.createElement("div", { onClick: this.saveChannel, className: this.state.selectedChannelId ? 'shown' : 'hidden' },
+                        React.createElement("i", { className: "fas fa-plus" }),
+                        " Add Channel"),
                     React.createElement("div", { className: "row search-results" }, this.state.searchResults)))));
     };
     return AddChannel;
