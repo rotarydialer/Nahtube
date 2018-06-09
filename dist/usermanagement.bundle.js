@@ -24119,18 +24119,15 @@ var AddChannel = /** @class */ (function (_super) {
         var payload = {
             "detailsFull": detailsFull
         };
-        if (detailsFull) {
-            console.log(payload);
-            console.log('Saving for user "%s".', user.username);
-            // Axios.post('/youtube/save/channelId/' + user.username, payload)
-            // .then(res => {
-            //     console.log('Channel saved. Response:');
-            //     console.log(res);
-            // })
-            // .catch(err => {
-            //     console.log('Error saving channel: ' + err);
-            // });
-            //this.props.onClose(false);
+        if (detailsFull && this.state.selectedChannelId) {
+            axios_1.default.post('/youtube/save/' + this.state.selectedChannelId + '/' + user.username, payload)
+                .then(function (res) {
+                console.log('Channel saved. Response:');
+                console.log(res);
+            })
+                .catch(function (err) {
+                console.log('Error saving channel: ' + err);
+            });
         }
         else {
             // TODO: actually handle this
