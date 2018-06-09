@@ -10,8 +10,9 @@ export interface Props {
 export interface State {
     isSearching: boolean;
     searchString: string;
-    searchResults: string[];
-    detailsFull: {}
+    searchResults: {}[];
+    detailsFull: {};
+    selectedChannelId: string;
 }
 
 // TODO: consider removing these hamfisted crutches
@@ -38,7 +39,8 @@ export default class AddChannel extends React.Component<Props, State> {
             isSearching: false,
             searchString: undefined,
             searchResults: [],
-            detailsFull: {}
+            detailsFull: {},
+            selectedChannelId: ''
         }
 
         this.onSearchChange = this.onSearchChange.bind(this);
@@ -101,7 +103,7 @@ export default class AddChannel extends React.Component<Props, State> {
             .then(
                 (resultsFound) => {
                     console.log(resultsFound.data);
-                    let searchResults = resultsFound.data.items.map( (result) => 
+                    let searchResults = resultsFound.data.items.map( (result) =>
                         <div key={result.id.channelId} className="col searchResultThumb">
                             <img onClick={this.selectChannelToAdd} 
                                 data-channelid={result.id.channelId} 
@@ -110,25 +112,17 @@ export default class AddChannel extends React.Component<Props, State> {
                                 alt={result.snippet.description}
                             />
                             <div>{result.snippet.channelTitle}</div>
-
-                            <div>{result}</div>
-
-                            <div onClick={this.saveChannel}>
-                                <i className="fas fa-plus"></i>
-                            </div>
                         </div>
-                    )
+                    );
 
                     this.setState({searchResults: searchResults});
-
-                    console.log(searchResults);
 
                     setTimeout(() => currentSearchExecuted = false, 1000);
                     setTimeout(() => this.setState({isSearching: false}), 1000);
                 }
             )
             .catch((err) => {
-                console.log('Send Message error: ' + err);
+                console.error('Channel search error: ' + err);
                 setTimeout(() => currentSearchExecuted = false, 1000);
                 setTimeout(() => this.setState({isSearching: false}), 1000);
             });
@@ -137,12 +131,16 @@ export default class AddChannel extends React.Component<Props, State> {
     }
 
     selectChannelToAdd(e) {
+        console.log('selectChannelToAdd');
         let channelData = e.target.dataset;
 
         console.log(channelData);
 
+        console.log(this.props);
+
         if (channelData) {
             this.setState({detailsFull: channelData});
+            this.setState({selectedChannelId: channelData.channelid});
 
         } else {
             console.log('ERROR: No video ID found for the selected video.');
@@ -165,21 +163,15 @@ export default class AddChannel extends React.Component<Props, State> {
             "detailsFull": detailsFull
         }
 
-        if (detailsFull) {
-
-            console.log(payload);
-
-            // Axios.post('/youtube/save/channelId/' + user.username, payload)
-            // .then(res => {
-            //     console.log('Channel saved. Response:');
-            //     console.log(res);
-            // })
-            // .catch(err => {
-            //     console.log('Error saving channel: ' + err);
-            // });
-
-            // sets "composeNew" to false, thereby closing the New Message component
-            this.props.onClose(false);
+        if (detailsFull && this.state.selectedChannelId) {
+            Axios.post('/youtube/save/' + this.state.selectedChannelId +  '/' + user.username, payload)
+            .then(res => {
+                console.log('Channel saved. Response:');
+                console.log(res);
+            })
+            .catch(err => {
+                console.log('Error saving channel: ' + err);
+            });
 
         } else {
             // TODO: actually handle this
@@ -214,6 +206,10 @@ export default class AddChannel extends React.Component<Props, State> {
                             }
 
                         </div>
+
+                        <div onClick={this.saveChannel} className={this.state.selectedChannelId ? 'shown' : 'hidden'}>
+                            <i className="fas fa-plus"></i> Add Channel
+                        </div> 
 
                         <div className="row search-results">
                             {this.state.searchResults}

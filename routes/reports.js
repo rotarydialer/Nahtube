@@ -4,7 +4,6 @@ var moment = require('moment');
 
 // TODO: handle more generically/elegantly
 var timezoneparam = '-04';
-let timeZoneEastern = '+04'; // TODO: buggy results from the above on certain queries... check logic
 
 router.get("/user/summary/activity/date/:dateToCheck?", function(req, res, next) {
   var checkDate = moment(req.params.dateToCheck || Date.now());
@@ -155,7 +154,7 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
             
       activity_dates AS (
         SELECT u.username AS username,
-               date_trunc('day', a.action_time) AS action_date,
+               date_trunc('day', a.action_time AT TIME ZONE $3) AS action_date,
                count(a.action_time) AS watch_count
           FROM nahtube.user_activity a
          INNER JOIN nahtube.users u
@@ -169,7 +168,7 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
     SELECT d.arb_date AS action_date, COALESCE(a.watch_count, 0) AS watch_count FROM date_range d
       LEFT JOIN activity_dates a 
              ON d.arb_date = a.action_date;
-      `,[username, startdate, timeZoneEastern]
+      `,[username, startdate, timezoneparam]
     );
 
     var { rows } = qresult;
@@ -187,7 +186,36 @@ router.get("/user/watchcount/:username/:startdate", function (req, res, next) {
     setImmediate(() => {
       //throw e
       res.status(500);
-      console.log(e);
+      console.error(e);
+      return res.send("Error: " + e.message);
+    })
+  );
+});
+
+router.get("/now", function(req, res, next) {
+  (async () => {
+    qresult = await pgpool.query(
+      'SELECT NOW();'
+    );
+    
+    var { rows } = qresult;
+
+    var data = {};
+    data.results = rows;
+
+    if (rows.length) {
+      data['time'] = 'server time';
+      return res.send(data);
+    } else {
+      res.status(404);
+      return res.send("Error getting database time.");
+    }
+
+  })().catch(e =>
+    setImmediate(() => {
+      //throw e
+      res.status(500);
+      console.error(e);
       return res.send("Error: " + e.message);
     })
   );
