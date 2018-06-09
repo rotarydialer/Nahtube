@@ -23933,7 +23933,7 @@ var Channels = /** @class */ (function (_super) {
             var reportUser = nextProps.user ? nextProps.user : this.props.user;
             var counts = [];
             if (reportUser)
-                axios_1.default.get('/channels/' + reportUser.id)
+                axios_1.default.get('/channels/' + reportUser.username)
                     .then(function (channels) {
                     _this.setState({
                         channelData: channels.data
