@@ -24086,12 +24086,10 @@ var AddChannel = /** @class */ (function (_super) {
                 return React.createElement("div", { key: result.id.channelId, className: "col searchResultThumb" },
                     React.createElement("img", { onClick: _this.selectChannelToAdd, "data-channelid": result.id.channelId, className: "channelThumb", src: formatChannelThumbnail(result), alt: result.snippet.description }),
                     React.createElement("div", null, result.snippet.channelTitle),
-                    React.createElement("div", null, result),
                     React.createElement("div", { onClick: _this.saveChannel },
                         React.createElement("i", { className: "fas fa-plus" })));
             });
             _this.setState({ searchResults: searchResults });
-            console.log(searchResults);
             setTimeout(function () { return currentSearchExecuted = false; }, 1000);
             setTimeout(function () { return _this.setState({ isSearching: false }); }, 1000);
         })

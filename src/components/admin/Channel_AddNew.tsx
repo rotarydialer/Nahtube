@@ -10,7 +10,7 @@ export interface Props {
 export interface State {
     isSearching: boolean;
     searchString: string;
-    searchResults: string[];
+    searchResults: {}[];
     detailsFull: {}
 }
 
@@ -101,7 +101,7 @@ export default class AddChannel extends React.Component<Props, State> {
             .then(
                 (resultsFound) => {
                     console.log(resultsFound.data);
-                    let searchResults = resultsFound.data.items.map( (result) => 
+                    let searchResults = resultsFound.data.items.map( (result) =>
                         <div key={result.id.channelId} className="col searchResultThumb">
                             <img onClick={this.selectChannelToAdd} 
                                 data-channelid={result.id.channelId} 
@@ -111,17 +111,13 @@ export default class AddChannel extends React.Component<Props, State> {
                             />
                             <div>{result.snippet.channelTitle}</div>
 
-                            <div>{result}</div>
-
                             <div onClick={this.saveChannel}>
                                 <i className="fas fa-plus"></i>
-                            </div>
+                            </div> 
                         </div>
-                    )
+                    );
 
                     this.setState({searchResults: searchResults});
-
-                    console.log(searchResults);
 
                     setTimeout(() => currentSearchExecuted = false, 1000);
                     setTimeout(() => this.setState({isSearching: false}), 1000);
