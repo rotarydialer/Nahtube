@@ -17376,6 +17376,8 @@ var UserManagement = /** @class */ (function (_super) {
     UserManagement.prototype.render = function () {
         return (React.createElement("div", null,
             React.createElement("div", { className: "parent-nav" },
+                React.createElement("a", { href: '/' }, "Home"),
+                " | ",
                 React.createElement("a", { href: '/parents' }, "Dashboard"),
                 " | Users | ",
                 React.createElement("a", { href: '/parents/activity/videos' }, "Videos"),
@@ -18704,7 +18706,7 @@ var BasicSummary = /** @class */ (function (_super) {
             if (reportUser)
                 axios_1.default.get('/reports/user/watchcount/' + reportUser.username + '/' + reportStart.format("YYYY-MM-DD"))
                     .then(function (reportData) {
-                    var rows = reportData.data.results.map(function (row) {
+                    var rows = reportData.data.results.map(function (row, index) {
                         actionDates_1.push(Moment(row.action_date).format("M/D"));
                         counts_1.push(row.watch_count);
                         return React.createElement("div", { className: "row", key: row.action_date },
@@ -23962,11 +23964,14 @@ var Channels = /** @class */ (function (_super) {
         var channels = this.state.channelData.map(function (ch) {
             return React.createElement("div", { className: "ch", key: ch.id },
                 React.createElement("div", { className: "col" },
-                    React.createElement("div", { className: "dummy" },
+                    React.createElement("div", { className: "dummy row" },
                         React.createElement("a", { href: '/youtube/videos/' + ch.channel_id },
-                            React.createElement("div", { className: "thumbnail" },
-                                React.createElement("img", { src: ch.channel_data.snippet.thumbnails.default.url, width: "44", height: "44" }),
-                                ch.channel_name)))));
+                            React.createElement("table", { cellPadding: "5" },
+                                React.createElement("tr", null,
+                                    React.createElement("td", null, ch.sort),
+                                    React.createElement("td", null,
+                                        React.createElement("img", { src: ch.channel_data.snippet.thumbnails.default.url, width: "44", height: "44" })),
+                                    React.createElement("td", null, ch.channel_name)))))));
         });
         return (React.createElement("div", null,
             React.createElement("b", null, "Channels:"),

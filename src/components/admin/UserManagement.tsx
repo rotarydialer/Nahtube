@@ -51,7 +51,7 @@ export class UserManagement extends React.Component<Props, State> {
     render() {
         return (
             <div>
-                <div className="parent-nav"><a href='/parents'>Dashboard</a> | Users | <a href='/parents/activity/videos'>Videos</a> | <a href='/parents/activity'>Activity</a></div>
+                <div className="parent-nav"><a href='/'>Home</a> | <a href='/parents'>Dashboard</a> | Users | <a href='/parents/activity/videos'>Videos</a> | <a href='/parents/activity'>Activity</a></div>
                 User Management
                 <div className="time-info"><b>Server time:</b> {this.state.serverNow ? Moment.parseZone(this.state.serverNow).format("MMMM Do YYYY, h:mm:ssa") : ''}</div>
                 <div className="time-info"><b>Local time:</b> {Moment().format("MMMM Do YYYY, h:mm:ssa")}</div>

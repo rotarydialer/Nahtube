@@ -54,8 +54,7 @@ export default class BasicSummary extends React.Component<Props, State> {
                 .then(
                     (reportData) => {
 
-                        let rows = reportData.data.results.map( (row) => {
-
+                        let rows = reportData.data.results.map( (row, index) => {
                             actionDates.push(Moment(row.action_date).format("M/D"));
                             counts.push(row.watch_count);
 
