@@ -79,13 +79,16 @@ export default class Channels extends React.Component<Props, State> {
         let channels = this.state.channelData.map( (ch) => 
 
             <div className="ch" key={ch.id}>
-                {/* <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6"> */}
                 <div className="col">
-                    <div className="dummy"><a href={'/youtube/videos/' + ch.channel_id}>
-                        <div className="thumbnail">
-                            <img src={ch.channel_data.snippet.thumbnails.default.url} width="44" height="44" />
-                            {ch.channel_name}
-                        </div></a>
+                    <div className="dummy row"><a href={'/youtube/videos/' + ch.channel_id}>
+                        <table cellPadding="5">
+                            <tr>
+                                <td>{ch.sort}</td>
+                                <td><img src={ch.channel_data.snippet.thumbnails.default.url} width="44" height="44" /></td>
+                                <td>{ch.channel_name}</td>
+                            </tr>
+                        </table>
+                        </a>
                     </div>
                 </div>
             </div>

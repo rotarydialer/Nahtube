@@ -40,6 +40,59 @@ router.get('/details', function(req, res, next) {
   } ))
 });
 
+router.get('/activity', function(req, res) {
+  const username = req.session.user.username;
+  const user_id = req.session.user.id;
+  console.log(`Getting recent activity on subscribed channels for ${username}`);
+
+  (async () => {
+    const client = await pgpool.connect();
+
+    try {
+      
+      await client.query('BEGIN');
+
+      // Step 1 of 2: Get list of user's channels
+      const userChannels = await client.query(`
+        SELECT ch.channel_id
+          FROM nahtube.channels_allowed ch
+         INNER JOIN nahtube.users users
+            ON ch.user_id = users.id
+         WHERE users.id = $1
+         ORDER BY ch.sort, ch.id;
+      `, [user_id]);
+
+      const channelList = userChannels.rows.map((channel) => {
+        return channel.channel_id
+      });
+
+      // Step 2 of 2: make a call to the activities list for each:
+      // https://developers.google.com/youtube/v3/docs/activities/list
+
+      res.status(200);
+      return res.send(channelList);
+
+    } catch (e) {
+      await client.query('ROLLBACK');
+      const respCode = e.code ? e.code : 404
+      server.log(['error'], e.message);
+
+      res.status(respCode);
+      return res.send({
+          message: 'ERROR: ' + e.message
+      });
+    } finally {
+        //client.release();
+    }
+    
+  })().catch(e => setImmediate(() => { 
+    //throw e 
+    res.status(500);
+    return res.send(e.message);
+  }))
+
+});
+
 router.get('/:username', function(req, res, next) {
   var username = req.params.username;
   
